@@ -1,3 +1,7 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +10,9 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("local.properties")))
 
 android {
     namespace = libs.versions.namespace.get()
@@ -19,6 +26,9 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "supabaseUrl", localProperties["supabase.url"].toString())
+        buildConfigField("String", "supabaseKey", localProperties["supabase.key"].toString())
     }
 
     buildTypes {
@@ -36,6 +46,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
