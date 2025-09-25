@@ -1,0 +1,20 @@
+name: Update recipes
+
+on: workflow_dispatch
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get recipes
+        run: |
+          curl https://openapi.foodsafetykorea.go.kr/api/${{ secrets.OPEN_API_RECIPE_KEY }}/COOKRCP01/json/1/1 > recipe.json
+      - name: Upload recipes to supabase
+        run: |
+          curl -L -X POST 'https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co/functions/v1/upload-recipe' \
+          -H 'Authorization: Bearer ${{ secrets.SUPABASE_ADMIN_KEY }}' \
+          -H 'Content-Type: application/json' \
+          -d @recipe.json
+      - name: Remove temp file
+        run: |
+          rm recipes.json
