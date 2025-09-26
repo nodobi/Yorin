@@ -6,15 +6,35 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-      - name: Get recipes
+      - name: Get latest update
+        id: latest-update
         run: |
-          curl https://openapi.foodsafetykorea.go.kr/api/${{ secrets.OPEN_API_RECIPE_KEY }}/COOKRCP01/json/1/1 > recipe.json
+          update_response=$(curl -L -X GET 'https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co/rest/v1/recipe_update_log?order=updated_at.desc&limit=1' \
+          -H 'apiKey: ${{ secrets.SUPABASE_ADMIN_KEY }}' \
+          -H 'Content-Type: application/json' | jq -r '.[0].updated_at')
+          
+          updated_date=$(date -d "$update_response" +"%Y%m%d")
+          
+          echo "UPDATED_DATE=${updated_date}" >> $GITHUB_OUTPUT
+      - name: Get recipes
+        id: fetch-recipes
+        env:
+          UPDATED_DATE: ${{ steps.latest-update.outputs.UPDATED_DATE }}
+        run: |
+          recipes_response=$(curl https://openapi.foodsafetykorea.go.kr/api/${{ secrets.OPEN_API_RECIPE_KEY }}/COOKRCP01/json/1/100/CHNG_DT=$UPDATED_DATE)
+          
+          echo "$recipes_response" > recipes.json
+          
+          total_count=$(echo "$recipes_response" | jq -r '.COOKRCP01.total_count' )
+          
+          echo "TOTAL_COUNT=${total_count}" >> $GITHUB_OUTPUT
       - name: Upload recipes to supabase
+        if: ${{ steps.fetch-recipes.outputs.TOTAL_COUNT != '0' }}
         run: |
           curl -L -X POST 'https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co/functions/v1/upload-recipe' \
           -H 'Authorization: Bearer ${{ secrets.SUPABASE_ADMIN_KEY }}' \
           -H 'Content-Type: application/json' \
-          -d @recipe.json
+          -d @recipes.json
       - name: Remove temp file
         run: |
           rm recipes.json
