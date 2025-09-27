@@ -1,4 +1,4 @@
-package com.hyeok.recipebook
+package com.hyeok.recipebook.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hyeok.recipebook.ui.theme.RecipeBookTheme
+import com.hyeok.recipebook.presentation.ui.theme.RecipeBookTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
