@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -26,6 +25,8 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "RECIPE_API_KEY", localProperties["recipe.api.key"].toString())
 
         buildConfigField("String", "supabaseUrl", localProperties["supabase.url"].toString())
         buildConfigField("String", "supabaseKey", localProperties["supabase.key"].toString())
