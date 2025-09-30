@@ -82,8 +82,8 @@ fun MainView() {
             composable<Route.Menu> { backStack ->
                 MenuScreen()
             }
-            composable<Route.Roulette> { backStack ->
-                RouletteScreen()
+            composable<Route.Ingredient> { backStack ->
+                IngredientScreen()
             }
         }
     }
