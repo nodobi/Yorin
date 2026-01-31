@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ui.theme
+package com.hyeok.recipebook.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

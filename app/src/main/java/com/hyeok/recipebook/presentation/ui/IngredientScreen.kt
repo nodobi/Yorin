@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation
+package com.hyeok.recipebook.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
