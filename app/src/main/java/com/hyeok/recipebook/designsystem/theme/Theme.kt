@@ -66,7 +66,17 @@ fun AppTheme(
 
 }
 
-//@Composable
-//object AppTheme {
-//
-//}
+object AppTheme {
+    val colors: AppColorPalette
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppColorScheme.current
+    val typography: AppTypography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalTypography.current
+    val shapes: Shapes
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalShapes.current
+}
