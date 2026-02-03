@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hyeok.recipebook.presentation.navigation.Route
-import com.hyeok.recipebook.designsystem.theme.RecipeBookTheme
+import com.hyeok.recipebook.designsystem.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            RecipeBookTheme {
+            AppTheme {
                 MainView()
             }
         }
@@ -113,7 +113,7 @@ fun MainView() {
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    RecipeBookTheme {
+    AppTheme {
         MainView()
     }
 }

@@ -2,12 +2,15 @@ package com.hyeok.recipebook.designsystem.theme
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 
@@ -23,11 +26,14 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40
 )
 
-val LocalAppLightColorScheme =
+val LocalAppColorScheme =
     staticCompositionLocalOf { AppLightColorPalette }
 
 val LocalShapes =
     staticCompositionLocalOf { Shapes }
+
+val LocalTypography =
+    staticCompositionLocalOf { AppTypography() }
 
 @Composable
 fun AppTheme(
@@ -46,11 +52,13 @@ fun AppTheme(
     }
 
     CompositionLocalProvider(
-        LocalAppLightColorScheme provides AppLightColorPalette,
-        LocalShapes provides Shapes
+        LocalAppColorScheme provides AppLightColorPalette,
+        LocalShapes provides Shapes,
+        LocalTypography provides AppTypography.Default
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
+            shapes = Shapes,
             typography = Typography,
             content = content
         )
