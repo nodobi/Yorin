@@ -27,6 +27,7 @@ data class AppColorPalette(
     val success2: Color,
     val success3: Color,
     val dimming: Color,
+    val fontColor: Color,
 )
 
 internal val AppLightColorPalette = AppColorPalette(
@@ -53,4 +54,5 @@ internal val AppLightColorPalette = AppColorPalette(
     success2 = Success2,
     success3 = Success3,
     dimming = Dimming,
+    fontColor = Black1
 )
