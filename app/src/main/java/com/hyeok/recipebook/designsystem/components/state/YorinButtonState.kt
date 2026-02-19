@@ -28,13 +28,13 @@ data class YorinButtonState(
             buttonShape: ButtonShape = ButtonShape.Rectangle,
             buttonSize: ButtonSize = ButtonSize.Medium,
             buttonColor: ButtonColor = ButtonColor.Primary,
-            enabled: Boolean = false
+            enabled: Boolean = true
         ): YorinButtonState {
             val (containerColor, contentColor) = when (buttonColor) {
                 ButtonColor.Primary -> YorinTheme.colors.main1 to YorinTheme.colors.black6
                 ButtonColor.Warning -> YorinTheme.colors.sub1 to YorinTheme.colors.black6
                 ButtonColor.Secondary -> YorinTheme.colors.main8 to YorinTheme.colors.black3
-            }.let { if (enabled) YorinTheme.colors.black6 to YorinTheme.colors.black3 else it }
+            }.let { if (!enabled) YorinTheme.colors.black6 to YorinTheme.colors.black3 else it }
 
             val shape = when (buttonShape) {
                 ButtonShape.Rectangle -> RoundedCornerShape(6.dp)
@@ -51,7 +51,7 @@ data class YorinButtonState(
                 ButtonSize.Medium -> 34.dp
             }
 
-            val borderStroke = if (enabled) BorderStroke(
+            val borderStroke = if (!enabled) BorderStroke(
                 width = 1.dp,
                 color = YorinTheme.colors.black5
             ) else null

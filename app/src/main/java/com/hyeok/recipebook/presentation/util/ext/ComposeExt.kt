@@ -6,7 +6,7 @@ fun Modifier.applyIf(
     condition: Boolean,
     modifier: Modifier.() -> Modifier
 ): Modifier = if (condition) {
-    then(modifier())
+    this.modifier()
 } else {
     this
 }
@@ -15,7 +15,7 @@ fun <T> Modifier.applyIfNotNull(
     value: T?,
     modifier: Modifier.(T) -> Modifier
 ): Modifier = if(value != null) {
-    then(modifier(value))
+    this.modifier(value)
 } else {
     this
 }
