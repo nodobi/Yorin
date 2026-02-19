@@ -9,7 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import com.hyeok.recipebook.designsystem.theme.AppTheme
+import com.hyeok.recipebook.designsystem.theme.YorinTheme
 
 @Composable
 fun YorinText(
@@ -22,7 +22,7 @@ fun YorinText(
     textAlign: TextAlign = TextAlign.Unspecified,
     style: TextStyle = TextStyle.Default,
 ) {
-    val fontColor = color.takeOrElse { style.color.takeOrElse { AppTheme.colors.fontColor } }
+    val fontColor = color.takeOrElse { style.color.takeOrElse { YorinTheme.colors.fontColor } }
 
     Text(
         modifier = modifier,

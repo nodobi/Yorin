@@ -20,7 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
-import com.hyeok.recipebook.designsystem.theme.AppTheme
+import com.hyeok.recipebook.designsystem.theme.YorinTheme
 
 /**
  * @param title
@@ -56,7 +56,7 @@ fun YorinAppbar(
         title = {
             YorinText(
                 text = title,
-                style = AppTheme.typography.title1,
+                style = YorinTheme.typography.title1,
             )
         },
         titleAlignment = titleAlignment,
@@ -139,10 +139,10 @@ private fun BasicYorinAppbarLayout(
 @Preview
 @Composable
 private fun YorinAppbarPreview() {
-    AppTheme {
+    YorinTheme {
         YorinAppbar(
             modifier = Modifier
-                .background(AppTheme.colors.black7)
+                .background(YorinTheme.colors.black7)
                 .width(390.dp),
             title = "타이틀",
             useNavigation = true
