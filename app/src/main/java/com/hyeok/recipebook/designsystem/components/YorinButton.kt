@@ -10,43 +10,27 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.hyeok.recipebook.designsystem.components.state.YorinButtonState
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.util.ext.applyIfNotNull
 
 
-/**
- * 버튼의 형태를 결정
- *
- */
 enum class ButtonShape() {
     Rectangle,
     Round;
 }
 
-/**
- * 버튼의 높이, 좌우 패딩을 결정
- *
- */
 enum class ButtonSize {
     Large,
     Medium,
 }
 
-/**
- * 버튼의 색상
- *
- */
 enum class ButtonColor {
     Primary,
     Warning,
@@ -85,7 +69,7 @@ fun YorinTextButton(
         stroke = buttonState.borderStroke,
         interactionSource = interactionSource
     ) {
-        Text(
+        YorinText(
             text = text,
             color = buttonState.contentColor,
             style = YorinTheme.typography.button1
@@ -128,59 +112,4 @@ private fun BasicButtonBox(
             ),
         content = content
     )
-}
-
-@Immutable
-data class YorinButtonState(
-    val containerColor: Color,
-    val contentColor: Color,
-    val height: Dp,
-    val horizontalPadding: Dp,
-    val shape: Shape,
-    val borderStroke: BorderStroke? = null
-) {
-    companion object {
-        @Composable
-        fun from(
-            buttonShape: ButtonShape = ButtonShape.Rectangle,
-            buttonSize: ButtonSize = ButtonSize.Medium,
-            buttonColor: ButtonColor = ButtonColor.Primary,
-            enabled: Boolean = false
-        ): YorinButtonState {
-            val (containerColor, contentColor) = when (buttonColor) {
-                ButtonColor.Primary -> YorinTheme.colors.main1 to YorinTheme.colors.black6
-                ButtonColor.Warning -> YorinTheme.colors.sub1 to YorinTheme.colors.black6
-                ButtonColor.Secondary -> YorinTheme.colors.main8 to YorinTheme.colors.black3
-            }.let { if (enabled) YorinTheme.colors.black6 to YorinTheme.colors.black3 else it }
-
-            val shape = when (buttonShape) {
-                ButtonShape.Rectangle -> RoundedCornerShape(6.dp)
-                ButtonShape.Round -> RoundedCornerShape(10.dp)
-            }
-
-            val horizontalPadding = when (buttonSize) {
-                ButtonSize.Large -> 24.dp
-                ButtonSize.Medium -> 16.dp
-            }
-
-            val height = when (buttonSize) {
-                ButtonSize.Large -> 42.dp
-                ButtonSize.Medium -> 34.dp
-            }
-
-            val borderStroke = if (enabled) BorderStroke(
-                width = 1.dp,
-                color = YorinTheme.colors.black5
-            ) else null
-
-            return YorinButtonState(
-                containerColor = containerColor,
-                contentColor = contentColor,
-                height = height,
-                horizontalPadding = horizontalPadding,
-                shape = shape,
-                borderStroke = borderStroke,
-            )
-        }
-    }
 }
