@@ -11,16 +11,16 @@ object Route {
     object Home
 
     @Serializable
-    object Menu
+    object Recipe
 
     @Serializable
     object Ingredient
 
     // TODO::이미지 수정
     val topLevelRoutes = listOf(
-        TopLevelRoute<Menu>(
-            name = "Menu",
-            route = Menu,
+        TopLevelRoute<Recipe>(
+            name = "Recipe",
+            route = Recipe,
             icon = Icons.Filled.Home
         ),
         TopLevelRoute<Home>(

@@ -20,15 +20,13 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.home.HomeScreen
 import com.hyeok.recipebook.presentation.home.homeScreen
-import com.hyeok.recipebook.presentation.ingredient.IngredientScreen
-import com.hyeok.recipebook.presentation.recipe.MenuScreen
+import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
+import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.recipe.recipeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,27 +39,6 @@ class MainActivity : ComponentActivity() {
                 MainView()
             }
         }
-    }
-
-    fun foo() {
-        val a =1
-
-
-        bar {
-            this + 123
-        }
-
-        baz { it ->
-            it + 123
-        }
-    }
-
-    fun bar(block: Int.() -> Int) {
-        val a = block(123)
-    }
-
-    fun baz(block: (Int) -> Int) {
-        val a = block(123)
     }
 }
 
@@ -89,8 +66,8 @@ fun MainView() {
                                 restoreState = true
                             }
                         },
-                        icon = {Icon(route.icon, contentDescription = null)},
-                        label = {Text(text = route.name)}
+                        icon = { Icon(route.icon, contentDescription = null) },
+                        label = { Text(text = route.name) }
                     )
                 }
             }
@@ -104,12 +81,12 @@ fun MainView() {
             homeScreen(
                 modifier = Modifier
             )
-            composable<Route.Menu> { backStack ->
-                MenuScreen()
-            }
-            composable<Route.Ingredient> { backStack ->
-                IngredientScreen()
-            }
+            recipeScreen(
+                modifier = Modifier
+            )
+            ingredientScreen(
+                modifier = Modifier
+            )
         }
     }
 }
