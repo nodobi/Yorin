@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,26 +44,35 @@ import com.hyeok.recipebook.presentation.navigation.Route
 fun BottomNavigationBar(
     navController: NavHostController,
 ) {
-    YorinBottomBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+    Box() {
+        Spacer(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(YorinTheme.colors.black5)
+        )
+        YorinBottomBar {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
 
-        Route.topLevelRoutes.forEachIndexed { idx, route ->
-            YorinBottomBarItem(
-                label = route.name,
-                imageVector = route.icon,
-                selected = currentDestination?.hierarchy?.any { it.hasRoute(route.route::class) } == true,
-                onClick = {
-                    navController.navigate(route.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+            Route.topLevelRoutes.forEachIndexed { idx, route ->
+                YorinBottomBarItem(
+                    label = stringResource(route.name),
+                    imageVector = ImageVector.vectorResource(route.icon),
+                    selected = currentDestination?.hierarchy?.any { it.hasRoute(route.route::class) } == true,
+                    onClick = {
+                        navController.navigate(route.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+
+                            launchSingleTop = true
+                            restoreState = true
                         }
-
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
@@ -78,13 +90,13 @@ private fun YorinBottomBar(
 
     Box(
         modifier = modifier
+            .windowInsetsPadding(insets)
             .fillMaxWidth()
             .height(BottomBarHeight)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(insets)
                 .selectableGroup()
         ) {
             content()
@@ -143,8 +155,8 @@ private fun BottomNavigationPreview() {
     YorinBottomBar {
         Route.topLevelRoutes.forEachIndexed { idx, route ->
             YorinBottomBarItem(
-                label = route.name,
-                imageVector = route.icon,
+                label = stringResource(route.name),
+                imageVector = ImageVector.vectorResource(route.icon),
                 selected = false,
                 onClick = { }
             )

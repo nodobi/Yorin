@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">RecipeBook</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="menu_home">홈</string>
+    <string name="menu_recipe">레시피</string>
+    <string name="menu_ingredient">재료</string>
 </resources>
