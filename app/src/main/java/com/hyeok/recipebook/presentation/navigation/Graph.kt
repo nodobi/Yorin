@@ -18,14 +18,14 @@ object Route {
 
     // TODO::이미지 수정
     val topLevelRoutes = listOf(
-        TopLevelRoute<Recipe>(
-            name = "Recipe",
-            route = Recipe,
-            icon = Icons.Filled.Home
-        ),
         TopLevelRoute<Home>(
             name = "Home",
             route = Home,
+            icon = Icons.Filled.Home
+        ),
+        TopLevelRoute<Recipe>(
+            name = "Recipe",
+            route = Recipe,
             icon = Icons.Filled.Home
         ),
         TopLevelRoute<Ingredient>(
