@@ -25,6 +25,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.home.HomeScreen
+import com.hyeok.recipebook.presentation.home.homeScreen
+import com.hyeok.recipebook.presentation.ingredient.IngredientScreen
+import com.hyeok.recipebook.presentation.recipe.MenuScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -97,9 +101,9 @@ fun MainView() {
             navController = navController,
             startDestination = Route.Home
         ) {
-            composable<Route.Home> { backStack ->
-                HomeScreen()
-            }
+            homeScreen(
+                modifier = Modifier
+            )
             composable<Route.Menu> { backStack ->
                 MenuScreen()
             }
