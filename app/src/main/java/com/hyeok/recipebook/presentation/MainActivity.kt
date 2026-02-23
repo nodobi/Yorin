@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ui
+package com.hyeok.recipebook.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.BottomNavigationBar
 import com.hyeok.recipebook.presentation.home.homeScreen
 import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
 import com.hyeok.recipebook.presentation.navigation.Route
