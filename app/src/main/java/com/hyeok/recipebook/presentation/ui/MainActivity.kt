@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation
+package com.hyeok.recipebook.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hyeok.recipebook.presentation.navigation.Route
-import com.hyeok.recipebook.presentation.ui.theme.RecipeBookTheme
+import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,10 +33,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            RecipeBookTheme {
+            YorinTheme {
                 MainView()
             }
         }
+    }
+
+    fun foo() {
+        val a =1
+
+
+        bar {
+            this + 123
+        }
+
+        baz { it ->
+            it + 123
+        }
+    }
+
+    fun bar(block: Int.() -> Int) {
+        val a = block(123)
+    }
+
+    fun baz(block: (Int) -> Int) {
+        val a = block(123)
     }
 }
 
@@ -92,7 +113,7 @@ fun MainView() {
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    RecipeBookTheme {
+    YorinTheme {
         MainView()
     }
 }

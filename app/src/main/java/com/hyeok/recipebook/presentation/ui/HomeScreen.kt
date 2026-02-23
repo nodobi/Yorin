@@ -1,9 +1,9 @@
-package com.hyeok.recipebook.presentation
+package com.hyeok.recipebook.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun MenuScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier) {
 
 }
