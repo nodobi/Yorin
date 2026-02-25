@@ -1,8 +1,8 @@
 package com.hyeok.recipebook.presentation.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.hyeok.recipebook.R
 import kotlinx.serialization.Serializable
 
 object Route {
@@ -11,33 +11,35 @@ object Route {
     object Home
 
     @Serializable
-    object Menu
+    object Recipe
 
     @Serializable
     object Ingredient
 
     // TODO::이미지 수정
     val topLevelRoutes = listOf(
-        TopLevelRoute<Menu>(
-            name = "Menu",
-            route = Menu,
-            icon = Icons.Filled.Home
-        ),
         TopLevelRoute<Home>(
-            name = "Home",
+            name = R.string.menu_home,
             route = Home,
-            icon = Icons.Filled.Home
+            icon = R.drawable.ic_home
+        ),
+        TopLevelRoute<Recipe>(
+            name = R.string.menu_recipe,
+            route = Recipe,
+            icon = R.drawable.ic_chefhat
         ),
         TopLevelRoute<Ingredient>(
-            name = "Ingredient",
+            name = R.string.menu_ingredient,
             route = Ingredient,
-            icon = Icons.Filled.Home
+            icon = R.drawable.ic_refrigerator
         )
     )
 }
 
 data class TopLevelRoute<T: Any> (
-    val name: String,
+    @StringRes
+    val name: Int,
     val route: T,
-    val icon: ImageVector
+    @DrawableRes
+    val icon: Int
 )
