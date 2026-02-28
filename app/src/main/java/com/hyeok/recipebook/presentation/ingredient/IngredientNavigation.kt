@@ -9,7 +9,8 @@ fun NavGraphBuilder.ingredientScreen(
 ) {
     composable<Route.Ingredient> {
         IngredientRoute(
-            navigateUp = navigateUp
+            onClickAddIngredient = {},
+            onClickEditIngredient = {}
         )
     }
 }
