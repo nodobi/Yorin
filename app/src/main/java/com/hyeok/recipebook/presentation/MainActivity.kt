@@ -52,7 +52,7 @@ fun MainView() {
                 modifier = Modifier
             )
             ingredientScreen(
-                modifier = Modifier
+                navigateUp = { }
             )
         }
     }
