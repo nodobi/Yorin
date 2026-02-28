@@ -30,6 +30,8 @@ fun IngredientCard(
     ingredientName: String,
     remainExpirationDate: Long,
     expirationDate: String,
+    weight: Int,
+    weightUnit: String,
     modifier: Modifier = Modifier,
     description: String = "",
     onClick: () -> Unit = {},
@@ -93,7 +95,7 @@ fun IngredientCard(
                     )
                     YorinText(
                         modifier = Modifier,
-                        text = "무게 (500g)",
+                        text = "$weight$weightUnit",
                         style = YorinTheme.typography.caption1
                     )
                 }
@@ -154,6 +156,8 @@ private fun IngredientCardPreview() {
                 ingredientName = "양파",
                 remainExpirationDate = 10,
                 expirationDate = "2025-01-01",
+                weight = 1,
+                weightUnit = "개",
                 description = ""
             )
 
@@ -161,6 +165,8 @@ private fun IngredientCardPreview() {
                 ingredientName = "양파",
                 remainExpirationDate = 10,
                 expirationDate = "2025-01-01",
+                weight = 1,
+                weightUnit = "개",
                 description = "메모에 해당하는 영역"
             )
         }

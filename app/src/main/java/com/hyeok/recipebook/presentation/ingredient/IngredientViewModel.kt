@@ -14,38 +14,54 @@ class IngredientViewModel @Inject constructor(
     val tempIngredients = listOf(
         IngredientUiState(
             name = "재료",
-            expirationDate = LocalDate.now().plusDays(1)
-        ),
-        IngredientUiState(
-            name = "재료",
-            expirationDate = LocalDate.now().plusDays(1)
-        ),
-        IngredientUiState(
-            name = "재료",
-            expirationDate = LocalDate.now().plusDays(1)
+            expirationDate = LocalDate.now().plusDays(1),
+            weight = 1,
+            weightUnit = "개"
         ),
         IngredientUiState(
             name = "재료",
             expirationDate = LocalDate.now().plusDays(1),
+            weight = 1,
+            weightUnit = "개"
+        ),
+        IngredientUiState(
+            name = "재료",
+            expirationDate = LocalDate.now().plusDays(1),
+            weight = 1,
+            weightUnit = "개"
+        ),
+        IngredientUiState(
+            name = "재료",
+            expirationDate = LocalDate.now().plusDays(1),
+            weight = 1,
+            weightUnit = "개",
             description = "재료설명"
         ),
         IngredientUiState(
             name = "재료",
-            expirationDate = LocalDate.now().plusDays(1)
+            expirationDate = LocalDate.now().plusDays(1),
+            weight = 1,
+            weightUnit = "개"
         ),
         IngredientUiState(
             name = "재료",
             expirationDate = LocalDate.now().plusDays(1),
+            weight = 1,
+            weightUnit = "개",
             description = "긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명"
         ),
         IngredientUiState(
             name = "재료",
             expirationDate = LocalDate.now().plusDays(5),
+            weight = 1,
+            weightUnit = "개",
             description = "긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명"
         ),
         IngredientUiState(
             name = "재료",
             expirationDate = LocalDate.now().plusDays(10),
+            weight = 1,
+            weightUnit = "개",
             description = "긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명긴재료설명"
         )
     )

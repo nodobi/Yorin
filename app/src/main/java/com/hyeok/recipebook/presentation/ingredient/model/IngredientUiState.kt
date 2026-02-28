@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter
 data class IngredientUiState(
     val name: String,
     val expirationDate: LocalDate,
+    val weight: Int,
+    val weightUnit: String,
     val description: String = ""
 ) {
     val remainExpirationDate: Long =
