@@ -5,12 +5,4 @@
     <string name="menu_home">홈</string>
     <string name="menu_recipe">레시피</string>
     <string name="menu_ingredient">재료</string>
-
-
-    <!-- 재료 -->
-    <string name="ingredient_title">재료</string>
-    <string name="ingredient_expiration_warning_title">유통기한 임박!</string>
-    <string name="ingredient_expiration_warning_body">%1$d개의 재료가 곧 만료됩니다</string>
-
-    <string name="ingredient_remain_expiration_days">%1$d일 남음</string>
 </resources>

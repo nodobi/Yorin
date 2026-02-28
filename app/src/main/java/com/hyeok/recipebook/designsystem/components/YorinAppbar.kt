@@ -51,7 +51,8 @@ fun YorinAppbar(
     }
 
     BasicYorinAppbar(
-        modifier = modifier,
+        modifier = modifier
+            .height(AppbarHeight),
         title = {
             YorinText(
                 text = title,
@@ -91,8 +92,7 @@ private fun BasicYorinAppbar(
                 windowInsets.only(
                     WindowInsetsSides.Top + WindowInsetsSides.Horizontal
                 )
-            )
-            .height(AppbarHeight),
+            ),
         title = title,
         titleAlignment = titleAlignment,
         leftButton = leftButton,
