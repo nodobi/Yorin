@@ -2,6 +2,7 @@ package com.hyeok.recipebook.presentation.ingredient.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +28,18 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 @Composable
 fun IngredientCard(
     ingredientName: String,
-    remainExpirationDate: Int,
+    remainExpirationDate: Long,
     expirationDate: String,
     modifier: Modifier = Modifier,
     description: String = "",
+    onClick: () -> Unit = {},
 ) {
+
     YorinCard(
-        modifier = modifier,
+        modifier = modifier
+            .clickable {
+                onClick()
+            },
         shape = RoundedCornerShape(12.dp),
         stroke = BorderStroke(1.dp, YorinTheme.colors.black5)
     ) {
@@ -147,7 +153,8 @@ private fun IngredientCardPreview() {
             IngredientCard(
                 ingredientName = "양파",
                 remainExpirationDate = 10,
-                expirationDate = "2025-01-01"
+                expirationDate = "2025-01-01",
+                description = ""
             )
 
             IngredientCard(
