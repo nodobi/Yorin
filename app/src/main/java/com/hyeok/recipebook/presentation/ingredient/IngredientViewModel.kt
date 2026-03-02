@@ -24,24 +24,28 @@ class IngredientViewModel @Inject constructor(
     val tempIngredients = listOf(
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(1),
             weight = 1,
             weightUnit = "개"
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(1),
             weight = 1,
             weightUnit = "개"
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(1),
             weight = 1,
             weightUnit = "개"
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(1),
             weight = 1,
             weightUnit = "개",
@@ -49,12 +53,14 @@ class IngredientViewModel @Inject constructor(
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(1),
             weight = 1,
             weightUnit = "개"
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(1),
             weight = 1,
             weightUnit = "개",
@@ -62,6 +68,7 @@ class IngredientViewModel @Inject constructor(
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(5),
             weight = 1,
             weightUnit = "개",
@@ -69,6 +76,7 @@ class IngredientViewModel @Inject constructor(
         ),
         IngredientUiState(
             name = "재료",
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(10),
             weight = 1,
             weightUnit = "개",
