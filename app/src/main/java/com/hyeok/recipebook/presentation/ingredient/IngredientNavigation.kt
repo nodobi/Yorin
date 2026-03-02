@@ -32,7 +32,7 @@ fun NavGraphBuilder.ingredientScreen(
         composable<Route.Ingredient.Ingredients> {
             IngredientRoute(
                 onClickAddIngredient = {},
-                onClickEditIngredient = {
+                onClickIngredient = {
                     navController.navigateToIngredientDetail()
                 }
             )
