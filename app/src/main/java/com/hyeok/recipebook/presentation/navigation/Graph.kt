@@ -14,9 +14,14 @@ object Route {
     object Recipe
 
     @Serializable
-    object Ingredient
+    object Ingredient {
+        @Serializable
+        object Ingredients
 
-    // TODO::이미지 수정
+        @Serializable
+        object Detail
+    }
+
     val topLevelRoutes = listOf(
         TopLevelRoute<Home>(
             name = R.string.menu_home,
