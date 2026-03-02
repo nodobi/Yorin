@@ -8,6 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiState
+import com.hyeok.recipebook.presentation.ingredient.ui.IngredientDetailSheet
 import com.hyeok.recipebook.presentation.navigation.Route
 
 
@@ -37,7 +39,15 @@ fun NavGraphBuilder.ingredientScreen(
         }
 
         bottomSheet<Route.Ingredient.Detail> {
-
+            IngredientDetailSheet(
+                ingredientUiState = IngredientUiState.mockState(),
+                onDismiss = {
+                    navController.popBackStack()
+                },
+                onClickRecipe = {},
+                onEditIngredient = {},
+                onDeleteIngredient = {}
+            )
         }
     }
 }

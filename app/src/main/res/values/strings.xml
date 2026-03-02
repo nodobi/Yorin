@@ -2,6 +2,10 @@
     <string name="app_name">RecipeBook</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <!-- 버튼 -->
+    <string name="btn_do_edit">수정하기</string>
+    <string name="btn_do_delete">삭제하기</string>
+
     <string name="menu_home">홈</string>
     <string name="menu_recipe">레시피</string>
     <string name="menu_ingredient">재료</string>
@@ -13,4 +17,11 @@
     <string name="ingredient_expiration_warning_body">%1$d개의 재료가 곧 만료됩니다</string>
 
     <string name="ingredient_remain_expiration_days">%1$d일 남음</string>
+
+    <string name="ingredient_detail_amount_title">수량</string>
+    <string name="ingredient_detail_purchase_date_title">구매일</string>
+    <string name="ingredient_detail_expiration_date_title">유통기한</string>
+    <string name="ingredient_detail_description_title">메모</string>
+    <string name="ingredient_detail_related_recipes_title">이 재료를 사용하는 레시피</string>
+
 </resources>
