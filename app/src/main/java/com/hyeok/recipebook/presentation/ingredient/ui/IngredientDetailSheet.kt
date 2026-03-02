@@ -1,6 +1,5 @@
 package com.hyeok.recipebook.presentation.ingredient.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,12 +9,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -32,6 +29,7 @@ import com.hyeok.recipebook.designsystem.components.ButtonShape
 import com.hyeok.recipebook.designsystem.components.ButtonSize
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
 import com.hyeok.recipebook.designsystem.components.YorinCard
+import com.hyeok.recipebook.designsystem.components.YorinModalBottomSheet
 import com.hyeok.recipebook.designsystem.components.YorinProgressBar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
@@ -49,30 +47,10 @@ fun IngredientDetailSheet(
     onEditIngredient: () -> Unit = {},
     onDeleteIngredient: () -> Unit = {}
 ) {
-    ModalBottomSheet(
-        modifier = Modifier
-            .fillMaxWidth(),
+    YorinModalBottomSheet(
+        modifier = Modifier.fillMaxWidth(),
         sheetState = sheetState,
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        dragHandle = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(44.dp)
-                        .height(4.dp)
-                        .background(YorinTheme.colors.black5)
-                )
-            }
-        },
-        containerColor = YorinTheme.colors.black7,
-        onDismissRequest = {
-            onDismiss()
-        }
+        onDismiss = onDismiss
     ) {
         Column(
             modifier = modifier,
@@ -141,7 +119,6 @@ fun IngredientDetailSheet(
                     size = ButtonSize.Large,
                     color = ButtonColor.Warning
                 )
-
             }
         }
     }
