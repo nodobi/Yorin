@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.presentation.ingredient.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,82 +54,111 @@ fun IngredientDetailSheet(
         sheetState = sheetState,
         onDismiss = onDismiss
     ) {
-        Column(
+        IngredientDetailLayout(
             modifier = modifier,
+            ingredientUiState = ingredientUiState,
+            onDismiss = onDismiss,
+            onClickRecipe = onClickRecipe,
+            onEditIngredient = onEditIngredient,
+            onDeleteIngredient = onDeleteIngredient
+        )
+    }
+}
+
+@Composable
+fun IngredientDetailLayout(
+    modifier: Modifier = Modifier,
+    ingredientUiState: IngredientUiState,
+    onDismiss: () -> Unit = {},
+    onClickRecipe: (String) -> Unit = {},
+    onEditIngredient: () -> Unit = {},
+    onDeleteIngredient: () -> Unit = {}
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        YorinAppbar(
+            title = ingredientUiState.name,
+            titleAlignment = Alignment.CenterStart,
+            action = {
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            onDismiss()
+                        },
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_close),
+                    contentDescription = null
+                )
+            }
+        )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            YorinAppbar(
-                title = ingredientUiState.name,
-                titleAlignment = Alignment.CenterStart,
-                action = {
-                    Icon(
-                        modifier = Modifier
-                            .clickable {
-                                onDismiss()
-                            },
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_close),
-                        contentDescription = null
-                    )
-                }
+            ExpirationProgress(
+                modifier = Modifier.fillMaxWidth(),
+                ingredientUiState = ingredientUiState
             )
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                ExpirationProgress(
-                    modifier = Modifier.fillMaxWidth()
-                )
 
-                IngredientDetails(
-                    modifier = Modifier.fillMaxWidth(),
-                    ingredientUiState = ingredientUiState
-                )
+            IngredientDetails(
+                modifier = Modifier.fillMaxWidth(),
+                ingredientUiState = ingredientUiState
+            )
 
-                IngredientDescription(
-                    modifier = Modifier.fillMaxWidth(),
-                    description = ingredientUiState.description
-                )
+            IngredientDescription(
+                modifier = Modifier.fillMaxWidth(),
+                description = ingredientUiState.description
+            )
 
-                IngredientRecipes(
-                    modifier = Modifier.fillMaxWidth(),
-                    recipes = listOf("레시피1", "레시피2", "레시피3"),
-                    onClick = onClickRecipe
-                )
-            }
-            HorizontalDivider(color = YorinTheme.colors.black5)
-            Row(
-                modifier = Modifier
-                    .padding(
-                        horizontal = 24.dp,
-                        vertical = 16.dp
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                YorinTextButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.btn_do_edit),
-                    onClick = onEditIngredient,
-                    shape = ButtonShape.Round,
-                    size = ButtonSize.Large,
-                    color = ButtonColor.Secondary
-                )
-                YorinTextButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.btn_do_delete),
-                    onClick = onDeleteIngredient,
-                    shape = ButtonShape.Round,
-                    size = ButtonSize.Large,
-                    color = ButtonColor.Warning
-                )
-            }
+            IngredientRecipes(
+                modifier = Modifier.fillMaxWidth(),
+                recipes = listOf("레시피1", "레시피2", "레시피3"),
+                onClick = onClickRecipe
+            )
+        }
+        HorizontalDivider(color = YorinTheme.colors.black5)
+        Row(
+            modifier = Modifier
+                .padding(
+                    horizontal = 24.dp,
+                    vertical = 16.dp
+                ),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            YorinTextButton(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.btn_do_edit),
+                onClick = onEditIngredient,
+                shape = ButtonShape.Round,
+                size = ButtonSize.Large,
+                color = ButtonColor.Secondary
+            )
+            YorinTextButton(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.btn_do_delete),
+                onClick = onDeleteIngredient,
+                shape = ButtonShape.Round,
+                size = ButtonSize.Large,
+                color = ButtonColor.Warning
+            )
         }
     }
 }
 
 @Composable
 private fun ExpirationProgress(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ingredientUiState: IngredientUiState
 ) {
+    val progress = remember(ingredientUiState) {
+        if (ingredientUiState.remainExpirationDate == ingredientUiState.totalDay) {
+            1f
+        } else {
+            1f - (ingredientUiState.remainExpirationDate.toFloat() / ingredientUiState.totalDay.toFloat())
+        }
+    }
+
     YorinCard(
         modifier = modifier,
         backgroundColor = YorinTheme.colors.main8,
@@ -143,20 +174,25 @@ private fun ExpirationProgress(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 YorinText(
-                    text = "유통기한",
+                    text = stringResource(R.string.ingredient_detail_expiration_date_title),
                     style = YorinTheme.typography.button1
                 )
                 YorinText(
-                    text = "4일",
+                    text = stringResource(
+                        R.string.ingredient_remain_expiration_days,
+                        ingredientUiState.remainExpirationDate
+                    ),
                     style = YorinTheme.typography.button1
                 )
             }
 
             YorinProgressBar(
-                progress = 0.5f,
+                progress = progress,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp)
+                    .height(8.dp),
+                progressBarColor = YorinTheme.colors.main2,
+                containerColor = YorinTheme.colors.black6
             )
         }
     }
@@ -313,8 +349,10 @@ private fun IngredientRecipeRow(
 @Composable
 private fun IngredientDetailSheetPreview() {
     YorinTheme {
-        IngredientDetailSheet(
-            onDismiss = {},
+        IngredientDetailLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(YorinTheme.colors.black7),
             ingredientUiState = IngredientUiState.mockState()
         )
     }

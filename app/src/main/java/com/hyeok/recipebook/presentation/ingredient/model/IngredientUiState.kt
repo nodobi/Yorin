@@ -21,7 +21,9 @@ data class IngredientUiState(
         }
 
     val totalDay: Long =
-        expirationDate.toEpochDay() - purchaseDate.toEpochDay()
+        expirationDate.toEpochDay() - purchaseDate.toEpochDay().let {
+            if (it < 0) 0 else it
+        }
 
     @Composable
     fun toExpirationDateFormat(): String {
@@ -38,7 +40,7 @@ data class IngredientUiState(
     companion object {
         fun mockState() = IngredientUiState(
             name = "돼지고기",
-            purchaseDate = LocalDate.now().plusDays(5),
+            purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(10),
             weight = 200,
             weightUnit = "g",
