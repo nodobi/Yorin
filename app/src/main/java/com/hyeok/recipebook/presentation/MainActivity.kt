@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -34,26 +36,29 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainView() {
-    val navController = rememberNavController()
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomNavigationBar(navController) }
-    ) { innerPadding ->
-        NavHost(
-            modifier = Modifier.padding(innerPadding),
-            navController = navController,
-            startDestination = Route.Home
-        ) {
-            homeScreen(
-                modifier = Modifier
-            )
-            recipeScreen(
-                modifier = Modifier
-            )
-            ingredientScreen(
-                navigateUp = { }
-            )
+    ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar = { BottomNavigationBar(navController) }
+        ) { innerPadding ->
+            NavHost(
+                modifier = Modifier.padding(innerPadding),
+                navController = navController,
+                startDestination = Route.Home
+            ) {
+                homeScreen(
+                    modifier = Modifier
+                )
+                recipeScreen(
+                    modifier = Modifier
+                )
+                ingredientScreen(
+                    navController = navController
+                )
+            }
         }
     }
 }

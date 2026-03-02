@@ -40,7 +40,7 @@ import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiState
 @Composable
 fun IngredientRoute(
     viewModel: IngredientViewModel = hiltViewModel(),
-    onClickEditIngredient: (IngredientUiState) -> Unit = {},
+    onClickIngredient: (IngredientUiState) -> Unit = {},
     onClickAddIngredient: () -> Unit = {}
 ) {
     val ingredients = viewModel.tempIngredients
@@ -58,7 +58,7 @@ fun IngredientRoute(
         ingredients = ingredients,
         expiredCount = expiredCount,
         onClickIngredient = { ingredient ->
-            onClickEditIngredient(ingredient)
+            onClickIngredient(ingredient)
         },
         onClickAddIngredient = {
             onClickAddIngredient()
