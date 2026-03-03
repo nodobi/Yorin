@@ -20,6 +20,9 @@ object Route {
 
         @Serializable
         object Detail
+
+        @Serializable
+        object Edit
     }
 
     val topLevelRoutes = listOf(

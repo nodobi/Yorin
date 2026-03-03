@@ -7,9 +7,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiState
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientDetailSheet
+import com.hyeok.recipebook.presentation.ingredient.ui.IngredientEditSheet
 import com.hyeok.recipebook.presentation.navigation.Route
 
 
@@ -19,6 +21,10 @@ fun NavController.navigateToIngredient(navOptions: NavOptions? = null) {
 
 fun NavController.navigateToIngredientDetail(navOptions: NavOptions? = null) {
     navigate(Route.Ingredient.Detail, navOptions)
+}
+
+fun NavController.navigateToIngredientEdit(navOptions: NavOptions? = null) {
+    navigate(Route.Ingredient.Edit, navOptions)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +37,9 @@ fun NavGraphBuilder.ingredientScreen(
     ) {
         composable<Route.Ingredient.Ingredients> {
             IngredientRoute(
-                onClickAddIngredient = {},
+                onClickAddIngredient = {
+                    navController.navigateToIngredientEdit()
+                },
                 onClickIngredient = {
                     navController.navigateToIngredientDetail()
                 }
@@ -45,9 +53,19 @@ fun NavGraphBuilder.ingredientScreen(
                     navController.popBackStack()
                 },
                 onClickRecipe = {},
-                onEditIngredient = {},
+                onEditIngredient = {
+                    navController.navigateToIngredientEdit(
+                        navOptions {
+                            popUpTo(Route.Ingredient.Ingredients) { inclusive = false }
+                        }
+                    )
+                },
                 onDeleteIngredient = {}
             )
+        }
+
+        bottomSheet<Route.Ingredient.Edit> {
+
         }
     }
 }
