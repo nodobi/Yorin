@@ -114,8 +114,8 @@ private fun BasicYorinTextField(
         BasicTextField(
             modifier = Modifier.fillMaxWidth(),
             state = state,
-            enabled = true,
-            readOnly = false,
+            enabled = enabled,
+            readOnly = readOnly,
             textStyle = textStyle,
             lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = keyboardAction,
