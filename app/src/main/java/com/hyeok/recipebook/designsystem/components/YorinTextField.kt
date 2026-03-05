@@ -107,57 +107,53 @@ private fun BasicYorinTextField(
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     onKeyboardAction: ((() -> Unit) -> Unit)? = null
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.CenterStart
-    ) {
-        BasicTextField(
-            modifier = Modifier.fillMaxWidth(),
-            state = state,
-            enabled = enabled,
-            readOnly = readOnly,
-            textStyle = textStyle,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            keyboardOptions = keyboardAction,
-            onKeyboardAction = onKeyboardAction,
-            decorator = { innerTextField ->
-                Row(
-                    modifier = Modifier
-                        .clip(shape)
-                        .background(backgroundColor, shape)
-                        .fillMaxWidth()
-                        .height(height)
-                        .padding(innerPadding),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (leadingIcon != null) {
-                        leadingIcon()
+    BasicTextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape),
+        state = state,
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = textStyle,
+        lineLimits = TextFieldLineLimits.SingleLine,
+        keyboardOptions = keyboardAction,
+        onKeyboardAction = onKeyboardAction,
+        decorator = { innerTextField ->
+            Row(
+                modifier = Modifier
+                    .background(backgroundColor, shape)
+                    .fillMaxWidth()
+                    .height(height)
+                    .padding(innerPadding),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (leadingIcon != null) {
+                    leadingIcon()
 
-                        Spacer(
-                            modifier = Modifier.width(10.dp)
+                    Spacer(
+                        modifier = Modifier.width(10.dp)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (state.text.isEmpty()) {
+                        YorinText(
+                            text = placeHolder,
+                            style = textStyle,
+                            color = placeHolderColor
                         )
                     }
+                    innerTextField()
+                }
 
-                    Box(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        if (state.text.isEmpty()) {
-                            YorinText(
-                                text = placeHolder,
-                                style = textStyle,
-                                color = placeHolderColor
-                            )
-                        }
-                        innerTextField()
-                    }
-
-                    if (trailingIcon != null) {
-                        trailingIcon()
-                    }
+                if (trailingIcon != null) {
+                    trailingIcon()
                 }
             }
-        )
-    }
+        }
+    )
 }
 
 object YorinTextFieldDefault {
