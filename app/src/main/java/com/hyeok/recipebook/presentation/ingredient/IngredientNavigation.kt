@@ -65,7 +65,12 @@ fun NavGraphBuilder.ingredientScreen(
         }
 
         bottomSheet<Route.Ingredient.Edit> {
-
+            IngredientEditSheet(
+                ingredientUiState = null,
+                onDismiss = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
