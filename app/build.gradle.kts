@@ -76,7 +76,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     ksp(libs.hilt.compiler)
-    implementation(libs.kotlin.serialization.json)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.coroutine.core)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.navigation.runtime.ktx)
