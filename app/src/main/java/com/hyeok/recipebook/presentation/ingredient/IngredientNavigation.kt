@@ -2,6 +2,8 @@ package com.hyeok.recipebook.presentation.ingredient
 
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.remember
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -31,11 +33,15 @@ fun NavController.navigateToIngredientEdit(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.ingredientScreen(
     navController: NavHostController
 ) {
-
     navigation<Route.Ingredient>(
         startDestination = Route.Ingredient.Ingredients
     ) {
-        composable<Route.Ingredient.Ingredients> {
+        composable<Route.Ingredient.Ingredients> { backStackEntry ->
+            val backstackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Route.Ingredient>()
+            }
+            val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+
             IngredientRoute(
                 onClickAddIngredient = {
                     navController.navigateToIngredientEdit()
@@ -46,7 +52,12 @@ fun NavGraphBuilder.ingredientScreen(
             )
         }
 
-        bottomSheet<Route.Ingredient.Detail> {
+        bottomSheet<Route.Ingredient.Detail> { backStackEntry ->
+            val backstackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Route.Ingredient>()
+            }
+            val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+
             IngredientDetailSheet(
                 ingredientUiState = IngredientUiState.mockState(),
                 onDismiss = {
@@ -64,7 +75,12 @@ fun NavGraphBuilder.ingredientScreen(
             )
         }
 
-        bottomSheet<Route.Ingredient.Edit> {
+        bottomSheet<Route.Ingredient.Edit> { backStackEntry ->
+            val backstackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<Route.Ingredient>()
+            }
+            val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+
             IngredientEditSheet(
                 ingredientUiState = null,
                 onDismiss = {
