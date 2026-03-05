@@ -35,12 +35,12 @@ import com.hyeok.recipebook.designsystem.components.YorinSearchbar
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.ingredient.component.ExpirationWarningCard
 import com.hyeok.recipebook.presentation.ingredient.component.IngredientCard
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiState
+import com.hyeok.recipebook.presentation.ingredient.model.IngredientModel
 
 @Composable
 fun IngredientRoute(
     viewModel: IngredientViewModel = hiltViewModel(),
-    onClickIngredient: (IngredientUiState) -> Unit = {},
+    onClickIngredient: (IngredientModel) -> Unit = {},
     onClickAddIngredient: () -> Unit = {}
 ) {
     val ingredients = viewModel.tempIngredients
@@ -69,11 +69,11 @@ fun IngredientRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientScreen(
-    ingredients: List<IngredientUiState>,
+    ingredients: List<IngredientModel>,
     expiredCount: Int,
     modifier: Modifier = Modifier,
     searchQueryState: TextFieldState = rememberTextFieldState(),
-    onClickIngredient: (IngredientUiState) -> Unit = {},
+    onClickIngredient: (IngredientModel) -> Unit = {},
     onClickAddIngredient: () -> Unit = {}
 ) {
     Column(

@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Stable
-data class IngredientUiState(
+data class IngredientModel(
     val name: String,
     val purchaseDate: LocalDate,
     val expirationDate: LocalDate,
@@ -37,8 +37,8 @@ data class IngredientUiState(
         return purchaseDate.format(format)
     }
 
-    companion object {
-        fun mockState() = IngredientUiState(
+    companion object Companion {
+        fun mockState() = IngredientModel(
             name = "돼지고기",
             purchaseDate = LocalDate.now(),
             expirationDate = LocalDate.now().plusDays(10),

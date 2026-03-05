@@ -50,7 +50,7 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiState
+import com.hyeok.recipebook.presentation.ingredient.model.IngredientModel
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -58,7 +58,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun IngredientEditSheet(
     modifier: Modifier = Modifier,
-    ingredientUiState: IngredientUiState?,
+    ingredientModel: IngredientModel?,
     sheetState: SheetState = rememberModalBottomSheetState(),
     onDismiss: () -> Unit = {},
 ) {
@@ -71,7 +71,7 @@ fun IngredientEditSheet(
     ) {
         IngredientEditLayout(
             modifier = modifier,
-            ingredientUiState = ingredientUiState,
+            ingredientModel = ingredientModel,
             onDismiss = onDismiss
         )
     }
@@ -81,7 +81,7 @@ fun IngredientEditSheet(
 @Composable
 fun IngredientEditLayout(
     modifier: Modifier = Modifier,
-    ingredientUiState: IngredientUiState?,
+    ingredientModel: IngredientModel?,
     onDismiss: () -> Unit = {},
 ) {
 
@@ -89,7 +89,7 @@ fun IngredientEditLayout(
         modifier = modifier
     ) {
         YorinAppbar(
-            title = if (ingredientUiState == null)
+            title = if (ingredientModel == null)
                 stringResource(R.string.ingredient_edit_add_title)
             else
                 stringResource(R.string.ingredient_edit_edit_title),
@@ -352,7 +352,7 @@ private fun IngredientEditSheet() {
     YorinTheme {
         IngredientEditLayout(
             modifier = Modifier.background(YorinTheme.colors.black7),
-            ingredientUiState = null
+            ingredientModel = null
         )
     }
 }

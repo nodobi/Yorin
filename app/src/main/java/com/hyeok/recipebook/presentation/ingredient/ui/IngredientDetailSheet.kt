@@ -36,13 +36,13 @@ import com.hyeok.recipebook.designsystem.components.YorinProgressBar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiState
+import com.hyeok.recipebook.presentation.ingredient.model.IngredientModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientDetailSheet(
     modifier: Modifier = Modifier,
-    ingredientUiState: IngredientUiState,
+    ingredientModel: IngredientModel,
     sheetState: SheetState = rememberModalBottomSheetState(),
     onDismiss: () -> Unit = {},
     onClickRecipe: (String) -> Unit = {},
@@ -56,7 +56,7 @@ fun IngredientDetailSheet(
     ) {
         IngredientDetailLayout(
             modifier = modifier,
-            ingredientUiState = ingredientUiState,
+            ingredientModel = ingredientModel,
             onDismiss = onDismiss,
             onClickRecipe = onClickRecipe,
             onEditIngredient = onEditIngredient,
@@ -68,7 +68,7 @@ fun IngredientDetailSheet(
 @Composable
 fun IngredientDetailLayout(
     modifier: Modifier = Modifier,
-    ingredientUiState: IngredientUiState,
+    ingredientModel: IngredientModel,
     onDismiss: () -> Unit = {},
     onClickRecipe: (String) -> Unit = {},
     onEditIngredient: () -> Unit = {},
@@ -78,7 +78,7 @@ fun IngredientDetailLayout(
         modifier = modifier,
     ) {
         YorinAppbar(
-            title = ingredientUiState.name,
+            title = ingredientModel.name,
             titleAlignment = Alignment.CenterStart,
             action = {
                 Icon(
@@ -98,17 +98,17 @@ fun IngredientDetailLayout(
         ) {
             ExpirationProgress(
                 modifier = Modifier.fillMaxWidth(),
-                ingredientUiState = ingredientUiState
+                ingredientModel = ingredientModel
             )
 
             IngredientDetails(
                 modifier = Modifier.fillMaxWidth(),
-                ingredientUiState = ingredientUiState
+                ingredientModel = ingredientModel
             )
 
             IngredientDescription(
                 modifier = Modifier.fillMaxWidth(),
-                description = ingredientUiState.description
+                description = ingredientModel.description
             )
 
             IngredientRecipes(
@@ -149,13 +149,13 @@ fun IngredientDetailLayout(
 @Composable
 private fun ExpirationProgress(
     modifier: Modifier = Modifier,
-    ingredientUiState: IngredientUiState
+    ingredientModel: IngredientModel
 ) {
-    val progress = remember(ingredientUiState) {
-        if (ingredientUiState.remainExpirationDate == ingredientUiState.totalDay) {
+    val progress = remember(ingredientModel) {
+        if (ingredientModel.remainExpirationDate == ingredientModel.totalDay) {
             1f
         } else {
-            1f - (ingredientUiState.remainExpirationDate.toFloat() / ingredientUiState.totalDay.toFloat())
+            1f - (ingredientModel.remainExpirationDate.toFloat() / ingredientModel.totalDay.toFloat())
         }
     }
 
@@ -180,7 +180,7 @@ private fun ExpirationProgress(
                 YorinText(
                     text = stringResource(
                         R.string.ingredient_remain_expiration_days,
-                        ingredientUiState.remainExpirationDate
+                        ingredientModel.remainExpirationDate
                     ),
                     style = YorinTheme.typography.button1
                 )
@@ -201,7 +201,7 @@ private fun ExpirationProgress(
 @Composable
 private fun IngredientDetails(
     modifier: Modifier = Modifier,
-    ingredientUiState: IngredientUiState
+    ingredientModel: IngredientModel
 ) {
     Column(
         modifier = modifier,
@@ -209,17 +209,17 @@ private fun IngredientDetails(
     ) {
         IngredientDetailRow(
             title = stringResource(R.string.ingredient_detail_amount_title),
-            value = "${ingredientUiState.weight}${ingredientUiState.weightUnit}"
+            value = "${ingredientModel.weight}${ingredientModel.weightUnit}"
         )
 
         IngredientDetailRow(
             title = stringResource(R.string.ingredient_detail_purchase_date_title),
-            value = ingredientUiState.toPurchaseDateFormat()
+            value = ingredientModel.toPurchaseDateFormat()
         )
 
         IngredientDetailRow(
             title = stringResource(R.string.ingredient_detail_expiration_date_title),
-            value = ingredientUiState.toExpirationDateFormat()
+            value = ingredientModel.toExpirationDateFormat()
         )
     }
 }
@@ -353,7 +353,7 @@ private fun IngredientDetailSheetPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(YorinTheme.colors.black7),
-            ingredientUiState = IngredientUiState.mockState()
+            ingredientModel = IngredientModel.mockState()
         )
     }
 }
