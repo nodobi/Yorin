@@ -50,19 +50,30 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientModel
+import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
+import com.hyeok.recipebook.presentation.util.ext.toLocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun IngredientEditSheet(
+    ingredientEditUiState: IngredientEditUiState,
     modifier: Modifier = Modifier,
-    ingredientModel: IngredientModel?,
     sheetState: SheetState = rememberModalBottomSheetState(),
     onDismiss: () -> Unit = {},
+    onComplete: (IngredientUiModel) -> Unit = {}
 ) {
-
+    val nameState = rememberTextFieldState(ingredientEditUiState.ingredient?.name ?: "")
+    val purchaseState = rememberTextFieldState(ingredientEditUiState.ingredient?.formatPurchaseDate() ?: "")
+    val expirationState = rememberTextFieldState(ingredientEditUiState.ingredient?.formatExpirationDate() ?: "")
+    val weightState = rememberTextFieldState(ingredientEditUiState.ingredient?.weight?.toString() ?: "")
+    val weightUnitState = rememberTextFieldState(ingredientEditUiState.ingredient?.weightUnit ?: "")
+    val descriptionState = rememberTextFieldState(ingredientEditUiState.ingredient?.description ?: "")
 
     YorinModalBottomSheet(
         modifier = Modifier.fillMaxWidth(),
@@ -71,7 +82,70 @@ fun IngredientEditSheet(
     ) {
         IngredientEditLayout(
             modifier = modifier,
-            ingredientModel = ingredientModel,
+            title = if (ingredientEditUiState.ingredient == null)
+                stringResource(R.string.ingredient_edit_add_title)
+            else
+                stringResource(R.string.ingredient_edit_edit_title),
+            nameState = nameState,
+            purchaseState = purchaseState,
+            expirationState = expirationState,
+            weightState = weightState,
+            weightUnitState = weightUnitState,
+            descriptionState = descriptionState,
+            onChangePurchaseDate = { utcEpochMilliseconds ->
+                purchaseState.edit {
+                    val timestamp = utcEpochMilliseconds.toLocalDate().format(
+                        LocalDate.Format {
+                            year()
+                            char('-')
+                            monthNumber()
+                            char('-')
+                            day()
+                        }
+                    )
+                    replace(0, purchaseState.text.length, timestamp)
+                }
+            },
+            onChangeExpirationDate = { utcEpochMilliseconds ->
+                expirationState.edit {
+                    val timestamp = utcEpochMilliseconds.toLocalDate().format(
+                        LocalDate.Format {
+                            year()
+                            char('-')
+                            monthNumber()
+                            char('-')
+                            day()
+                        }
+                    )
+                    replace(0, purchaseState.text.length, timestamp)
+                }
+            },
+            onCompleteEdit = {
+                onComplete(
+                    IngredientUiModel(
+                        name = nameState.text.toString(),
+                        purchaseDate = LocalDate.parse(purchaseState.text.toString(), LocalDate.Format {
+                            year()
+                            char('-')
+                            monthNumber()
+                            char('-')
+                            day()
+                        }),
+                        expirationDate = LocalDate.parse(
+                            expirationState.text.toString(),
+                            LocalDate.Format {
+                                year()
+                                char('-')
+                                monthNumber()
+                                char('-')
+                                day()
+                            }),
+                        weight = weightState.text.toString().toInt(),
+                        weightUnit = weightUnitState.text.toString(),
+                        description = descriptionState.text.toString(),
+                    )
+                )
+            },
             onDismiss = onDismiss
         )
     }
@@ -80,19 +154,24 @@ fun IngredientEditSheet(
 @OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientEditLayout(
+    title: String,
+    nameState: TextFieldState,
+    purchaseState: TextFieldState,
+    expirationState: TextFieldState,
+    weightState: TextFieldState,
+    weightUnitState: TextFieldState,
+    descriptionState: TextFieldState,
     modifier: Modifier = Modifier,
-    ingredientModel: IngredientModel?,
+    onChangePurchaseDate: (Long) -> Unit = {},
+    onChangeExpirationDate: (Long) -> Unit = {},
+    onCompleteEdit: () -> Unit = {},
     onDismiss: () -> Unit = {},
 ) {
-
     Column(
         modifier = modifier
     ) {
         YorinAppbar(
-            title = if (ingredientModel == null)
-                stringResource(R.string.ingredient_edit_add_title)
-            else
-                stringResource(R.string.ingredient_edit_edit_title),
+            title = title,
             titleAlignment = Alignment.CenterStart,
             action = {
                 Icon(
@@ -112,7 +191,7 @@ fun IngredientEditLayout(
         ) {
             LabeledTextField(
                 modifier = Modifier.fillMaxWidth(),
-                state = rememberTextFieldState(),
+                state = nameState,
                 label = stringResource(R.string.ingredient_edit_name_label),
                 placeHolder = stringResource(R.string.ingredient_edit_name_hint)
             )
@@ -123,14 +202,14 @@ fun IngredientEditLayout(
             ) {
                 LabeledTextField(
                     modifier = Modifier.weight(1f),
-                    state = rememberTextFieldState(),
+                    state = weightState,
                     label = stringResource(R.string.ingredient_edit_amount_label),
                     placeHolder = stringResource(R.string.ingredient_edit_amount_hint)
                 )
 
                 LabeledTextField(
                     modifier = Modifier.weight(1f),
-                    state = rememberTextFieldState(),
+                    state = weightUnitState,
                     label = stringResource(R.string.ingredient_edit_amount_unit_label),
                     placeHolder = stringResource(R.string.ingredient_edit_amount_unit_hint)
                 )
@@ -138,27 +217,23 @@ fun IngredientEditLayout(
 
             LabeledSpinner(
                 modifier = Modifier.fillMaxWidth(),
-                state = rememberTextFieldState(),
+                state = purchaseState,
                 label = stringResource(R.string.ingredient_edit_purchase_label),
                 placeHolder = stringResource(R.string.ingredient_edit_purchase_hint),
-                onSelectDate = { epochMilliSeconds ->
-
-                }
+                onSelectDate = onChangePurchaseDate
             )
 
             LabeledSpinner(
                 modifier = Modifier.fillMaxWidth(),
-                state = rememberTextFieldState(),
+                state = expirationState,
                 label = stringResource(R.string.ingredient_edit_expiration_label),
                 placeHolder = stringResource(R.string.ingredient_edit_expiration_hint),
-                onSelectDate = { epochMilliSeconds ->
-
-                }
+                onSelectDate = onChangeExpirationDate
             )
 
             LabeledTextField(
                 modifier = Modifier.fillMaxWidth(),
-                state = rememberTextFieldState(),
+                state = descriptionState,
                 label = stringResource(R.string.ingredient_edit_description_label),
                 placeHolder = stringResource(R.string.ingredient_edit_description_hint)
             )
@@ -177,9 +252,7 @@ fun IngredientEditLayout(
                 text = stringResource(R.string.btn_do_save),
                 shape = ButtonShape.Round,
                 size = ButtonSize.Large,
-                onClick = {
-
-                }
+                onClick = onCompleteEdit
             )
         }
     }
@@ -348,11 +421,17 @@ private fun IngredientDatePicker(
 
 @Preview
 @Composable
-private fun IngredientEditSheet() {
+private fun IngredientEditSheetPreview() {
     YorinTheme {
         IngredientEditLayout(
             modifier = Modifier.background(YorinTheme.colors.black7),
-            ingredientModel = null
+            title = "재료 수정",
+            nameState = rememberTextFieldState(),
+            purchaseState = rememberTextFieldState(),
+            expirationState = rememberTextFieldState(),
+            weightState = rememberTextFieldState(),
+            weightUnitState = rememberTextFieldState(),
+            descriptionState = rememberTextFieldState()
         )
     }
 }

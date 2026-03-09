@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientModel
+import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientDetailSheet
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientEditSheet
 import com.hyeok.recipebook.presentation.navigation.Route
@@ -40,7 +41,7 @@ fun NavGraphBuilder.ingredientScreen(
             val backstackEntry = remember(backStackEntry) {
                 navController.getBackStackEntry<Route.Ingredient>()
             }
-            val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+            hiltViewModel<IngredientViewModel>(backstackEntry)
 
             IngredientRoute(
                 onClickAddIngredient = {
@@ -56,7 +57,7 @@ fun NavGraphBuilder.ingredientScreen(
             val backstackEntry = remember(backStackEntry) {
                 navController.getBackStackEntry<Route.Ingredient>()
             }
-            val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+            hiltViewModel<IngredientViewModel>(backstackEntry)
 
             IngredientDetailSheet(
                 ingredientModel = IngredientModel.mockState(),
@@ -79,12 +80,16 @@ fun NavGraphBuilder.ingredientScreen(
             val backstackEntry = remember(backStackEntry) {
                 navController.getBackStackEntry<Route.Ingredient>()
             }
-            val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+            hiltViewModel<IngredientViewModel>(backstackEntry)
 
             IngredientEditSheet(
-                ingredientModel = null,
+                ingredientEditUiState = IngredientEditUiState.fake(),
                 onDismiss = {
                     navController.popBackStack()
+                },
+                onComplete = { ingredientUiModel ->
+                    navController.popBackStack()
+                    // TODO:: 저장 로직 추가
                 }
             )
         }
