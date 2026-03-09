@@ -11,7 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientModel
+import com.hyeok.recipebook.presentation.ingredient.state.IngredientDetailUiState
 import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientDetailSheet
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientEditSheet
@@ -60,7 +60,7 @@ fun NavGraphBuilder.ingredientScreen(
             hiltViewModel<IngredientViewModel>(backstackEntry)
 
             IngredientDetailSheet(
-                ingredientModel = IngredientModel.mockState(),
+                ingredientDetailUiState = IngredientDetailUiState.fake(),
                 onDismiss = {
                     navController.popBackStack()
                 },
