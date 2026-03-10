@@ -13,5 +13,11 @@ data class IngredientsUiState(
             expiredCount = 1,
             remainExpirationDays = listOf(1)
         )
+
+        fun empty() = IngredientsUiState(
+            ingredients = emptyList(),
+            expiredCount = 0,
+            remainExpirationDays = emptyList()
+        )
     }
 }

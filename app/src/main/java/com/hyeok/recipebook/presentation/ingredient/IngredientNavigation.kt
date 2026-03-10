@@ -2,8 +2,10 @@ package com.hyeok.recipebook.presentation.ingredient
 
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -13,7 +15,6 @@ import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.hyeok.recipebook.presentation.ingredient.state.IngredientDetailUiState
 import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientsUiState
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientDetailSheet
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientEditSheet
 import com.hyeok.recipebook.presentation.navigation.Route
@@ -43,9 +44,10 @@ fun NavGraphBuilder.ingredientScreen(
                 navController.getBackStackEntry<Route.Ingredient>()
             }
             val viewModel = hiltViewModel<IngredientViewModel>(backstackEntry)
+            val ingredientUiState by viewModel.ingredientsUiState.collectAsStateWithLifecycle()
 
             IngredientRoute(
-                ingredientsUiState = IngredientsUiState.fake(),
+                ingredientsUiState = ingredientUiState,
                 searchQueryState = viewModel.searchQueryState,
                 onClickAddIngredient = {
                     navController.navigateToIngredientEdit()
