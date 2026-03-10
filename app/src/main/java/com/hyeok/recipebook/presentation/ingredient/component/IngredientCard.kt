@@ -28,7 +28,7 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 @Composable
 fun IngredientCard(
     ingredientName: String,
-    remainExpirationDate: Long,
+    remainExpirationDate: Int,
     expirationDate: String,
     weight: Int,
     weightUnit: String,
