@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient.state
+package com.hyeok.recipebook.presentation.ingredient.edit
 
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import com.hyeok.recipebook.presentation.util.ext.toEpochMilliseconds

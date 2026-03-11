@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient.ui
+package com.hyeok.recipebook.presentation.ingredient.edit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,7 +51,6 @@ import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
 import com.hyeok.recipebook.presentation.util.ext.toLocalDate
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format

@@ -1,11 +1,10 @@
-package com.hyeok.recipebook.presentation.ingredient
+package com.hyeok.recipebook.presentation.ingredient.edit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import com.hyeok.recipebook.presentation.util.ext.toEpochMilliseconds

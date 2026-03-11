@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient.ui
+package com.hyeok.recipebook.presentation.ingredient.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +35,6 @@ import com.hyeok.recipebook.designsystem.components.YorinProgressBar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientDetailUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

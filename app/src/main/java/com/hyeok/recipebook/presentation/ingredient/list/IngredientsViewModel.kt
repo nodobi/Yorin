@@ -1,11 +1,10 @@
-package com.hyeok.recipebook.presentation.ingredient
+package com.hyeok.recipebook.presentation.ingredient.list
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientsUiState
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +18,7 @@ import kotlinx.datetime.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
-class IngredientViewModel @Inject constructor(
+class IngredientsViewModel @Inject constructor(
 
 ) : ViewModel() {
     val searchQueryState: TextFieldState = TextFieldState()
@@ -32,7 +31,7 @@ class IngredientViewModel @Inject constructor(
 
     val ingredientsUiState: StateFlow<IngredientsUiState> = combine(
         _ingredients, searchQueryFlow
-        ) { ingredients, searchQuery ->
+    ) { ingredients, searchQuery ->
         val currentEpochDays = DateTimeUtil.currentLocalDate(timeZone = TimeZone.currentSystemDefault()).toEpochDays()
 
         IngredientsUiState(
@@ -42,7 +41,7 @@ class IngredientViewModel @Inject constructor(
             },
             remainExpirationDays = ingredients.map {
                 (it.expirationDate.toEpochDays() - currentEpochDays).let { remainExpirationDay ->
-                    if(remainExpirationDay < 0) -1 else remainExpirationDay.toInt()
+                    if (remainExpirationDay < 0) -1 else remainExpirationDay.toInt()
                 }
             }
         )

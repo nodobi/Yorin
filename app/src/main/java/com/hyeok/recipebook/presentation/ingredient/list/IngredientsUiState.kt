@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient.state
+package com.hyeok.recipebook.presentation.ingredient.list
 
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 
