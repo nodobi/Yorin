@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import javax.inject.Inject
 
@@ -55,4 +56,9 @@ class IngredientDetailViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, IngredientDetailUiState.empty())
 
+    fun removeIngredient(id: Int) {
+        viewModelScope.launch {
+
+        }
+    }
 }

@@ -83,7 +83,9 @@ fun NavGraphBuilder.ingredientScreen(
                         }
                     )
                 },
-                onDeleteIngredient = {}
+                onDeleteIngredient = {
+                    viewModel.removeIngredient(ingredientDetailUiState.ingredient.id)
+                }
             )
         }
 
