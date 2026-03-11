@@ -122,7 +122,29 @@ fun IngredientEditSheet(
             },
             onCompleteEdit = {
                 onComplete(
-                    IngredientUiModel(
+                    ingredientEditUiState.ingredient?.copy(
+                        name = nameState.text.toString(),
+                        purchaseDate = LocalDate.parse(purchaseState.text.toString(), LocalDate.Format {
+                            year()
+                            char('-')
+                            monthNumber()
+                            char('-')
+                            day()
+                        }),
+                        expirationDate = LocalDate.parse(
+                            expirationState.text.toString(),
+                            LocalDate.Format {
+                                year()
+                                char('-')
+                                monthNumber()
+                                char('-')
+                                day()
+                            }),
+                        weight = weightState.text.toString().toInt(),
+                        weightUnit = weightUnitState.text.toString(),
+                        description = descriptionState.text.toString(),
+                    ) ?: IngredientUiModel(
+                        id = -1,
                         name = nameState.text.toString(),
                         purchaseDate = LocalDate.parse(purchaseState.text.toString(), LocalDate.Format {
                             year()

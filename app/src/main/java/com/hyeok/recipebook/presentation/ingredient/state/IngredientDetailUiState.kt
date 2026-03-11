@@ -16,5 +16,13 @@ data class IngredientDetailUiState(
                 expirationProgress = 0.5f,
                 relatedRecipes = emptyList()
             )
+
+        fun empty(): IngredientDetailUiState =
+            IngredientDetailUiState(
+                ingredient = IngredientUiModel.empty(),
+                remainExpirationDays = 0,
+                expirationProgress = 0f,
+                relatedRecipes = emptyList()
+            )
     }
 }

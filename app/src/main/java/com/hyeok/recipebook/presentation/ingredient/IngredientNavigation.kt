@@ -13,7 +13,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientDetailUiState
 import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientDetailSheet
 import com.hyeok.recipebook.presentation.ingredient.ui.IngredientEditSheet
@@ -24,12 +23,20 @@ fun NavController.navigateToIngredient(navOptions: NavOptions? = null) {
     navigate(Route.Ingredient.Ingredients, navOptions)
 }
 
-fun NavController.navigateToIngredientDetail(navOptions: NavOptions? = null) {
-    navigate(Route.Ingredient.Detail, navOptions)
+fun NavController.navigateToIngredientDetail(ingredientId: Int, navOptions: NavOptions? = null) {
+    navigate(
+        Route.Ingredient.Detail(
+            ingredientId = ingredientId
+        ), navOptions
+    )
 }
 
-fun NavController.navigateToIngredientEdit(navOptions: NavOptions? = null) {
-    navigate(Route.Ingredient.Edit, navOptions)
+fun NavController.navigateToIngredientEdit(ingredientId: Int?, navOptions: NavOptions? = null) {
+    navigate(
+        Route.Ingredient.Edit(
+            ingredientId = ingredientId
+        ), navOptions
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,29 +57,28 @@ fun NavGraphBuilder.ingredientScreen(
                 ingredientsUiState = ingredientUiState,
                 searchQueryState = viewModel.searchQueryState,
                 onClickAddIngredient = {
-                    navController.navigateToIngredientEdit()
+                    navController.navigateToIngredientEdit(ingredientId = null)
                 },
-                onClickIngredient = {
-                    navController.navigateToIngredientDetail()
+                onClickIngredient = { model ->
+                    navController.navigateToIngredientDetail(ingredientId = model.id)
                 }
             )
         }
 
         bottomSheet<Route.Ingredient.Detail> { backStackEntry ->
-            val backstackEntry = remember(backStackEntry) {
-                navController.getBackStackEntry<Route.Ingredient>()
-            }
-            hiltViewModel<IngredientViewModel>(backstackEntry)
+            val viewModel = hiltViewModel<IngredientDetailViewModel>()
+            val ingredientDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             IngredientDetailSheet(
-                ingredientDetailUiState = IngredientDetailUiState.fake(),
+                ingredientDetailUiState = ingredientDetailUiState,
                 onDismiss = {
                     navController.popBackStack()
                 },
                 onClickRecipe = {},
                 onEditIngredient = {
                     navController.navigateToIngredientEdit(
-                        navOptions {
+                        ingredientId = 0,
+                        navOptions = navOptions {
                             popUpTo(Route.Ingredient.Ingredients) { inclusive = false }
                         }
                     )
