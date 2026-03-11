@@ -77,7 +77,7 @@ fun NavGraphBuilder.ingredientScreen(
                 onClickRecipe = {},
                 onEditIngredient = {
                     navController.navigateToIngredientEdit(
-                        ingredientId = 0,
+                        ingredientId = ingredientDetailUiState.ingredient.id,
                         navOptions = navOptions {
                             popUpTo(Route.Ingredient.Ingredients) { inclusive = false }
                         }
