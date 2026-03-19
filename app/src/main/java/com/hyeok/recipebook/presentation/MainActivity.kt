@@ -53,7 +53,7 @@ fun MainView() {
                     modifier = Modifier
                 )
                 recipeScreen(
-                    modifier = Modifier
+                    navController = navController
                 )
                 ingredientScreen(
                     navController = navController
