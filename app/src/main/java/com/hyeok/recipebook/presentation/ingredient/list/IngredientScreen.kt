@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient
+package com.hyeok.recipebook.presentation.ingredient.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,6 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.ingredient.component.ExpirationWarningCard
 import com.hyeok.recipebook.presentation.ingredient.component.IngredientCard
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientsUiState
 
 @Composable
 fun IngredientRoute(

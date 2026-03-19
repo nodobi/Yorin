@@ -12,6 +12,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 data class IngredientUiModel(
+    val id: Int,
     val name: String,
     val purchaseDate: LocalDate,
     val expirationDate: LocalDate,
@@ -46,6 +47,7 @@ data class IngredientUiModel(
     companion object {
         @OptIn(ExperimentalTime::class)
         fun fake(): IngredientUiModel = IngredientUiModel(
+            id = 0,
             name = "돼지고기",
             purchaseDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
             expirationDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.plus(
@@ -55,6 +57,17 @@ data class IngredientUiModel(
             weight = 200,
             weightUnit = "g",
             description = "메모"
+        )
+
+        @OptIn(ExperimentalTime::class)
+        fun empty(): IngredientUiModel = IngredientUiModel(
+            id = -1,
+            name = "",
+            purchaseDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+            expirationDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+            weight = 0,
+            weightUnit = "",
+            description = "",
         )
     }
 }

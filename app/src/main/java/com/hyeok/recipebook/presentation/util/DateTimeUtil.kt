@@ -6,7 +6,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-object DateTmeUtil {
+object DateTimeUtil {
 
     @OptIn(ExperimentalTime::class)
     fun currentLocalDate(

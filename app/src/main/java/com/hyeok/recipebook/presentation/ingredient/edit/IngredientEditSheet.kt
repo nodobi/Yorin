@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient.ui
+package com.hyeok.recipebook.presentation.ingredient.edit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,7 +51,6 @@ import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.ingredient.state.IngredientEditUiState
 import com.hyeok.recipebook.presentation.util.ext.toLocalDate
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -122,7 +121,29 @@ fun IngredientEditSheet(
             },
             onCompleteEdit = {
                 onComplete(
-                    IngredientUiModel(
+                    ingredientEditUiState.ingredient?.copy(
+                        name = nameState.text.toString(),
+                        purchaseDate = LocalDate.parse(purchaseState.text.toString(), LocalDate.Format {
+                            year()
+                            char('-')
+                            monthNumber()
+                            char('-')
+                            day()
+                        }),
+                        expirationDate = LocalDate.parse(
+                            expirationState.text.toString(),
+                            LocalDate.Format {
+                                year()
+                                char('-')
+                                monthNumber()
+                                char('-')
+                                day()
+                            }),
+                        weight = weightState.text.toString().toInt(),
+                        weightUnit = weightUnitState.text.toString(),
+                        description = descriptionState.text.toString(),
+                    ) ?: IngredientUiModel(
+                        id = -1,
                         name = nameState.text.toString(),
                         purchaseDate = LocalDate.parse(purchaseState.text.toString(), LocalDate.Format {
                             year()

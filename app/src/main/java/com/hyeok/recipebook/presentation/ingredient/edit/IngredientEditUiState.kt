@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.ingredient.state
+package com.hyeok.recipebook.presentation.ingredient.edit
 
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import com.hyeok.recipebook.presentation.util.ext.toEpochMilliseconds
@@ -18,6 +18,13 @@ data class IngredientEditUiState(
             currentUtcMills = Clock.System.now().toEpochMilliseconds(),
             purchaseUtcMills = IngredientUiModel.fake().purchaseDate.toEpochMilliseconds(),
             expirationUtcMills = IngredientUiModel.fake().expirationDate.toEpochMilliseconds()
+        )
+
+        fun empty(): IngredientEditUiState = IngredientEditUiState(
+            ingredient = null,
+            currentUtcMills = 0L,
+            purchaseUtcMills = 0L,
+            expirationUtcMills = 0L,
         )
     }
 }
