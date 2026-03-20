@@ -42,4 +42,9 @@
     <string name="ingredient_edit_description_label">메모</string>
     <string name="ingredient_edit_description_hint">추가 정보를 입력해보세요</string>
 
+
+    <!-- 레시피 -->
+    <string name="recipe_title">레시피</string>
+    <string name="recipe_search_filter_recipe_title">레시피로 검색</string>
+    <string name="recipe_search_filter_ingredient_title">재료로 검색</string>
 </resources>
