@@ -11,7 +11,13 @@ object Route {
     object Home
 
     @Serializable
-    object Recipe
+    object Recipe {
+        @Serializable
+        object Recipes
+
+        @Serializable
+        data class Detail(val recipeId: Int)
+    }
 
     @Serializable
     object Ingredient {
@@ -44,7 +50,7 @@ object Route {
     )
 }
 
-data class TopLevelRoute<T: Any> (
+data class TopLevelRoute<T : Any>(
     @StringRes
     val name: Int,
     val route: T,
