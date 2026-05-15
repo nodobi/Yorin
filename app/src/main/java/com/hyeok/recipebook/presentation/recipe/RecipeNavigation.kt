@@ -28,7 +28,7 @@ fun NavGraphBuilder.recipeScreen(
     navController: NavHostController
 ) {
     navigation<Route.Recipe>(
-        startDestination = Route.Recipe.Recipes,
+        startDestination = Route.Recipe.Detail(0),
     ) {
         composable<Route.Recipe.Recipes> {
             RecipeRoute(
