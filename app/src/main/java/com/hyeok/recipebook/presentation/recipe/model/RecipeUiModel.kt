@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.presentation.recipe.model
 
+import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import kotlinx.datetime.LocalDate
 
 data class RecipeUiModel(
