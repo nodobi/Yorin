@@ -1,6 +1,5 @@
 package com.hyeok.recipebook.presentation.recipe.detail
 
-//import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,8 +36,10 @@ import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.recipe.detail.cookingstep.CookingStepsTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientsTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
+import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -186,11 +187,21 @@ fun RecipeDetailScreen(
                                 isEditing = isEditing
                             )
 
-                        RecipeDetailTab.COOKING_STEPS -> {
-
-                        }
+                        RecipeDetailTab.COOKING_STEPS ->
+                            CookingStepsTabContent(
+                                modifier = Modifier
+                                    .height(200.dp)
+                                    .fillMaxWidth(),
+                                isEditing = isEditing
+                            )
 
                         RecipeDetailTab.RECORD -> {
+                            RecordTabContent(
+                                modifier = Modifier
+                                    .height(200.dp)
+                                    .fillMaxWidth(),
+                                isEditing = isEditing
+                            )
                         }
                     }
                 }
