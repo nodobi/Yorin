@@ -36,7 +36,7 @@ import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.detail.cookingstep.CookingStepsTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientsTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
@@ -188,7 +188,7 @@ fun RecipeDetailScreen(
                             )
 
                         RecipeDetailTab.COOKING_STEPS ->
-                            CookingStepsTabContent(
+                            StepTabContent(
                                 modifier = Modifier
                                     .height(200.dp)
                                     .fillMaxWidth(),
