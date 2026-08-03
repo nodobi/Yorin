@@ -2,32 +2,20 @@ package com.hyeok.recipebook.presentation.recipe.detail.ingredients
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.components.DefaultSpinnerDropdown
@@ -46,6 +34,18 @@ fun IngredientsTabContent(
     ingredients: List<RecipeIngredientUiModel>,
     isEditing: Boolean = false
 ) {
+
+    val ingredientEditState = remember(ingredients) {
+        ingredients.map { recipeIngredient ->
+            EditingRecipeIngredientState(
+                id = recipeIngredient.id,
+                initialName = recipeIngredient.name,
+                initialQuantity = recipeIngredient.requireQuantity,
+                initialUnit = recipeIngredient.unit
+            )
+        }
+    }
+
     Column(
         modifier = modifier
             .padding(
@@ -59,21 +59,18 @@ fun IngredientsTabContent(
             style = YorinTheme.typography.body1
         )
 
-        ingredients.forEach { recipeIngredient ->
-            if (isEditing) {
-                // TODO:: EditingRecipeIngredientState 상위 컴포저블로 호이스팅
+        if (isEditing) {
+            ingredientEditState.forEach {
                 EditingRecipeIngredientCard(
                     modifier = modifier.fillMaxWidth(),
-                    editState = EditingRecipeIngredientState(
-                        id = recipeIngredient.id,
-                        initialName = recipeIngredient.name,
-                        initialQuantity = recipeIngredient.requireQuantity,
-                        initialUnit = recipeIngredient.unit
-                    )
+                    editState = it
                 )
-            } else {
+            }
+        } else {
+            ingredients.forEach {
                 RecipeIngredientCard(
-                    recipeIngredient = recipeIngredient
+                    modifier = modifier.fillMaxWidth(),
+                    recipeIngredient = it
                 )
             }
         }
@@ -89,7 +86,7 @@ class EditingRecipeIngredientState(
     initialUnit: String = "g"
 ) {
     val name = TextFieldState(initialText = initialName)
-    val quantity = TextFieldState(initialText = if(initialQuantity == 0) "" else initialQuantity.toString())
+    val quantity = TextFieldState(initialText = if (initialQuantity == 0) "" else initialQuantity.toString())
     var unit = initialUnit
 }
 
