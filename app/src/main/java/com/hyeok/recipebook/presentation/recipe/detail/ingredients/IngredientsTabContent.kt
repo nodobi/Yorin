@@ -37,7 +37,7 @@ fun IngredientsTabContent(
 
     val ingredientEditState = remember(ingredients) {
         ingredients.map { recipeIngredient ->
-            EditingRecipeIngredientState(
+            RecipeIngredientEditState(
                 id = recipeIngredient.id,
                 initialName = recipeIngredient.name,
                 initialQuantity = recipeIngredient.requireQuantity,
@@ -77,9 +77,9 @@ fun IngredientsTabContent(
     }
 }
 
-// 레시피 재료가 수정중일 때 데이터를 담는 stateholder
+// 수정중인 레시피 데이터를 담는 stateholder
 @Stable
-class EditingRecipeIngredientState(
+class RecipeIngredientEditState(
     val id: Int,
     initialName: String = "",
     initialQuantity: Int = 0,
@@ -92,7 +92,7 @@ class EditingRecipeIngredientState(
 
 @Composable
 private fun EditingRecipeIngredientCard(
-    editState: EditingRecipeIngredientState,
+    editState: RecipeIngredientEditState,
     modifier: Modifier = Modifier,
 ) {
 
@@ -260,6 +260,6 @@ private fun IngredientsTabContentPreview() {
 @Composable
 private fun EditingIngredientItemPreview() {
     EditingRecipeIngredientCard(
-        editState = EditingRecipeIngredientState(id = 0)
+        editState = RecipeIngredientEditState(id = 0)
     )
 }
