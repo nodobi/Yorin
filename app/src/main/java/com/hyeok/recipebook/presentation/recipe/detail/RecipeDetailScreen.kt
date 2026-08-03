@@ -189,9 +189,7 @@ fun RecipeDetailScreen(
 
                         RecipeDetailTab.COOKING_STEPS ->
                             StepTabContent(
-                                modifier = Modifier
-                                    .height(200.dp)
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 isEditing = isEditing
                             )
 
