@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.util.ext.applyIf
 
 enum class TextFieldSize {
     Large,
@@ -91,6 +92,7 @@ fun YorinTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     size: TextFieldSize = TextFieldSize.Large,
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     backgroundColor: Color = YorinTextFieldDefault.backgroundColor,
     textStyle: TextStyle = YorinTextFieldDefault.textStyle,
     placeHolderColor: Color = YorinTextFieldDefault.placeHolderColor,
@@ -104,6 +106,15 @@ fun YorinTextField(
     val innerPadding = when (size) {
         TextFieldSize.Large -> PaddingValues(horizontal = 16.dp)
         TextFieldSize.Small -> PaddingValues(horizontal = 12.dp)
+    }.let {
+        if (lineLimits != TextFieldLineLimits.SingleLine) {
+            when (size) {
+                TextFieldSize.Large -> PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                TextFieldSize.Small -> PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+            }
+        } else {
+            it
+        }
     }
     val height = when (size) {
         TextFieldSize.Large -> 44.dp
@@ -122,6 +133,7 @@ fun YorinTextField(
         innerPadding = innerPadding,
         enabled = enabled,
         readOnly = readOnly,
+        lineLimits = lineLimits,
         placeHolder = placeHolder,
         backgroundColor = backgroundColor,
         textStyle = textStyle,
@@ -145,6 +157,7 @@ private fun BasicYorinTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     placeHolder: String = "",
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     backgroundColor: Color = YorinTextFieldDefault.backgroundColor,
     textStyle: TextStyle = YorinTextFieldDefault.textStyle,
     placeHolderColor: Color = YorinTextFieldDefault.placeHolderColor,
@@ -163,7 +176,7 @@ private fun BasicYorinTextField(
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
-        lineLimits = TextFieldLineLimits.SingleLine,
+        lineLimits = lineLimits,
         keyboardOptions = keyboardAction,
         onKeyboardAction = onKeyboardAction,
         inputTransformation = inputTransformation,
@@ -173,7 +186,9 @@ private fun BasicYorinTextField(
                 modifier = Modifier
                     .background(backgroundColor, shape)
                     .fillMaxWidth()
-                    .height(height)
+                    .applyIf(lineLimits == TextFieldLineLimits.SingleLine) {
+                        height(height)
+                    }
                     .padding(innerPadding),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
