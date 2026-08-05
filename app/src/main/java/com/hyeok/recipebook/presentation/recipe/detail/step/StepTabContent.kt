@@ -1,14 +1,13 @@
 package com.hyeok.recipebook.presentation.recipe.detail.step
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +26,16 @@ fun StepTabContent(
     ),
     isEditing: Boolean = false
 ) {
+    val stepEditState = remember(recipeSteps) {
+        recipeSteps.map {
+            RecipeStepEditState(
+                id = it.id,
+                initialOrder = it.order,
+                initialDescription = it.description
+            )
+        }
+    }
+
     Column(
         modifier = modifier
             .padding(
@@ -36,16 +45,30 @@ fun StepTabContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         YorinText(
-            text = stringResource(R.string.recipe_detail_ingredient_title),
+            text = stringResource(R.string.recipe_detail_step_title),
             style = YorinTheme.typography.body1
         )
 
-        recipeSteps.forEach { step ->
-            RecipeStepCard(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                recipeStepUiModel = step
-            )
+        if (isEditing) {
+            stepEditState.forEach { editState ->
+                EditingRecipeStepCard(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    editState = editState,
+                    onRemoveStep = { id ->
+
+                    }
+                )
+            }
+
+        } else {
+            recipeSteps.forEach { step ->
+                RecipeStepCard(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    recipeStepUiModel = step
+                )
+            }
         }
 
     }
@@ -65,4 +88,12 @@ class RecipeStepEditState(
 @Composable
 fun StepTabContentPreview() {
     StepTabContent()
+}
+
+@BackgroundPreview
+@Composable
+fun EditingStepTabContentPreview() {
+    StepTabContent(
+        isEditing = true
+    )
 }
