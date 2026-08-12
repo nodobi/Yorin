@@ -64,4 +64,7 @@
     <string name="recipe_detail_ingredient_unit_label">단위</string>
 
     <string name="recipe_detail_step_title">조리 과정</string>
+
+    <string name="recipe_detail_record_title">조리 기록</string>
+    <string name="recipe_detail_record_add_label">기록 추가</string>
 </resources>
