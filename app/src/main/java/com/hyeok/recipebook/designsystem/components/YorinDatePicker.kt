@@ -24,7 +24,7 @@ fun YorinDatePicker(
     state: DatePickerState,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
-    onConfirm: (Long?) -> Unit = {}
+    onConfirm: (Long) -> Unit = {}
 ) {
     DatePickerDialog(
         modifier = modifier,
@@ -67,7 +67,9 @@ fun YorinDatePicker(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.btn_confirm),
                     onClick = {
-                        onConfirm(state.selectedDateMillis)
+                        // initialDate 가 항상 제공된다고 가정
+                        // TODO:: 선택한 날짜가 없는 경우 비활성화되도록 변경
+                        onConfirm(state.selectedDateMillis ?: 0L)
                     },
                     shape = ButtonShape.Round,
                     size = ButtonSize.Large,

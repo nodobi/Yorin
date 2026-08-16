@@ -372,7 +372,7 @@ private fun LabeledSpinner(
                 showDatePicker = false
             },
             onConfirm = { selectedDateMillis ->
-                onSelectDate(selectedDateMillis ?: 0L)
+                onSelectDate(selectedDateMillis)
                 showDatePicker = false
             }
         )
