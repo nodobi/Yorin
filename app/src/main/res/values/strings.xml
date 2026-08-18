@@ -51,7 +51,7 @@
     <string name="recipe_title">레시피</string>
     <string name="recipe_search_filter_recipe_title">레시피로 검색</string>
     <string name="recipe_search_filter_ingredient_title">재료로 검색</string>
-    
+
     <string name="recipe_detail_tab_ingredient">재료</string>
     <string name="recipe_detail_tab_step">조리 순서</string>
     <string name="recipe_detail_tab_record">기록</string>
@@ -67,4 +67,9 @@
 
     <string name="recipe_detail_record_title">조리 기록</string>
     <string name="recipe_detail_record_add_label">기록 추가</string>
+    <string name="recipe_detail_record_date_title">조리 일시</string>
+    <string name="recipe_detail_record_date_placeholder">0000-00-00</string>
+    <string name="recipe_detail_record_title_title">한줄 평</string>
+    <string name="recipe_detail_record_description_title">코멘트</string>
+    <string name="recipe_detail_record_score_title">맛 평가</string>
 </resources>
