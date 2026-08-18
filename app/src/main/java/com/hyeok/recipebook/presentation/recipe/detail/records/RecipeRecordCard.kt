@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.presentation.recipe.detail.records
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,8 @@ fun RecipeRecordCard(
     }
 
     YorinCard(
-        modifier = modifier
+        modifier = modifier,
+        stroke = BorderStroke(1.dp, YorinTheme.colors.black5)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -88,7 +90,7 @@ fun RecipeRecordCard(
 fun EditingRecipeRecordCard(
     recipeRecord: RecipeRecordUiModel,
     modifier: Modifier = Modifier,
-    onClick: (Int) -> Unit = {},
+    onClick: (RecipeRecordUiModel) -> Unit = {},
 ) {
     val recordDate = remember(recipeRecord.cookedAt) {
         recipeRecord.cookedAt.format(LocalDate.Formats.ISO)
@@ -97,8 +99,9 @@ fun EditingRecipeRecordCard(
     YorinCard(
         modifier = modifier
             .clickable {
-                onClick(recipeRecord.id)
-            }
+                onClick(recipeRecord)
+            },
+        stroke = BorderStroke(1.dp, YorinTheme.colors.black5)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

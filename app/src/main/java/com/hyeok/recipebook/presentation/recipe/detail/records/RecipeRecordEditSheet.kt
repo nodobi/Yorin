@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,10 +82,10 @@ private fun RecipeRecordEditSheetContent(
     onCancel: () -> Unit = {},
     onConfirm: (RecipeRecordUiModel) -> Unit = {},
 ) {
-    var date by remember(record) { mutableStateOf(record?.cookedAt) }
-    val title = rememberTextFieldState(record?.title ?: "")
-    val description = rememberTextFieldState(record?.description ?: "")
-    var score by remember(record) { mutableIntStateOf(record?.score ?: 0) }
+    var date by remember(record?.id) { mutableStateOf(record?.cookedAt) }
+    val title = remember(record?.id) { TextFieldState(record?.title ?: "") }
+    val description = remember(record?.id) { TextFieldState(record?.description ?: "") }
+    var score by remember(record?.id) { mutableIntStateOf(record?.score ?: 0) }
 
     Column(
         modifier = modifier,

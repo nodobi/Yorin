@@ -195,9 +195,7 @@ fun RecipeDetailScreen(
 
                         RecipeDetailTab.RECORD -> {
                             RecordTabContent(
-                                modifier = Modifier
-                                    .height(200.dp)
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 isEditing = isEditing
                             )
                         }
