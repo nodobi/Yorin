@@ -142,7 +142,7 @@ fun RecipeDetailScreen(
                             },
                             icon = {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_refrigerator),
+                                    imageVector = tab.toImage(),
                                     contentDescription = null
                                 )
                             },
@@ -220,6 +220,15 @@ enum class RecipeDetailTab {
             INGREDIENTS -> stringResource(R.string.recipe_detail_tab_ingredient)
             COOKING_STEPS -> stringResource(R.string.recipe_detail_tab_step)
             RECORD -> stringResource(R.string.recipe_detail_tab_record)
+        }
+    }
+
+    @Composable
+    fun toImage(): ImageVector {
+        return when (this) {
+            INGREDIENTS -> ImageVector.vectorResource(R.drawable.ic_refrigerator)
+            COOKING_STEPS -> ImageVector.vectorResource(R.drawable.ic_article)
+            RECORD -> ImageVector.vectorResource(R.drawable.ic_chat_bubble)
         }
     }
 }
