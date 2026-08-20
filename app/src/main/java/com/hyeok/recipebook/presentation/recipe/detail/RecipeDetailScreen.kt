@@ -3,14 +3,20 @@ package com.hyeok.recipebook.presentation.recipe.detail
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -34,12 +40,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
+import com.hyeok.recipebook.designsystem.components.YorinNumberTextField
+import com.hyeok.recipebook.designsystem.components.YorinRatingBar
 import com.hyeok.recipebook.designsystem.components.YorinText
+import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientsTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -106,12 +115,15 @@ fun RecipeDetailScreen(
                 }
         ) {
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .background(YorinTheme.colors.black5)
-                )
+                if (isEditing) {
+                    EditingRecipeDetailHeader(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    RecipeDetailHeader(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
             stickyHeader {
                 TabRow(
@@ -209,6 +221,131 @@ fun RecipeDetailScreen(
     }
 }
 
+@Composable
+private fun RecipeDetailHeader(
+    modifier: Modifier = Modifier
+) {
+    val title = ""
+    val cookingTime: Int = 0
+    val averageScore: Float = 0.0f
+
+    Column(
+        modifier = modifier
+    ) {
+        // TODO:: 이미지 로드
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(YorinTheme.colors.black5)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            YorinText(
+                modifier = Modifier.fillMaxWidth(),
+                text = title,
+                style = YorinTheme.typography.title1
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_clock),
+                    contentDescription = null,
+                    tint = YorinTheme.colors.black3
+                )
+
+                Spacer(modifier = Modifier.size(4.dp))
+
+                YorinText(
+                    text = "${cookingTime}분",
+                    color = YorinTheme.colors.black3,
+                    style = YorinTheme.typography.body2
+                )
+
+                Spacer(modifier = Modifier.size(16.dp))
+
+                YorinRatingBar(
+                    score = 4
+                )
+
+                Spacer(modifier = Modifier.size(8.dp))
+
+                YorinText(
+                    text = "$averageScore",
+                    color = YorinTheme.colors.main2,
+                    style = YorinTheme.typography.body2
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun EditingRecipeDetailHeader(
+    modifier: Modifier = Modifier
+) {
+    val title = rememberTextFieldState("")
+    val cookingTime = rememberTextFieldState("")
+
+    Column(
+        modifier = modifier
+            .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+
+        // TODO:: 이미지 로드
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(YorinTheme.colors.black5)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            YorinText(
+                text = "레시피 이름",
+                style = YorinTheme.typography.body2
+            )
+
+            YorinTextField(
+                state = title,
+                placeHolder = "예: 김치찌개"
+            )
+
+            YorinText(
+                text = "요리 시간(분)",
+                style = YorinTheme.typography.body2
+            )
+
+            YorinNumberTextField(
+                state = cookingTime,
+                placeHolder = "30(분)",
+                leadingIcon = {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_clock),
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+    }
+}
+
 enum class RecipeDetailTab {
     INGREDIENTS,
     COOKING_STEPS,
@@ -236,7 +373,9 @@ enum class RecipeDetailTab {
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
 @Composable
 private fun RecipeDetailScreenPreview() {
-    RecipeDetailScreen(
-
-    )
+    YorinTheme {
+        RecipeDetailScreen(
+            isEditing = true
+        )
+    }
 }
