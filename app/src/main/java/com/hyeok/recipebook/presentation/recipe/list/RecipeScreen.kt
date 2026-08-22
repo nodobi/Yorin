@@ -241,6 +241,7 @@ private fun RecipeCard(
                         modifier = Modifier.size(12.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.ic_clock),
                         contentDescription = null,
+                        tint = YorinTheme.colors.black3
                     )
                     YorinText(
                         text = "${cookingTime}분",
@@ -259,7 +260,16 @@ private fun RecipeScreenPreview() {
     YorinTheme {
         RecipeScreen(
             recipesUiState = RecipesUiState(
-                recipes = listOf()
+                recipes = listOf(
+                    RecipeItemUiModel(
+                        id = 1,
+                        name = "김치찌개",
+                        photoUri = null,
+                        ingredients = listOf("김치, 두부"),
+                        averageScore = 4.2f,
+                        cookingTime = 30
+                    )
+                )
             ),
             searchQueryState = rememberTextFieldState()
         )

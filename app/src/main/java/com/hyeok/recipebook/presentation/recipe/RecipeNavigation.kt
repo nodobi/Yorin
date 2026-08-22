@@ -1,6 +1,8 @@
 package com.hyeok.recipebook.presentation.recipe
 
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,7 +12,7 @@ import androidx.navigation.navigation
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
-import com.hyeok.recipebook.presentation.recipe.list.RecipesUiState
+import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
 
 fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
     navigate(Route.Recipe.Recipes, navOptions)
@@ -28,12 +30,15 @@ fun NavGraphBuilder.recipeScreen(
     navController: NavHostController
 ) {
     navigation<Route.Recipe>(
-        startDestination = Route.Recipe.Detail(0),
+        startDestination = Route.Recipe.Recipes,
     ) {
         composable<Route.Recipe.Recipes> {
+            val viewModel = hiltViewModel<RecipesViewModel>()
+            val recipesUiState by viewModel.recipesUiState.collectAsStateWithLifecycle()
+
             RecipeRoute(
-                recipesUiState = RecipesUiState(recipes = listOf()),
-                searchQueryState = rememberTextFieldState(),
+                recipesUiState = recipesUiState,
+                searchQueryState = viewModel.searchedQuery,
                 onAddRecipe = {},
                 onSelectFilter = {}
             )
