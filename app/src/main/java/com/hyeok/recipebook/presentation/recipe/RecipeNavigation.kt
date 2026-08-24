@@ -50,7 +50,9 @@ fun NavGraphBuilder.recipeScreen(
             val recipeDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             RecipeDetailRoute(
-                state = recipeDetailUiState
+                state = recipeDetailUiState,
+                onEditRecipe = {},
+                onConfirmRecipe = {},
             )
         }
     }

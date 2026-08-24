@@ -25,7 +25,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -46,7 +45,6 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientsTabContent
-import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import kotlinx.coroutines.CoroutineScope
@@ -54,15 +52,20 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RecipeDetailRoute(
-    state: RecipeDetailUiState
+    state: RecipeDetailUiState,
+    onEditRecipe: () -> Unit,
+    onConfirmRecipe: () -> Unit
 ) {
     val tabs = RecipeDetailTab.entries
-    var isEditing by remember { mutableStateOf(false) }
 
     RecipeDetailScreen(
-        isEditing = isEditing,
+        state = state,
         onEditRecipe = {
-            isEditing = !isEditing
+            if(state.isEditing) {
+                onConfirmRecipe()
+            } else {
+                onEditRecipe()
+            }
         }
     )
 }
@@ -70,8 +73,8 @@ fun RecipeDetailRoute(
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun RecipeDetailScreen(
+    state: RecipeDetailUiState,
     modifier: Modifier = Modifier,
-    isEditing: Boolean = false,
     scope: CoroutineScope = rememberCoroutineScope(),
     onEditRecipe: () -> Unit = {}
 ) {
@@ -81,7 +84,7 @@ fun RecipeDetailScreen(
     val tabs = RecipeDetailTab.entries
 
     var tabBarHeightPx by remember { mutableIntStateOf(0) }
-    var columnHeightPx by remember { mutableStateOf(0) }
+    var columnHeightPx by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = modifier
@@ -98,7 +101,7 @@ fun RecipeDetailScreen(
                             onClick = onEditRecipe
                         ),
                     text =
-                        if (isEditing)
+                        if (state.isEditing)
                             stringResource(R.string.btn_complete)
                         else
                             stringResource(R.string.btn_edit),
@@ -115,13 +118,16 @@ fun RecipeDetailScreen(
                 }
         ) {
             item {
-                if (isEditing) {
+                if (state.isEditing) {
                     EditingRecipeDetailHeader(
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
                     RecipeDetailHeader(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        name = state.recipe.name,
+                        cookingTime = state.recipe.cookingTime,
+                        averageScore = state.recipe.averageScore,
                     )
                 }
             }
@@ -192,23 +198,22 @@ fun RecipeDetailScreen(
                         RecipeDetailTab.INGREDIENTS ->
                             IngredientsTabContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                ingredients = listOf(
-                                    RecipeIngredientUiModel.dummy1,
-                                    RecipeIngredientUiModel.dummy2,
-                                ),
-                                isEditing = isEditing
+                                ingredients = state.recipe.ingredients,
+                                isEditing = state.isEditing
                             )
 
                         RecipeDetailTab.COOKING_STEPS ->
                             StepTabContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                isEditing = isEditing
+                                recipeSteps = state.recipe.steps,
+                                isEditing = state.isEditing
                             )
 
                         RecipeDetailTab.RECORD -> {
                             RecordTabContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                isEditing = isEditing
+                                records = state.recipe.cookingRecords,
+                                isEditing = state.isEditing
                             )
                         }
                     }
@@ -223,12 +228,11 @@ fun RecipeDetailScreen(
 
 @Composable
 private fun RecipeDetailHeader(
+    name: String,
+    cookingTime: Int,
+    averageScore: Float,
     modifier: Modifier = Modifier
 ) {
-    val title = ""
-    val cookingTime: Int = 0
-    val averageScore: Float = 0.0f
-
     Column(
         modifier = modifier
     ) {
@@ -248,7 +252,7 @@ private fun RecipeDetailHeader(
         ) {
             YorinText(
                 modifier = Modifier.fillMaxWidth(),
-                text = title,
+                text = name,
                 style = YorinTheme.typography.title1
             )
 
@@ -274,7 +278,7 @@ private fun RecipeDetailHeader(
                 Spacer(modifier = Modifier.size(16.dp))
 
                 YorinRatingBar(
-                    score = 4
+                    score = averageScore.toInt()
                 )
 
                 Spacer(modifier = Modifier.size(8.dp))
@@ -296,6 +300,7 @@ private fun EditingRecipeDetailHeader(
 ) {
     val title = rememberTextFieldState("")
     val cookingTime = rememberTextFieldState("")
+    val photoUrl = ""
 
     Column(
         modifier = modifier
@@ -375,7 +380,7 @@ enum class RecipeDetailTab {
 private fun RecipeDetailScreenPreview() {
     YorinTheme {
         RecipeDetailScreen(
-            isEditing = true
+            RecipeDetailUiState.fake()
         )
     }
 }
