@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RecipeDetailRoute(
-
+    state: RecipeDetailUiState
 ) {
     val tabs = RecipeDetailTab.entries
     var isEditing by remember { mutableStateOf(false) }

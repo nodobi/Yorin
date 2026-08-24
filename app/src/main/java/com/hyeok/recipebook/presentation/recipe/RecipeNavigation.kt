@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailViewModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
 
@@ -44,9 +45,12 @@ fun NavGraphBuilder.recipeScreen(
             )
         }
 
-        composable<Route.Recipe.Detail> {
-            RecipeDetailRoute(
+        composable<Route.Recipe.Detail> { backStackEntry ->
+            val viewModel = hiltViewModel<RecipeDetailViewModel>()
+            val recipeDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+            RecipeDetailRoute(
+                state = recipeDetailUiState
             )
         }
     }

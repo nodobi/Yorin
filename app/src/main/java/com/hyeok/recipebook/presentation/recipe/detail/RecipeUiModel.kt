@@ -1,8 +1,9 @@
-package com.hyeok.recipebook.presentation.recipe.model
+package com.hyeok.recipebook.presentation.recipe.detail
 
-import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
+import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
+import com.hyeok.recipebook.presentation.recipe.model.ChangeHistoryUiModel
 import kotlinx.datetime.LocalDate
 
 data class RecipeUiModel(
