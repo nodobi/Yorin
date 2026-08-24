@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -25,6 +25,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -61,7 +62,7 @@ fun RecipeDetailRoute(
     RecipeDetailScreen(
         state = state,
         onEditRecipe = {
-            if(state.isEditing) {
+            if (state.isEditing) {
                 onConfirmRecipe()
             } else {
                 onEditRecipe()
@@ -85,6 +86,19 @@ fun RecipeDetailScreen(
 
     var tabBarHeightPx by remember { mutableIntStateOf(0) }
     var columnHeightPx by remember { mutableIntStateOf(0) }
+
+    val editState by remember {
+        mutableStateOf(
+            RecipeDetailEditState(
+                initialName = state.recipe.name,
+                initialCookingTime = state.recipe.cookingTime,
+                initialPhotoUrl = state.recipe.photoUrl,
+                initialIngredients = state.recipe.ingredients,
+                initialStep = state.recipe.steps,
+                initialRecord = state.recipe.cookingRecords
+            )
+        )
+    }
 
     Column(
         modifier = modifier
@@ -120,7 +134,10 @@ fun RecipeDetailScreen(
             item {
                 if (state.isEditing) {
                     EditingRecipeDetailHeader(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        name = editState.name,
+                        cookingTime = editState.cookingTime,
+                        photoUrl = editState.photoUrl,
                     )
                 } else {
                     RecipeDetailHeader(
@@ -213,7 +230,10 @@ fun RecipeDetailScreen(
                             RecordTabContent(
                                 modifier = Modifier.fillMaxWidth(),
                                 records = state.recipe.cookingRecords,
-                                isEditing = state.isEditing
+                                isEditing = state.isEditing,
+                                onEditedRecord = { editedRecord ->
+                                    // TODO:: editState record 업데이트
+                                }
                             )
                         }
                     }
@@ -296,11 +316,11 @@ private fun RecipeDetailHeader(
 
 @Composable
 private fun EditingRecipeDetailHeader(
+    name: TextFieldState,
+    cookingTime: TextFieldState,
+    photoUrl: String?,
     modifier: Modifier = Modifier
 ) {
-    val title = rememberTextFieldState("")
-    val cookingTime = rememberTextFieldState("")
-    val photoUrl = ""
 
     Column(
         modifier = modifier
@@ -308,7 +328,7 @@ private fun EditingRecipeDetailHeader(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
 
-        // TODO:: 이미지 로드
+        // TODO:: 이미지 로드 photoUrl 사용
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -327,7 +347,7 @@ private fun EditingRecipeDetailHeader(
             )
 
             YorinTextField(
-                state = title,
+                state = name,
                 placeHolder = "예: 김치찌개"
             )
 
@@ -381,6 +401,16 @@ private fun RecipeDetailScreenPreview() {
     YorinTheme {
         RecipeDetailScreen(
             RecipeDetailUiState.fake()
+        )
+    }
+}
+
+@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
+@Composable
+private fun RecipeDetailEditScreenPreview() {
+    YorinTheme {
+        RecipeDetailScreen(
+            RecipeDetailUiState.fake().copy(isEditing = true)
         )
     }
 }

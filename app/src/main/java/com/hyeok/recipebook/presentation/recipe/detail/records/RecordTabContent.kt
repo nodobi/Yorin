@@ -110,7 +110,6 @@ fun RecordTabContent(
                 }
             },
             onConfirm = { new ->
-                // TODO:: oldRecord 를 newRecord 로 업데이트
                 val newRecord = new
 
                 onEditedRecord(new)
