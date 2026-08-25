@@ -6,4 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface IngredientRepository {
 
     fun getIngredients(): Flow<List<IngredientUiModel>>
+
+    fun getIngredient(ingredientId: Int): IngredientUiModel
+
+    fun removeIngredient(ingredientId: Int)
 }

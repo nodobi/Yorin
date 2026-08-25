@@ -4,7 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.data.repository.IngredientRepository
+import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,18 +19,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class IngredientDetailViewModel @Inject constructor(
+    private val ingredientRepository: IngredientRepository,
+    private val recipeRepository: RecipeRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Detail>().ingredientId
     private val ingredient = flow {
-//        emit(repository.getIngredient(ingredientId))
-        emit(IngredientUiModel.fake())
+        emit(ingredientRepository.getIngredient(ingredientId))
     }
 
     private val recipes = flow {
-//        emit(repository.getRecipes(ingredientId))
-        emit(emptyList<String>())
+        emit(recipeRepository.getRecipesByIngredient(ingredientId).map { it.name })
     }
 
     val uiState = combine(
@@ -55,9 +56,9 @@ class IngredientDetailViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, IngredientDetailUiState.empty())
 
-    fun removeIngredient(id: Int) {
+    fun removeIngredient(ingredientId: Int) {
         viewModelScope.launch {
-
+            ingredientRepository.removeIngredient(ingredientId)
         }
     }
 }

@@ -8,4 +8,12 @@ class IngredientRepositoryImpl: IngredientRepository {
     override fun getIngredients(): Flow<List<IngredientUiModel>> {
         TODO("Not yet implemented")
     }
+
+    override fun getIngredient(ingredientId: Int): IngredientUiModel {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeIngredient(ingredientId: Int) {
+        TODO("Not yet implemented")
+    }
 }
