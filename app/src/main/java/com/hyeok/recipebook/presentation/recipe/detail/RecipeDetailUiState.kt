@@ -44,7 +44,7 @@ class RecipeDetailEditState(
             )
         })
     }
-    val step = mutableStateListOf<RecipeStepEditState>().apply {
+    val steps = mutableStateListOf<RecipeStepEditState>().apply {
         addAll(initialStep.map {
             RecipeStepEditState(
                 id = it.id,
@@ -56,6 +56,4 @@ class RecipeDetailEditState(
     val record = mutableStateListOf<RecipeRecordUiModel>().apply {
         addAll(initialRecord)
     }
-
-
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,12 +33,9 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 
 @Composable
 fun StepTabContent(
+    recipeSteps: List<RecipeStepUiModel>,
+    editedRecipeSteps: SnapshotStateList<RecipeStepEditState>,
     modifier: Modifier = Modifier,
-    recipeSteps: List<RecipeStepUiModel> = listOf(
-        RecipeStepUiModel(id = 1, order = 1, description = "첫 번째 순서"),
-        RecipeStepUiModel(id = 2, order = 2, description = "두 번째 순서"),
-        RecipeStepUiModel(id = 3, order = 3, description = "세 번째 순서")
-    ),
     isEditing: Boolean = false
 ) {
 
@@ -56,20 +54,7 @@ fun StepTabContent(
         )
 
         if (isEditing) {
-            val stepEditState = remember {
-                mutableStateListOf<RecipeStepEditState>().apply {
-                    recipeSteps.map {
-                        add(
-                            RecipeStepEditState(
-                                id = it.id,
-                                initialOrder = it.order,
-                                initialDescription = it.description
-                            )
-                        )
-                    }
-                }
-            }
-            stepEditState.forEach { editState ->
+            editedRecipeSteps.forEach { editState ->
                 EditingRecipeStepCard(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -85,10 +70,10 @@ fun StepTabContent(
                     .fillMaxWidth()
                     .height(48.dp)
                     .clickable {
-                        stepEditState.add(
+                        editedRecipeSteps.add(
                             RecipeStepEditState(
                                 id = -1,
-                                initialOrder = stepEditState.size,
+                                initialOrder = editedRecipeSteps.size,
                                 initialDescription = ""
                             )
                         )
@@ -136,13 +121,37 @@ class RecipeStepEditState(
 @BackgroundPreview
 @Composable
 fun StepTabContentPreview() {
-    StepTabContent()
+    StepTabContent(
+        recipeSteps = listOf(
+            RecipeStepUiModel(id = 1, order = 1, description = "첫 번째 순서"),
+            RecipeStepUiModel(id = 2, order = 2, description = "두 번째 순서"),
+            RecipeStepUiModel(id = 3, order = 3, description = "세 번째 순서")
+
+        ),
+        editedRecipeSteps = remember { mutableStateListOf(
+            RecipeStepEditState(id = 1, initialOrder = 1, initialDescription = "첫 번째 순서"),
+            RecipeStepEditState(id = 2, initialOrder = 2, initialDescription = "두 번째 순서"),
+            RecipeStepEditState(id = 3, initialOrder = 3, initialDescription = "세 번째 순서")
+        ) },
+        isEditing = false
+    )
 }
 
 @BackgroundPreview
 @Composable
 fun EditingStepTabContentPreview() {
     StepTabContent(
+        recipeSteps = listOf(
+            RecipeStepUiModel(id = 1, order = 1, description = "첫 번째 순서"),
+            RecipeStepUiModel(id = 2, order = 2, description = "두 번째 순서"),
+            RecipeStepUiModel(id = 3, order = 3, description = "세 번째 순서")
+
+        ),
+        editedRecipeSteps = remember { mutableStateListOf(
+            RecipeStepEditState(id = 1, initialOrder = 1, initialDescription = "첫 번째 순서"),
+            RecipeStepEditState(id = 2, initialOrder = 2, initialDescription = "두 번째 순서"),
+            RecipeStepEditState(id = 3, initialOrder = 3, initialDescription = "세 번째 순서")
+        ) },
         isEditing = true
     )
 }

@@ -7,6 +7,7 @@ import com.hyeok.recipebook.presentation.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,4 +22,9 @@ class RecipeDetailViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
+    fun updateIsEditing(isEditing: Boolean) {
+        _uiState.update {
+            it.copy(isEditing = isEditing)
+        }
+    }
 }

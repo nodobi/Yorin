@@ -51,8 +51,12 @@ fun NavGraphBuilder.recipeScreen(
 
             RecipeDetailRoute(
                 state = recipeDetailUiState,
-                onEditRecipe = {},
-                onConfirmRecipe = {},
+                onEditRecipe = {
+                    viewModel.updateIsEditing(true)
+                },
+                onConfirmRecipe = {
+                    viewModel.updateIsEditing(false)
+                },
             )
         }
     }

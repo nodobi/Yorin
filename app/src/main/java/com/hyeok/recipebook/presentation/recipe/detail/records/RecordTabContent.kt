@@ -37,6 +37,7 @@ fun RecordTabContent(
     records: List<RecipeRecordUiModel> = listOf(),
     scope: CoroutineScope = rememberCoroutineScope(),
     isEditing: Boolean = true,
+    onAddNewRecord: (RecipeRecordUiModel) -> Unit = {},
     onEditedRecord: (RecipeRecordUiModel) -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -112,7 +113,13 @@ fun RecordTabContent(
             onConfirm = { new ->
                 val newRecord = new
 
-                onEditedRecord(new)
+                // 새로 추가되어 저장되지 않은 상태는 id 가 -1
+                if(new.id == -1) {
+                    onAddNewRecord(new)
+                } else {
+                    onEditedRecord(new)
+                }
+
                 scope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {

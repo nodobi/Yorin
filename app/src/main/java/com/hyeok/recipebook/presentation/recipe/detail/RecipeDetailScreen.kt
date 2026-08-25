@@ -61,7 +61,7 @@ fun RecipeDetailRoute(
 
     RecipeDetailScreen(
         state = state,
-        onEditRecipe = {
+        onClickEdit = {
             if (state.isEditing) {
                 onConfirmRecipe()
             } else {
@@ -77,7 +77,7 @@ fun RecipeDetailScreen(
     state: RecipeDetailUiState,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onEditRecipe: () -> Unit = {}
+    onClickEdit: () -> Unit = {}
 ) {
     val pagerState = rememberPagerState(0) { 3 }
     val currentPage = pagerState.currentPage
@@ -87,15 +87,15 @@ fun RecipeDetailScreen(
     var tabBarHeightPx by remember { mutableIntStateOf(0) }
     var columnHeightPx by remember { mutableIntStateOf(0) }
 
-    val editState by remember {
+    var editState by remember {
         mutableStateOf(
             RecipeDetailEditState(
-                initialName = state.recipe.name,
-                initialCookingTime = state.recipe.cookingTime,
-                initialPhotoUrl = state.recipe.photoUrl,
-                initialIngredients = state.recipe.ingredients,
-                initialStep = state.recipe.steps,
-                initialRecord = state.recipe.cookingRecords
+                initialName = "",
+                initialCookingTime = 0,
+                initialPhotoUrl = null,
+                initialIngredients = listOf(),
+                initialStep = listOf(),
+                initialRecord = listOf()
             )
         )
     }
@@ -111,9 +111,17 @@ fun RecipeDetailScreen(
             action = {
                 YorinText(
                     modifier = Modifier
-                        .clickable(
-                            onClick = onEditRecipe
-                        ),
+                        .clickable {
+                            onClickEdit()
+                            editState = RecipeDetailEditState(
+                                initialName = state.recipe.name,
+                                initialCookingTime = state.recipe.cookingTime,
+                                initialPhotoUrl = state.recipe.photoUrl,
+                                initialIngredients = state.recipe.ingredients,
+                                initialStep = state.recipe.steps,
+                                initialRecord = state.recipe.cookingRecords
+                            )
+                        },
                     text =
                         if (state.isEditing)
                             stringResource(R.string.btn_complete)
@@ -216,6 +224,7 @@ fun RecipeDetailScreen(
                             IngredientsTabContent(
                                 modifier = Modifier.fillMaxWidth(),
                                 ingredients = state.recipe.ingredients,
+                                editedIngredients = editState.ingredients,
                                 isEditing = state.isEditing
                             )
 
@@ -223,6 +232,7 @@ fun RecipeDetailScreen(
                             StepTabContent(
                                 modifier = Modifier.fillMaxWidth(),
                                 recipeSteps = state.recipe.steps,
+                                editedRecipeSteps = editState.steps,
                                 isEditing = state.isEditing
                             )
 
@@ -231,8 +241,17 @@ fun RecipeDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 records = state.recipe.cookingRecords,
                                 isEditing = state.isEditing,
-                                onEditedRecord = { editedRecord ->
-                                    // TODO:: editState record 업데이트
+                                onAddNewRecord = { new ->
+
+
+                                },
+                                onEditedRecord = { edited ->
+                                    editState.record.map { old ->
+                                        if(old.id == edited.id)
+                                            edited
+                                        else
+                                            old
+                                    }
                                 }
                             )
                         }

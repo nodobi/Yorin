@@ -19,8 +19,12 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,6 +47,7 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 fun IngredientsTabContent(
     modifier: Modifier = Modifier,
     ingredients: List<RecipeIngredientUiModel>,
+    editedIngredients: SnapshotStateList<RecipeIngredientEditState>,
     isEditing: Boolean = false
 ) {
 
@@ -61,22 +66,7 @@ fun IngredientsTabContent(
         )
 
         if (isEditing) {
-            val ingredientsEditState = remember {
-                mutableStateListOf<RecipeIngredientEditState>().apply {
-                    ingredients.map { recipeIngredient ->
-                        add(
-                            RecipeIngredientEditState(
-                                id = recipeIngredient.id,
-                                initialName = recipeIngredient.name,
-                                initialQuantity = recipeIngredient.requireQuantity,
-                                initialUnit = recipeIngredient.unit
-                            )
-                        )
-                    }
-                }
-            }
-
-            ingredientsEditState.forEach {
+            editedIngredients.forEach {
                 EditingRecipeIngredientCard(
                     modifier = modifier.fillMaxWidth(),
                     editState = it
@@ -88,7 +78,7 @@ fun IngredientsTabContent(
                     .fillMaxWidth()
                     .height(48.dp)
                     .clickable {
-                        ingredientsEditState.add(RecipeIngredientEditState(id = -1))
+                        editedIngredients.add(RecipeIngredientEditState(id = -1))
                     },
                 stroke = BorderStroke(
                     width = 1.dp,
@@ -129,7 +119,7 @@ class RecipeIngredientEditState(
 ) {
     val name = TextFieldState(initialText = initialName)
     val quantity = TextFieldState(initialText = if (initialQuantity == 0) "" else initialQuantity.toString())
-    var unit = initialUnit
+    var unit by mutableStateOf(initialUnit)
 }
 
 @Composable
@@ -294,6 +284,7 @@ private fun IngredientsTabContentPreview() {
             RecipeIngredientUiModel.dummy1,
             RecipeIngredientUiModel.dummy2,
         ),
+        editedIngredients = remember { mutableStateListOf() },
         isEditing = false
     )
 }
