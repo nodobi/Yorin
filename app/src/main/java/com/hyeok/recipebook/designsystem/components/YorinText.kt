@@ -19,6 +19,8 @@ fun YorinText(
     textDecoration: TextDecoration = TextDecoration.None,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
     textAlign: TextAlign = TextAlign.Unspecified,
     style: TextStyle = TextStyle.Default,
 ) {
@@ -31,6 +33,8 @@ fun YorinText(
         textDecoration = textDecoration,
         textAlign = textAlign,
         overflow = overflow,
+        maxLines = maxLines,
+        minLines = minLines,
         softWrap = softWrap,
         style = style
     )

@@ -17,8 +17,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.byValue
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -30,15 +33,55 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.util.ext.applyIf
 
 enum class TextFieldSize {
     Large,
     Small
+}
+
+@Composable
+fun YorinNumberTextField(
+    state: TextFieldState,
+    modifier: Modifier = Modifier,
+    placeHolder: String = "",
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    size: TextFieldSize = TextFieldSize.Large,
+    backgroundColor: Color = YorinTextFieldDefault.backgroundColor,
+    textStyle: TextStyle = YorinTextFieldDefault.textStyle,
+    placeHolderColor: Color = YorinTextFieldDefault.placeHolderColor,
+    outputTransformation: OutputTransformation? = null,
+    leadingIcon: (@Composable RowScope.() -> Unit)? = null,
+    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
+    onKeyboardAction: ((() -> Unit) -> Unit)? = null
+) {
+    YorinTextField(
+        state = state,
+        modifier = modifier,
+        placeHolder = placeHolder,
+        enabled = enabled,
+        readOnly = readOnly,
+        size = size,
+        backgroundColor = backgroundColor,
+        textStyle = textStyle,
+        placeHolderColor = placeHolderColor,
+        keyboardAction = KeyboardOptions(keyboardType = KeyboardType.Number),
+        inputTransformation = InputTransformation.byValue { current, proposed ->
+            if (proposed.all { it.isDigit() } && proposed.length <= 8) proposed
+            else current
+        },
+        outputTransformation = outputTransformation,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        onKeyboardAction = onKeyboardAction
+    )
 }
 
 @Composable
@@ -49,10 +92,13 @@ fun YorinTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     size: TextFieldSize = TextFieldSize.Large,
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     backgroundColor: Color = YorinTextFieldDefault.backgroundColor,
     textStyle: TextStyle = YorinTextFieldDefault.textStyle,
     placeHolderColor: Color = YorinTextFieldDefault.placeHolderColor,
     keyboardAction: KeyboardOptions = KeyboardOptions.Default,
+    inputTransformation: InputTransformation? = null,
+    outputTransformation: OutputTransformation? = null,
     leadingIcon: (@Composable RowScope.() -> Unit)? = null,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     onKeyboardAction: ((() -> Unit) -> Unit)? = null
@@ -60,6 +106,15 @@ fun YorinTextField(
     val innerPadding = when (size) {
         TextFieldSize.Large -> PaddingValues(horizontal = 16.dp)
         TextFieldSize.Small -> PaddingValues(horizontal = 12.dp)
+    }.let {
+        if (lineLimits != TextFieldLineLimits.SingleLine) {
+            when (size) {
+                TextFieldSize.Large -> PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                TextFieldSize.Small -> PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+            }
+        } else {
+            it
+        }
     }
     val height = when (size) {
         TextFieldSize.Large -> 44.dp
@@ -78,11 +133,14 @@ fun YorinTextField(
         innerPadding = innerPadding,
         enabled = enabled,
         readOnly = readOnly,
+        lineLimits = lineLimits,
         placeHolder = placeHolder,
         backgroundColor = backgroundColor,
         textStyle = textStyle,
         placeHolderColor = placeHolderColor,
         keyboardAction = keyboardAction,
+        inputTransformation = inputTransformation,
+        outputTransformation = outputTransformation,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         onKeyboardAction = onKeyboardAction
@@ -99,10 +157,13 @@ private fun BasicYorinTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     placeHolder: String = "",
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     backgroundColor: Color = YorinTextFieldDefault.backgroundColor,
     textStyle: TextStyle = YorinTextFieldDefault.textStyle,
     placeHolderColor: Color = YorinTextFieldDefault.placeHolderColor,
     keyboardAction: KeyboardOptions = KeyboardOptions.Default,
+    inputTransformation: InputTransformation? = null,
+    outputTransformation: OutputTransformation? = null,
     leadingIcon: (@Composable RowScope.() -> Unit)? = null,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     onKeyboardAction: ((() -> Unit) -> Unit)? = null
@@ -115,15 +176,19 @@ private fun BasicYorinTextField(
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
-        lineLimits = TextFieldLineLimits.SingleLine,
+        lineLimits = lineLimits,
         keyboardOptions = keyboardAction,
         onKeyboardAction = onKeyboardAction,
+        inputTransformation = inputTransformation,
+        outputTransformation = outputTransformation,
         decorator = { innerTextField ->
             Row(
                 modifier = Modifier
                     .background(backgroundColor, shape)
                     .fillMaxWidth()
-                    .height(height)
+                    .applyIf(lineLimits == TextFieldLineLimits.SingleLine) {
+                        height(height)
+                    }
                     .padding(innerPadding),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

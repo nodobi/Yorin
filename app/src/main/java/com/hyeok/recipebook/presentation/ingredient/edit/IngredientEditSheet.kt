@@ -14,10 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,10 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
-import com.hyeok.recipebook.designsystem.components.ButtonColor
 import com.hyeok.recipebook.designsystem.components.ButtonShape
 import com.hyeok.recipebook.designsystem.components.ButtonSize
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
+import com.hyeok.recipebook.designsystem.components.YorinDatePicker
 import com.hyeok.recipebook.designsystem.components.YorinModalBottomSheet
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
@@ -369,74 +366,16 @@ private fun LabeledSpinner(
     }
 
     if (showDatePicker) {
-        IngredientDatePicker(
+        YorinDatePicker(
             state = datePickerState,
             onDismiss = {
                 showDatePicker = false
             },
-            onConfirm = {
-                onSelectDate(datePickerState.selectedDateMillis ?: 0L)
+            onConfirm = { selectedDateMillis ->
+                onSelectDate(selectedDateMillis)
                 showDatePicker = false
             }
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun IngredientDatePicker(
-    state: DatePickerState,
-    modifier: Modifier = Modifier,
-    onDismiss: () -> Unit = {},
-    onConfirm: () -> Unit = {}
-) {
-    DatePickerDialog(
-        modifier = modifier,
-        onDismissRequest = onDismiss,
-        confirmButton = {},
-        dismissButton = {},
-        colors = DatePickerDefaults.colors(
-            containerColor = YorinTheme.colors.black7
-        )
-    ) {
-        Column {
-            DatePicker(
-                state = state,
-                title = null,
-                headline = null,
-                showModeToggle = false,
-                colors = DatePickerDefaults.colors(
-                    containerColor = YorinTheme.colors.black7,
-                    selectedDayContainerColor = YorinTheme.colors.main2,
-                    selectedDayContentColor = YorinTheme.colors.black7,
-                    todayDateBorderColor = YorinTheme.colors.main2,
-                    weekdayContentColor = YorinTheme.colors.main1
-                )
-            )
-            Row(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                YorinTextButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.btn_cancel),
-                    onClick = onDismiss,
-                    shape = ButtonShape.Round,
-                    size = ButtonSize.Large,
-                    color = ButtonColor.Secondary
-                )
-
-                YorinTextButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.btn_confirm),
-                    onClick = onConfirm,
-                    shape = ButtonShape.Round,
-                    size = ButtonSize.Large,
-                    color = ButtonColor.Primary
-                )
-            }
-        }
     }
 }
 
@@ -457,15 +396,3 @@ private fun IngredientEditSheetPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-private fun IngredientDatePickerPreview() {
-    YorinTheme {
-        val datePickerState = rememberDatePickerState()
-
-        IngredientDatePicker(
-            state = datePickerState,
-        )
-    }
-}

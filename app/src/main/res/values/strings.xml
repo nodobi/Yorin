@@ -4,7 +4,11 @@
 
     <!-- 버튼 -->
     <string name="btn_confirm">확인</string>
+    <string name="btn_edit">수정</string>
+    <string name="btn_complete">완료</string>
     <string name="btn_cancel">취소</string>
+    <string name="btn_save">저장</string>
+
     <string name="btn_do_edit">수정하기</string>
     <string name="btn_do_delete">삭제하기</string>
     <string name="btn_do_save">저장하기</string>
@@ -42,4 +46,30 @@
     <string name="ingredient_edit_description_label">메모</string>
     <string name="ingredient_edit_description_hint">추가 정보를 입력해보세요</string>
 
+
+    <!-- 레시피 -->
+    <string name="recipe_title">레시피</string>
+    <string name="recipe_search_filter_recipe_title">레시피로 검색</string>
+    <string name="recipe_search_filter_ingredient_title">재료로 검색</string>
+
+    <string name="recipe_detail_tab_ingredient">재료</string>
+    <string name="recipe_detail_tab_step">조리 순서</string>
+    <string name="recipe_detail_tab_record">기록</string>
+
+    <string name="recipe_detail_ingredient_title">필요한 재료</string>
+    <string name="recipe_detail_ingredient_name_label">재료명</string>
+    <string name="recipe_detail_ingredient_name_hint">예: 돼지고기</string>
+    <string name="recipe_detail_ingredient_amount_label">수량</string>
+    <string name="recipe_detail_ingredient_amount_hint">100</string>
+    <string name="recipe_detail_ingredient_unit_label">단위</string>
+
+    <string name="recipe_detail_step_title">조리 과정</string>
+
+    <string name="recipe_detail_record_title">조리 기록</string>
+    <string name="recipe_detail_record_add_label">기록 추가</string>
+    <string name="recipe_detail_record_date_title">조리 일시</string>
+    <string name="recipe_detail_record_date_placeholder">0000-00-00</string>
+    <string name="recipe_detail_record_title_title">한줄 평</string>
+    <string name="recipe_detail_record_description_title">코멘트</string>
+    <string name="recipe_detail_record_score_title">맛 평가</string>
 </resources>

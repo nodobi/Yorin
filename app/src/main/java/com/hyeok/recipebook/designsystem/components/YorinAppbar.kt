@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.designsystem.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -36,12 +37,16 @@ fun YorinAppbar(
     useNavigation: Boolean = false,
     titleAlignment: Alignment = Alignment.Center,
     windowInsets: WindowInsets = WindowInsets.systemBars,
+    navigateUp: () -> Unit = {},
     action: @Composable (() -> Unit)? = null,
 ) {
     val navIcon: @Composable (() -> Unit)? = {
         if (useNavigation) {
             Icon(
-                modifier = Modifier,
+                modifier = Modifier
+                    .clickable(
+                        onClick = navigateUp
+                    ),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_back),
                 contentDescription = null
             )
