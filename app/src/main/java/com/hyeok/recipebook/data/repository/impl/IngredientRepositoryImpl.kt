@@ -16,4 +16,8 @@ class IngredientRepositoryImpl: IngredientRepository {
     override fun removeIngredient(ingredientId: Int) {
         TODO("Not yet implemented")
     }
+
+    override fun addIngredient(ingredient: IngredientUiModel) {
+        TODO("Not yet implemented")
+    }
 }

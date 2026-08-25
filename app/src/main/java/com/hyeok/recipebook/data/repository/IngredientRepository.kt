@@ -10,4 +10,6 @@ interface IngredientRepository {
     fun getIngredient(ingredientId: Int): IngredientUiModel
 
     fun removeIngredient(ingredientId: Int)
+
+    fun addIngredient(ingredient: IngredientUiModel)
 }
