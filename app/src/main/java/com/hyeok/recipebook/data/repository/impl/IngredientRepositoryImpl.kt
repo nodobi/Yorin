@@ -5,4 +5,7 @@ import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import kotlinx.coroutines.flow.Flow
 
 class IngredientRepositoryImpl: IngredientRepository {
+    override fun getIngredients(): Flow<List<IngredientUiModel>> {
+        TODO("Not yet implemented")
+    }
 }
