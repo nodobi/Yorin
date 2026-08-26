@@ -103,7 +103,7 @@ fun NavGraphBuilder.ingredientScreen(
                 },
                 onComplete = { ingredientUiModel ->
                     navController.popBackStack()
-                    // TODO:: 저장 로직 추가
+                    viewModel.addIngredient(ingredientUiModel)
                 }
             )
         }
