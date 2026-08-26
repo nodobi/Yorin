@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     implementation(libs.datastore)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
     implementation(libs.hilt)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
