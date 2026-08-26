@@ -14,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,8 +27,9 @@ class IngredientEditViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Detail>().ingredientId
+
     private val ingredient = flow {
-        emit(ingredientRepository.getIngredient(ingredientId))
+        emit(ingredientRepository.getIngredient(ingredientId).getOrDefault(IngredientUiModel.empty()))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -49,6 +51,10 @@ class IngredientEditViewModel @Inject constructor(
     fun addIngredient(ingredient: IngredientUiModel) {
         viewModelScope.launch {
             ingredientRepository.addIngredient(ingredient)
+                .onSuccess {
+                    // TODO:: ingredient 갱신
+                }
+                .onFailure {  }
         }
     }
 }

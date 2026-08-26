@@ -4,5 +4,5 @@ import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
 
 interface RecipeRepository {
 
-    fun getRecipesByIngredient(ingredientId: Int): List<RecipeItemUiModel>
+    suspend fun getRecipesByIngredient(ingredientId: Int): Result<List<RecipeItemUiModel>>
 }

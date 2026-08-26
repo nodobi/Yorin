@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import javax.inject.Inject
@@ -29,6 +30,9 @@ class IngredientsViewModel @Inject constructor(
         .debounce(200L)
 
     private val _ingredients: Flow<List<IngredientUiModel>> = ingredientRepository.getIngredients()
+        .map {
+            it.getOrDefault(emptyList())
+        }
 
     val ingredientsUiState: StateFlow<IngredientsUiState> = combine(
         _ingredients, searchQueryFlow

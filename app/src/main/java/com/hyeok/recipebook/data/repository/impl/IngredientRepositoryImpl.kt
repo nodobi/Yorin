@@ -5,19 +5,19 @@ import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import kotlinx.coroutines.flow.Flow
 
 class IngredientRepositoryImpl: IngredientRepository {
-    override fun getIngredients(): Flow<List<IngredientUiModel>> {
+    override fun getIngredients(): Flow<Result<List<IngredientUiModel>>> {
         TODO("Not yet implemented")
     }
 
-    override fun getIngredient(ingredientId: Int): IngredientUiModel {
+    override suspend fun getIngredient(ingredientId: Int): Result<IngredientUiModel> {
         TODO("Not yet implemented")
     }
 
-    override fun removeIngredient(ingredientId: Int) {
+    override suspend fun removeIngredient(ingredientId: Int): Result<Unit> {
         TODO("Not yet implemented")
     }
 
-    override fun addIngredient(ingredient: IngredientUiModel) {
+    override suspend fun addIngredient(ingredient: IngredientUiModel): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.repository.RecipeRepository
+import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -25,12 +27,13 @@ class IngredientDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Detail>().ingredientId
+
     private val ingredient = flow {
-        emit(ingredientRepository.getIngredient(ingredientId))
+        emit(ingredientRepository.getIngredient(ingredientId).getOrDefault(IngredientUiModel.empty()))
     }
 
     private val recipes = flow {
-        emit(recipeRepository.getRecipesByIngredient(ingredientId).map { it.name })
+        emit(recipeRepository.getRecipesByIngredient(ingredientId).map { it.map { it.name } }.getOrDefault(emptyList()))
     }
 
     val uiState = combine(
@@ -59,6 +62,10 @@ class IngredientDetailViewModel @Inject constructor(
     fun removeIngredient(ingredientId: Int) {
         viewModelScope.launch {
             ingredientRepository.removeIngredient(ingredientId)
+                .onSuccess {
+                    // TODO:: 화면 전환
+                }
+                .onFailure {  }
         }
     }
 }

@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface IngredientRepository {
 
-    fun getIngredients(): Flow<List<IngredientUiModel>>
+    fun getIngredients(): Flow<Result<List<IngredientUiModel>>>
 
-    fun getIngredient(ingredientId: Int): IngredientUiModel
+    suspend fun getIngredient(ingredientId: Int): Result<IngredientUiModel>
 
-    fun removeIngredient(ingredientId: Int)
+    suspend fun removeIngredient(ingredientId: Int): Result<Unit>
 
-    fun addIngredient(ingredient: IngredientUiModel)
+    suspend fun addIngredient(ingredient: IngredientUiModel): Result<Unit>
 }
