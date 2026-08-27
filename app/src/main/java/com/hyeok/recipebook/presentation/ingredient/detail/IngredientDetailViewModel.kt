@@ -59,7 +59,7 @@ class IngredientDetailViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, IngredientDetailUiState.empty())
 
-    fun removeIngredient(ingredientId: Int) {
+    fun removeIngredient(ingredientId: Long) {
         viewModelScope.launch {
             ingredientRepository.removeIngredient(ingredientId)
                 .onSuccess {

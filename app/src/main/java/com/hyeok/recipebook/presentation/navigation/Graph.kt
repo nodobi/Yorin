@@ -25,10 +25,10 @@ object Route {
         object Ingredients
 
         @Serializable
-        data class Detail(val ingredientId: Int)
+        data class Detail(val ingredientId: Long)
 
         @Serializable
-        data class Edit(val ingredientId: Int?)
+        data class Edit(val ingredientId: Long?)
     }
 
     val topLevelRoutes = listOf(

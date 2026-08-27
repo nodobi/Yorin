@@ -12,7 +12,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 data class IngredientUiModel(
-    val id: Int,
+    val id: Long,
     val name: String,
     val purchaseDate: LocalDate,
     val expirationDate: LocalDate,
