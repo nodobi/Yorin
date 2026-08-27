@@ -6,6 +6,7 @@ import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import com.hyeok.recipebook.data.database.dao.IngredientDao
 import com.hyeok.recipebook.data.database.dao.RecipeDao
+import com.hyeok.recipebook.data.database.dao.WeightUnitDao
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
 import com.hyeok.recipebook.data.database.entity.WeightUnitEntity
 
@@ -16,6 +17,7 @@ import com.hyeok.recipebook.data.database.entity.WeightUnitEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun ingredientDao(): IngredientDao
     abstract fun recipeDao(): RecipeDao
+    abstract fun weightUnitDao(): WeightUnitDao
 
     companion object {
         @Volatile

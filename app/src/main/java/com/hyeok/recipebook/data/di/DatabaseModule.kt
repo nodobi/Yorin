@@ -2,6 +2,9 @@ package com.hyeok.recipebook.data.di
 
 import android.content.Context
 import com.hyeok.recipebook.data.database.AppDatabase
+import com.hyeok.recipebook.data.database.dao.IngredientDao
+import com.hyeok.recipebook.data.database.dao.RecipeDao
+import com.hyeok.recipebook.data.database.dao.WeightUnitDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,4 +22,22 @@ object DatabaseModule {
     fun providesAppDatabase(
         @ApplicationContext context: Context
     ): AppDatabase = AppDatabase.getDatabase(context)
+
+    @Singleton
+    @Provides
+    fun providesIngredientDao(
+        appDatabase: AppDatabase
+    ): IngredientDao = appDatabase.ingredientDao()
+
+    @Singleton
+    @Provides
+    fun providesRecipeDao(
+        appDatabase: AppDatabase
+    ): RecipeDao = appDatabase.recipeDao()
+
+    @Singleton
+    @Provides
+    fun providesWeightUnitDao(
+        appDatabase: AppDatabase
+    ): WeightUnitDao = appDatabase.weightUnitDao()
 }
