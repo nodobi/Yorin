@@ -26,7 +26,7 @@ class IngredientRepositoryImpl(
                         id = it.id,
                         name = it.name,
                         purchaseDate = LocalDate.fromEpochDays(it.purchaseDate),
-                        expirationDate = LocalDate.fromEpochDays(it.expirationDate),
+                        expirationDate = it.expirationDate?.let { LocalDate.fromEpochDays(it)},
                         weight = it.weight,
                         weightUnit = weightUnits[it.weightUnitId]!!,
                         description = it.description
@@ -37,24 +37,29 @@ class IngredientRepositoryImpl(
 
     }
 
-    override fun getIngredient(ingredientId: Long): Flow<Result<IngredientUiModel>> {
+    override fun getIngredient(ingredientId: Long): Flow<Result<IngredientUiModel?>> {
         return ingredientLocalDataSource
             .getIngredient(ingredientId)
             .map { ingredientEntity ->
-                val weightUnitName = weightUnitLocalDataSource.getUnitById(ingredientEntity.weightUnitId)
+                val weightUnitName = ingredientEntity?.weightUnitId?.let {
+                    weightUnitLocalDataSource.getUnitById(it)
+                } ?: ""
 
                 Result.success(
-                    IngredientUiModel(
-                        id = ingredientEntity.id,
-                        name = ingredientEntity.name,
-                        purchaseDate = LocalDate.fromEpochDays(ingredientEntity.purchaseDate),
-                        expirationDate = LocalDate.fromEpochDays(ingredientEntity.expirationDate),
-                        weight = ingredientEntity.weight,
-                        weightUnit = weightUnitName,
-                        description = ingredientEntity.description
-                    )
+                    ingredientEntity?.let {
+                        IngredientUiModel(
+                            id = it.id,
+                            name = it.name,
+                            purchaseDate = LocalDate.fromEpochDays(it.purchaseDate),
+                            expirationDate = it.expirationDate?.let { LocalDate.fromEpochDays(it) },
+                            weight = it.weight,
+                            weightUnit = weightUnitName,
+                            description = it.description
+                        )
+                    }
                 )
             }
+            .catch { Result.failure<IngredientUiModel?>(it)}
     }
 
     override suspend fun removeIngredient(ingredientId: Long): Result<Unit> = runCatching {
@@ -67,7 +72,7 @@ class IngredientRepositoryImpl(
             IngredientEntity(
                 name = ingredient.name,
                 purchaseDate = ingredient.purchaseDate.toEpochDays(),
-                expirationDate = ingredient.expirationDate.toEpochDays(),
+                expirationDate = ingredient.expirationDate?.toEpochDays(),
                 weight = ingredient.weight,
                 weightUnitId = unitId,
                 description = ingredient.description

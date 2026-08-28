@@ -1,6 +1,5 @@
 package com.hyeok.recipebook.data.source
 
-import com.hyeok.recipebook.data.database.AppDatabase
 import com.hyeok.recipebook.data.database.dao.IngredientDao
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +12,7 @@ class IngredientLocalDataSource @Inject constructor(
         return ingredientDao.getAllIngredients()
     }
 
-    fun getIngredient(ingredientId: Long): Flow<IngredientEntity> {
+    fun getIngredient(ingredientId: Long): Flow<IngredientEntity?> {
         return ingredientDao.getIngredient(ingredientId)
     }
 
