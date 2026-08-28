@@ -21,8 +21,8 @@ data class IngredientEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val purchaseDate: Long,
-    val expirationDate: Long,
+    val expirationDate: Long?,
     val weight: Int,
     val weightUnitId: Long,
-    val description: String
+    val description: String,
 )
