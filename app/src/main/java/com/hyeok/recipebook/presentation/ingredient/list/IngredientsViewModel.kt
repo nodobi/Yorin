@@ -42,9 +42,13 @@ class IngredientsViewModel @Inject constructor(
         IngredientsUiState(
             ingredients = ingredients.filter { it.name.contains(searchQuery) },
             expiredCount = ingredients.count {
+                if(it.expirationDate == null) return@count false
+
                 (it.expirationDate.toEpochDays() - currentEpochDays) < 0
             },
             remainExpirationDays = ingredients.map {
+                if(it.expirationDate == null) return@map null
+
                 (it.expirationDate.toEpochDays() - currentEpochDays).let { remainExpirationDay ->
                     if (remainExpirationDay < 0) -1 else remainExpirationDay.toInt()
                 }
