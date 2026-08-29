@@ -152,15 +152,19 @@ fun IngredientEditSheet(
                             char('-')
                             day()
                         }),
-                        expirationDate = LocalDate.parse(
-                            expirationState.text.toString(),
-                            LocalDate.Format {
-                                year()
-                                char('-')
-                                monthNumber()
-                                char('-')
-                                day()
-                            }),
+                        expirationDate = expirationState.text.toString().let { str ->
+                            if (str == "") return@let null
+
+                            LocalDate.parse(
+                                str,
+                                LocalDate.Format {
+                                    year()
+                                    char('-')
+                                    monthNumber()
+                                    char('-')
+                                    day()
+                                })
+                        },
                         weight = weightState.text.toString().toInt(),
                         weightUnit = weightUnitState.text.toString(),
                         description = descriptionState.text.toString(),

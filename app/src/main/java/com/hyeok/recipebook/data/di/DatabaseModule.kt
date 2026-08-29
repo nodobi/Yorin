@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 
@@ -20,8 +21,9 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providesAppDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase = AppDatabase.getDatabase(context)
+        @ApplicationContext context: Context,
+        @ApplicationScope scope: CoroutineScope
+    ): AppDatabase = AppDatabase.getDatabase(context, scope)
 
     @Singleton
     @Provides
