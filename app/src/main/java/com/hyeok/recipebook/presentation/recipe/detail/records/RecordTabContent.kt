@@ -114,7 +114,7 @@ fun RecordTabContent(
                 val newRecord = new
 
                 // 새로 추가되어 저장되지 않은 상태는 id 가 -1
-                if(new.id == -1) {
+                if(new.id == -1L) {
                     onAddNewRecord(new)
                 } else {
                     onEditedRecord(new)
