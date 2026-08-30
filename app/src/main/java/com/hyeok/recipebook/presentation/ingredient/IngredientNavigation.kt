@@ -2,6 +2,7 @@ package com.hyeok.recipebook.presentation.ingredient
 
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -95,9 +96,11 @@ fun NavGraphBuilder.ingredientScreen(
         bottomSheet<Route.Ingredient.Edit> { backStackEntry ->
             val viewModel = hiltViewModel<IngredientEditViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
             IngredientEditSheet(
                 ingredientEditUiState = uiState,
+                sheetState = sheetState,
                 onDismiss = {
                     navController.popBackStack()
                 },
