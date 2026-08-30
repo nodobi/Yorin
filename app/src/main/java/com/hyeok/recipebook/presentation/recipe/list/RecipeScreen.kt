@@ -60,7 +60,7 @@ fun RecipeScreen(
     recipesUiState: RecipesUiState,
     searchQueryState: TextFieldState,
     onAddRecipe: () -> Unit = {},
-    onClickRecipe: (Int) -> Unit = {},
+    onClickRecipe: (Long) -> Unit = {},
     onSelectFilter: (RecipeSearchFilter) -> Unit = {},
     onSearchRecipes: (String) -> Unit = {},
 ) {
