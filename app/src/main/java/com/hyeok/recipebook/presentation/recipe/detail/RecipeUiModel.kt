@@ -7,7 +7,7 @@ import com.hyeok.recipebook.presentation.recipe.model.ChangeHistoryUiModel
 import kotlinx.datetime.LocalDate
 
 data class RecipeUiModel(
-    val id: Int,
+    val id: Long,
     val name: String,
     val registerDate: LocalDate,
     val cookingTime: Int,
