@@ -81,7 +81,7 @@ private fun StepIcon(
 fun EditingRecipeStepCard(
     editState: RecipeStepEditState,
     modifier: Modifier = Modifier,
-    onRemoveStep: (Int) -> Unit = {}
+    onRemoveStep: (Long) -> Unit = {}
 ) {
     YorinCard(
         modifier = modifier

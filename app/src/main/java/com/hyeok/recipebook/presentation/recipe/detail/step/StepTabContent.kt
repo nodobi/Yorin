@@ -110,7 +110,7 @@ fun StepTabContent(
 
 @Stable
 class RecipeStepEditState(
-    val id: Int,
+    val id: Long,
     initialOrder: Int,
     initialDescription: String
 ) {
