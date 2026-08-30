@@ -11,7 +11,7 @@ package com.hyeok.recipebook.presentation.recipe.detail.ingredients
  * @property isInStock 요리에 사용할 재료가 있는지 여부
  */
 data class RecipeIngredientUiModel(
-    val id: Int,
+    val id: Long,
     val name: String,
     val unit: String,
     val requireQuantity: Int,
