@@ -103,8 +103,8 @@ fun IngredientDetailLayout(
             IngredientDetails(
                 modifier = Modifier.fillMaxWidth(),
                 weight = "${ingredientDetailUiState.ingredient.weight}${ingredientDetailUiState.ingredient.weightUnit}",
-                purchaseDate = ingredientDetailUiState.ingredient.formatPurchaseDate(),
-                expirationDate = ingredientDetailUiState.ingredient.formatExpirationDate(),
+                purchaseDate = ingredientDetailUiState.ingredient.formatPurchaseDate() ?: "-",
+                expirationDate = ingredientDetailUiState.ingredient.formatExpirationDate() ?: "-",
             )
 
             IngredientDescription(
@@ -152,9 +152,14 @@ fun IngredientDetailLayout(
 @Composable
 private fun ExpirationProgress(
     progress: Float,
-    remainExpirationDate: Int,
+    remainExpirationDate: Int?,
     modifier: Modifier = Modifier,
 ) {
+    val remainText = remainExpirationDate?.let {
+        stringResource(
+            R.string.ingredient_remain_expiration_days, it)
+    } ?: "?일 남음"
+
     YorinCard(
         modifier = modifier,
         backgroundColor = YorinTheme.colors.main8,
@@ -174,16 +179,13 @@ private fun ExpirationProgress(
                     style = YorinTheme.typography.button1
                 )
                 YorinText(
-                    text = stringResource(
-                        R.string.ingredient_remain_expiration_days,
-                        remainExpirationDate
-                    ),
+                    text = remainText,
                     style = YorinTheme.typography.button1
                 )
             }
 
             YorinProgressBar(
-                progress = progress,
+                progress = if(remainExpirationDate == null) 0.5f else progress,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),

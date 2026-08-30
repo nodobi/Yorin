@@ -4,7 +4,7 @@ import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
 
 class RecipeRepositoryImpl: RecipeRepository {
-    override suspend fun getRecipesByIngredient(ingredientId: Int): Result<List<RecipeItemUiModel>> {
+    override suspend fun getRecipesByIngredient(ingredientId: Long): Result<List<RecipeItemUiModel>> {
         TODO("Not yet implemented")
     }
 }

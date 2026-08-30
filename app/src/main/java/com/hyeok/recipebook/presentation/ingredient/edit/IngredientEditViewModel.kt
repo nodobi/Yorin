@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,27 +27,20 @@ class IngredientEditViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Detail>().ingredientId
+    private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Edit>().ingredientId
 
-    private val ingredient = flow {
-        emit(ingredientRepository.getIngredient(ingredientId).getOrDefault(IngredientUiModel.empty()))
-    }
+    private val ingredient = ingredientRepository.getIngredient(ingredientId ?: -1)
+        .map {
+            it.getOrNull()
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<IngredientEditUiState> = ingredient
-        .mapLatest { model ->
-            val today = DateTimeUtil.currentLocalDate(TimeZone.UTC)
-
+        .map { model ->
             IngredientEditUiState(
                 ingredient = model,
-                currentUtcMills = today.toEpochMilliseconds(),
-                purchaseUtcMills = model.purchaseDate.toEpochMilliseconds(),
-                expirationUtcMills = model.expirationDate.toEpochMilliseconds(),
             )
-
-            IngredientEditUiState.empty()
         }.stateIn(viewModelScope, SharingStarted.Lazily, IngredientEditUiState.empty())
-
 
     fun addIngredient(ingredient: IngredientUiModel) {
         viewModelScope.launch {

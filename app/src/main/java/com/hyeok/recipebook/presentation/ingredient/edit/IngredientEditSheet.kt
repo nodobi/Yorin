@@ -48,6 +48,7 @@ import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.presentation.util.ext.toEpochMilliseconds
 import com.hyeok.recipebook.presentation.util.ext.toLocalDate
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -88,6 +89,8 @@ fun IngredientEditSheet(
             weightState = weightState,
             weightUnitState = weightUnitState,
             descriptionState = descriptionState,
+            purchaseDateMillis = ingredientEditUiState.ingredient?.purchaseDate?.toEpochMilliseconds(),
+            expirationDateMillis = ingredientEditUiState.ingredient?.expirationDate?.toEpochMilliseconds(),
             onChangePurchaseDate = { utcEpochMilliseconds ->
                 purchaseState.edit {
                     val timestamp = utcEpochMilliseconds.toLocalDate().format(
@@ -149,15 +152,19 @@ fun IngredientEditSheet(
                             char('-')
                             day()
                         }),
-                        expirationDate = LocalDate.parse(
-                            expirationState.text.toString(),
-                            LocalDate.Format {
-                                year()
-                                char('-')
-                                monthNumber()
-                                char('-')
-                                day()
-                            }),
+                        expirationDate = expirationState.text.toString().let { str ->
+                            if (str == "") return@let null
+
+                            LocalDate.parse(
+                                str,
+                                LocalDate.Format {
+                                    year()
+                                    char('-')
+                                    monthNumber()
+                                    char('-')
+                                    day()
+                                })
+                        },
                         weight = weightState.text.toString().toInt(),
                         weightUnit = weightUnitState.text.toString(),
                         description = descriptionState.text.toString(),
@@ -180,6 +187,8 @@ fun IngredientEditLayout(
     weightUnitState: TextFieldState,
     descriptionState: TextFieldState,
     modifier: Modifier = Modifier,
+    purchaseDateMillis: Long? = null,
+    expirationDateMillis: Long? = null,
     onChangePurchaseDate: (Long) -> Unit = {},
     onChangeExpirationDate: (Long) -> Unit = {},
     onCompleteEdit: () -> Unit = {},
@@ -238,6 +247,7 @@ fun IngredientEditLayout(
                 state = purchaseState,
                 label = stringResource(R.string.ingredient_edit_purchase_label),
                 placeHolder = stringResource(R.string.ingredient_edit_purchase_hint),
+                initialSelectedDateMillis = purchaseDateMillis,
                 onSelectDate = onChangePurchaseDate
             )
 
@@ -246,6 +256,7 @@ fun IngredientEditLayout(
                 state = expirationState,
                 label = stringResource(R.string.ingredient_edit_expiration_label),
                 placeHolder = stringResource(R.string.ingredient_edit_expiration_hint),
+                initialSelectedDateMillis = expirationDateMillis,
                 onSelectDate = onChangeExpirationDate
             )
 
@@ -312,12 +323,13 @@ private fun LabeledSpinner(
     onSelectDate: (Long) -> Unit,
     modifier: Modifier = Modifier,
     placeHolder: String = "",
+    initialSelectedDateMillis: Long? = Clock.System.now().toEpochMilliseconds(),
     selectableDates: SelectableDates = DatePickerDefaults.AllDates
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = Clock.System.now().toEpochMilliseconds(),
+        initialSelectedDateMillis = initialSelectedDateMillis ?: Clock.System.now().toEpochMilliseconds(),
         selectableDates = selectableDates
     )
 

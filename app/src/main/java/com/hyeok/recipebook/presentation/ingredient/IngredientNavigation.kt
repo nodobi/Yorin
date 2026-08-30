@@ -2,6 +2,7 @@ package com.hyeok.recipebook.presentation.ingredient
 
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -26,7 +27,7 @@ fun NavController.navigateToIngredient(navOptions: NavOptions? = null) {
     navigate(Route.Ingredient.Ingredients, navOptions)
 }
 
-fun NavController.navigateToIngredientDetail(ingredientId: Int, navOptions: NavOptions? = null) {
+fun NavController.navigateToIngredientDetail(ingredientId: Long, navOptions: NavOptions? = null) {
     navigate(
         Route.Ingredient.Detail(
             ingredientId = ingredientId
@@ -34,7 +35,7 @@ fun NavController.navigateToIngredientDetail(ingredientId: Int, navOptions: NavO
     )
 }
 
-fun NavController.navigateToIngredientEdit(ingredientId: Int?, navOptions: NavOptions? = null) {
+fun NavController.navigateToIngredientEdit(ingredientId: Long?, navOptions: NavOptions? = null) {
     navigate(
         Route.Ingredient.Edit(
             ingredientId = ingredientId
@@ -95,9 +96,11 @@ fun NavGraphBuilder.ingredientScreen(
         bottomSheet<Route.Ingredient.Edit> { backStackEntry ->
             val viewModel = hiltViewModel<IngredientEditViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
             IngredientEditSheet(
                 ingredientEditUiState = uiState,
+                sheetState = sheetState,
                 onDismiss = {
                     navController.popBackStack()
                 },

@@ -24,6 +24,7 @@
     <string name="ingredient_expiration_warning_body">%1$d개의 재료가 곧 만료됩니다</string>
 
     <string name="ingredient_remain_expiration_days">%1$d일 남음</string>
+    <string name="ingredient_after_purchase_days">보관 %1$d일 째</string>
 
     <string name="ingredient_detail_amount_title">수량</string>
     <string name="ingredient_detail_purchase_date_title">구매일</string>

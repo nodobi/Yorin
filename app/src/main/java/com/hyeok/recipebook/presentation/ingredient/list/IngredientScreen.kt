@@ -18,9 +18,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +34,10 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.ingredient.component.ExpirationWarningCard
 import com.hyeok.recipebook.presentation.ingredient.component.IngredientCard
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.presentation.util.DateTimeUtil
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.until
 
 @Composable
 fun IngredientRoute(
@@ -63,6 +69,16 @@ fun IngredientScreen(
     onClickIngredient: (IngredientUiModel) -> Unit = {},
     onClickAddIngredient: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val expirationDates = remember(ingredientsUiState.ingredients, context) {
+        val today = DateTimeUtil.currentLocalDate(TimeZone.currentSystemDefault())
+        ingredientsUiState.ingredients.map {
+            it.formatExpirationDate() ?:
+            context.getString(R.string.ingredient_after_purchase_days, it.purchaseDate.until(today, DateTimeUnit.DAY))
+        }
+    }
+
     Column(
         modifier = modifier
     ) {
@@ -123,7 +139,7 @@ fun IngredientScreen(
                             .wrapContentHeight(),
                         ingredientName = ingredientItem.name,
                         remainExpirationDate = ingredientsUiState.remainExpirationDays[idx],
-                        expirationDate = ingredientItem.formatExpirationDate(),
+                        expirationDate = expirationDates[idx],
                         weight = ingredientItem.weight,
                         weightUnit = ingredientItem.weightUnit,
                         description = ingredientItem.description,

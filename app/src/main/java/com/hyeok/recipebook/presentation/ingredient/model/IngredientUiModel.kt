@@ -12,10 +12,10 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 data class IngredientUiModel(
-    val id: Int,
+    val id: Long,
     val name: String,
     val purchaseDate: LocalDate,
-    val expirationDate: LocalDate,
+    val expirationDate: LocalDate?,
     val weight: Int,
     val weightUnit: String,
     val description: String
@@ -28,8 +28,8 @@ data class IngredientUiModel(
             char('-')
             day()
         }
-    ): String {
-        return purchaseDate.format(format)
+    ): String? {
+        return purchaseDate?.format(format)
     }
 
     fun formatExpirationDate(
@@ -40,8 +40,8 @@ data class IngredientUiModel(
             char('-')
             day()
         }
-    ): String {
-        return expirationDate.format(format)
+    ): String? {
+        return expirationDate?.format(format)
     }
 
     companion object {

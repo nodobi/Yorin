@@ -4,7 +4,7 @@ import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 
 data class IngredientDetailUiState(
     val ingredient: IngredientUiModel,
-    val remainExpirationDays: Int,
+    val remainExpirationDays: Int?,
     val expirationProgress: Float,
     val relatedRecipes: List<String>
 ) {

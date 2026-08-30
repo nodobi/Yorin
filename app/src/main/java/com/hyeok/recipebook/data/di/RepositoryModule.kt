@@ -4,6 +4,8 @@ import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.repository.impl.IngredientRepositoryImpl
 import com.hyeok.recipebook.data.repository.impl.RecipeRepositoryImpl
+import com.hyeok.recipebook.data.source.IngredientLocalDataSource
+import com.hyeok.recipebook.data.source.WeightUnitLocalDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +20,12 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun providesIngredientRepository(
-    ): IngredientRepository = IngredientRepositoryImpl()
+        ingredientLocalDataSource: IngredientLocalDataSource,
+        weightUnitLocalDataSource: WeightUnitLocalDataSource
+    ): IngredientRepository = IngredientRepositoryImpl(
+        ingredientLocalDataSource,
+        weightUnitLocalDataSource
+    )
 
     @Provides
     @Singleton

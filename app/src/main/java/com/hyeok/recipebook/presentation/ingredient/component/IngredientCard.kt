@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,7 +29,7 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 @Composable
 fun IngredientCard(
     ingredientName: String,
-    remainExpirationDate: Int,
+    remainExpirationDate: Int?,
     expirationDate: String,
     weight: Int,
     weightUnit: String,
@@ -60,22 +61,26 @@ fun IngredientCard(
                     style = YorinTheme.typography.body5
                 )
 
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = YorinTheme.colors.sub4,
-                            shape = RoundedCornerShape(8.dp)
+                if(remainExpirationDate != null) {
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = YorinTheme.colors.sub4,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp),
+                    ) {
+                        YorinText(
+                            text = stringResource(
+                                R.string.ingredient_remain_expiration_days,
+                                remainExpirationDate
+                            ),
+                            style = YorinTheme.typography.caption1,
+                            color = YorinTheme.colors.sub1
                         )
-                        .padding(horizontal = 8.dp),
-                ) {
-                    YorinText(
-                        text = stringResource(
-                            R.string.ingredient_remain_expiration_days,
-                            remainExpirationDate
-                        ),
-                        style = YorinTheme.typography.caption1,
-                        color = YorinTheme.colors.sub1
-                    )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.size(0.dp))
                 }
             }
 
@@ -165,6 +170,15 @@ private fun IngredientCardPreview() {
                 ingredientName = "양파",
                 remainExpirationDate = 10,
                 expirationDate = "2025-01-01",
+                weight = 1,
+                weightUnit = "개",
+                description = "메모에 해당하는 영역"
+            )
+
+            IngredientCard(
+                ingredientName = "양파",
+                remainExpirationDate = null,
+                expirationDate = "보관 3일 째",
                 weight = 1,
                 weightUnit = "개",
                 description = "메모에 해당하는 영역"
