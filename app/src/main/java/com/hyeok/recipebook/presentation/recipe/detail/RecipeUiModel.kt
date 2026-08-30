@@ -3,7 +3,6 @@ package com.hyeok.recipebook.presentation.recipe.detail
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
-import com.hyeok.recipebook.presentation.recipe.model.ChangeHistoryUiModel
 import kotlinx.datetime.LocalDate
 
 data class RecipeUiModel(
@@ -16,7 +15,6 @@ data class RecipeUiModel(
     val ingredients: List<RecipeIngredientUiModel>,
     val steps: List<RecipeStepUiModel>,
     val cookingRecords: List<RecipeRecordUiModel>,
-    val changeHistory: List<ChangeHistoryUiModel>
 ) {
     companion object {
         fun fake(): RecipeUiModel = RecipeUiModel(
@@ -44,7 +42,6 @@ data class RecipeUiModel(
             ),
             steps = listOf(),
             cookingRecords = listOf(),
-            changeHistory = listOf()
         )
     }
 }
