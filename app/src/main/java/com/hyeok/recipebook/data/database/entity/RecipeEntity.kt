@@ -9,7 +9,6 @@ data class RecipeEntity(
     val name: String,
     val registerDate: Long,
     val cookingTime: Int,
-    val averageScore: Float,
     val photoUrl: String?,
 )
 
