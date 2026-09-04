@@ -19,10 +19,10 @@ fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
     navigate(Route.Recipe.Recipes, navOptions)
 }
 
-fun NavController.navigateToRecipeDetail(navOptions: NavOptions? = null, ingredientId: Int) {
+fun NavController.navigateToRecipeDetail(navOptions: NavOptions? = null, recipeId: Long?) {
     navigate(
         Route.Recipe.Detail(
-            ingredientId
+            recipeId
         ), navOptions
     )
 }
@@ -35,13 +35,20 @@ fun NavGraphBuilder.recipeScreen(
     ) {
         composable<Route.Recipe.Recipes> {
             val viewModel = hiltViewModel<RecipesViewModel>()
-            val recipesUiState by viewModel.recipesUiState.collectAsStateWithLifecycle()
+            val recipesUiState by viewModel.state.collectAsStateWithLifecycle()
 
             RecipeRoute(
                 recipesUiState = recipesUiState,
-                searchQueryState = viewModel.searchedQuery,
-                onAddRecipe = {},
-                onSelectFilter = {}
+                searchQueryState = viewModel.searchQueryState,
+                onAddRecipe = {
+                    navController.navigateToRecipeDetail(recipeId = null)
+                },
+                onClickRecipe = { recipeId ->
+                    navController.navigateToRecipeDetail(recipeId = recipeId)
+                },
+                onSelectFilter = { newFilter ->
+                    viewModel.updateFilter(newFilter)
+                }
             )
         }
 
