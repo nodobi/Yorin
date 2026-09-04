@@ -25,17 +25,17 @@ class IngredientDaoTest {
             .build()
 
 
-        runBlocking { 
+        runBlocking {
             val weightUnitDao = db.weightUnitDao()
             val ingredientDao = db.ingredientDao()
-            
+
             weightUnitDao.run {
                 addUnit(WeightUnitEntity(name = "g"))
                 addUnit(WeightUnitEntity(name = "kg"))
                 addUnit(WeightUnitEntity(name = "ml"))
                 addUnit(WeightUnitEntity(name = "L"))
             }
-            
+
             ingredientDao.insertIngredient(
                 IngredientEntity(
                     id = 1,
@@ -43,6 +43,18 @@ class IngredientDaoTest {
                     purchaseDate = LocalDate(2026, 9, 4).toEpochDays(),
                     expirationDate = LocalDate(2026, 9, 6).toEpochDays(),
                     weight = 100,
+                    weightUnitId = 1,
+                    description = ""
+                )
+            )
+
+            ingredientDao.insertIngredient(
+                IngredientEntity(
+                    id = 2,
+                    name = "두부",
+                    purchaseDate = LocalDate(2026, 9, 4).toEpochDays(),
+                    expirationDate = LocalDate(2026, 9, 6).toEpochDays(),
+                    weight = 200,
                     weightUnitId = 1,
                     description = ""
                 )
@@ -55,6 +67,13 @@ class IngredientDaoTest {
         val ingredient = db.ingredientDao().getIngredient(1).first()
         assert(ingredient.id == 1L)
         assert(ingredient.weightUnit == "g")
+    }
+
+    @Test
+    fun `모든 재료 로드 테스트`() = runTest {
+        val ingredients = db.ingredientDao().getAllIngredients().first()
+
+        assert(ingredients.size == 2)
     }
 
     @After

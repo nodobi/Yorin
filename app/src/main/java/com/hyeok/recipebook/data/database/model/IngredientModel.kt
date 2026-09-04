@@ -23,3 +23,14 @@ fun IngredientModel.toUiModel(): IngredientUiModel =
         weightUnit = weightUnit,
         description = description
     )
+
+fun IngredientUiModel.toModel() =
+    IngredientModel(
+        id = id,
+        name = name,
+        purchaseDate = purchaseDate.toEpochDays(),
+        expirationDate = expirationDate?.toEpochDays(),
+        weight = weight,
+        weightUnit = weightUnit,
+        description = description
+    )

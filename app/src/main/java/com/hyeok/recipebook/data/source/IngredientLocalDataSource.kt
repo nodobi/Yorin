@@ -1,15 +1,17 @@
 package com.hyeok.recipebook.data.source
 
 import com.hyeok.recipebook.data.database.dao.IngredientDao
+import com.hyeok.recipebook.data.database.dao.WeightUnitDao
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
 import com.hyeok.recipebook.data.database.model.IngredientModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class IngredientLocalDataSource @Inject constructor(
-    private val ingredientDao: IngredientDao
+    private val ingredientDao: IngredientDao,
+    private val weightUnitDao: WeightUnitDao
 ) {
-    fun getIngredients(): Flow<List<IngredientEntity>> {
+    fun getIngredients(): Flow<List<IngredientModel>> {
         return ingredientDao.getAllIngredients()
     }
 
@@ -21,7 +23,17 @@ class IngredientLocalDataSource @Inject constructor(
         ingredientDao.deleteIngredient(ingredientId)
     }
 
-    suspend fun addIngredient(ingredient: IngredientEntity) {
-        ingredientDao.insertIngredient(ingredient)
+    suspend fun addIngredient(ingredientModel: IngredientModel) {
+        ingredientDao.insertIngredient(
+            IngredientEntity(
+                id = ingredientModel.id,
+                name = ingredientModel.name,
+                purchaseDate = ingredientModel.purchaseDate,
+                expirationDate = ingredientModel.expirationDate,
+                weight = ingredientModel.weight,
+                weightUnitId = weightUnitDao.getIdByName(ingredientModel.weightUnit),
+                description = ingredientModel.description,
+            )
+        )
     }
 }
