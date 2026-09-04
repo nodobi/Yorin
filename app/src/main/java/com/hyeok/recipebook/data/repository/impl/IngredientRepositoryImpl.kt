@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.data.repository.impl
 
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
+import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.WeightUnitLocalDataSource
@@ -26,7 +27,7 @@ class IngredientRepositoryImpl(
                         id = it.id,
                         name = it.name,
                         purchaseDate = LocalDate.fromEpochDays(it.purchaseDate),
-                        expirationDate = it.expirationDate?.let { LocalDate.fromEpochDays(it)},
+                        expirationDate = it.expirationDate?.let { LocalDate.fromEpochDays(it) },
                         weight = it.weight,
                         weightUnit = weightUnits[it.weightUnitId]!!,
                         description = it.description
@@ -40,26 +41,8 @@ class IngredientRepositoryImpl(
     override fun getIngredient(ingredientId: Long): Flow<Result<IngredientUiModel?>> {
         return ingredientLocalDataSource
             .getIngredient(ingredientId)
-            .map { ingredientEntity ->
-                val weightUnitName = ingredientEntity?.weightUnitId?.let {
-                    weightUnitLocalDataSource.getUnitById(it)
-                } ?: ""
-
-                Result.success(
-                    ingredientEntity?.let {
-                        IngredientUiModel(
-                            id = it.id,
-                            name = it.name,
-                            purchaseDate = LocalDate.fromEpochDays(it.purchaseDate),
-                            expirationDate = it.expirationDate?.let { LocalDate.fromEpochDays(it) },
-                            weight = it.weight,
-                            weightUnit = weightUnitName,
-                            description = it.description
-                        )
-                    }
-                )
-            }
-            .catch { Result.failure<IngredientUiModel?>(it)}
+            .map { Result.success(it.toUiModel()) }
+            .catch { Result.failure<IngredientUiModel>(it) }
     }
 
     override suspend fun removeIngredient(ingredientId: Long): Result<Unit> = runCatching {

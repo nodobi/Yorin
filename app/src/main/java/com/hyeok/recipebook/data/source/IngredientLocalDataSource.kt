@@ -2,6 +2,7 @@ package com.hyeok.recipebook.data.source
 
 import com.hyeok.recipebook.data.database.dao.IngredientDao
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
+import com.hyeok.recipebook.data.database.model.IngredientModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ class IngredientLocalDataSource @Inject constructor(
         return ingredientDao.getAllIngredients()
     }
 
-    fun getIngredient(ingredientId: Long): Flow<IngredientEntity?> {
+    fun getIngredient(ingredientId: Long): Flow<IngredientModel> {
         return ingredientDao.getIngredient(ingredientId)
     }
 
