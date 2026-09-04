@@ -41,8 +41,9 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 fun RecipeRoute(
     recipesUiState: RecipesUiState,
     searchQueryState: TextFieldState,
-    onAddRecipe: () -> Unit = {},
-    onSelectFilter: (RecipeSearchFilter) -> Unit = {},
+    onAddRecipe: () -> Unit,
+    onClickRecipe: (Long) -> Unit,
+    onSelectFilter: (RecipeSearchFilter) -> Unit,
 ) {
 
     RecipeScreen(
@@ -50,6 +51,7 @@ fun RecipeRoute(
         recipesUiState = recipesUiState,
         searchQueryState = searchQueryState,
         onAddRecipe = onAddRecipe,
+        onClickRecipe = onClickRecipe,
         onSelectFilter = onSelectFilter
     )
 }
@@ -60,9 +62,8 @@ fun RecipeScreen(
     recipesUiState: RecipesUiState,
     searchQueryState: TextFieldState,
     onAddRecipe: () -> Unit = {},
-    onClickRecipe: (Int) -> Unit = {},
+    onClickRecipe: (Long) -> Unit = {},
     onSelectFilter: (RecipeSearchFilter) -> Unit = {},
-    onSearchRecipes: (String) -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -92,7 +93,9 @@ fun RecipeScreen(
             YorinSearchbar(
                 modifier = Modifier.fillMaxWidth(),
                 state = searchQueryState,
-                onSearch = onSearchRecipes
+                onSearch = {
+                    // Debounce 처리했으므로 이벤트 등록할 필요는 없다.
+                }
             )
 
             SearchFilters(

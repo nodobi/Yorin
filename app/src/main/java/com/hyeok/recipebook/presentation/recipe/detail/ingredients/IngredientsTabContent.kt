@@ -112,7 +112,7 @@ fun IngredientsTabContent(
 // 수정중인 레시피 데이터를 담는 stateholder
 @Stable
 class RecipeIngredientEditState(
-    val id: Int,
+    val id: Long,
     initialName: String = "",
     initialQuantity: Int = 0,
     initialUnit: String = "g"

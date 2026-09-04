@@ -9,12 +9,22 @@ import com.hyeok.recipebook.data.database.dao.IngredientDao
 import com.hyeok.recipebook.data.database.dao.RecipeDao
 import com.hyeok.recipebook.data.database.dao.WeightUnitDao
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
+import com.hyeok.recipebook.data.database.entity.RecipeEntity
+import com.hyeok.recipebook.data.database.entity.RecipeIngredientEntity
+import com.hyeok.recipebook.data.database.entity.RecipeRecordEntity
+import com.hyeok.recipebook.data.database.entity.RecipeStepEntity
 import com.hyeok.recipebook.data.database.entity.WeightUnitEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [IngredientEntity::class, WeightUnitEntity::class],
+    entities = [
+        IngredientEntity::class,
+        WeightUnitEntity::class,
+        RecipeEntity::class,
+        RecipeIngredientEntity::class,
+        RecipeStepEntity::class,
+        RecipeRecordEntity::class],
     version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -42,7 +52,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     private class AppDatabaseCallback(
         private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
+    ) : Callback() {
         override suspend fun onCreate(connection: SQLiteConnection) {
             super.onCreate(connection)
             scope.launch {
