@@ -19,6 +19,9 @@ class IngredientLocalDataSource @Inject constructor(
         return ingredientDao.getIngredient(ingredientId)
     }
 
+    suspend fun getIngredients(ingredientName: String): List<IngredientModel> =
+        ingredientDao.getIngredients(ingredientName)
+
     suspend fun removeIngredient(ingredientId: Long) {
         ingredientDao.deleteIngredient(ingredientId)
     }

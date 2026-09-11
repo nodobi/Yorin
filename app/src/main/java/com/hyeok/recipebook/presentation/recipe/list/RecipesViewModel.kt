@@ -31,7 +31,7 @@ class RecipesViewModel @Inject constructor(
     private val searchQueryFlow = snapshotFlow { searchQueryState.text }
         .debounce(200L)
 
-    private val recipesFlow = recipeRepository.getRecipes()
+    private val recipesFlow = recipeRepository.getRecipesSummaries()
         .map {
             it.getOrElse {
                 emptyList()

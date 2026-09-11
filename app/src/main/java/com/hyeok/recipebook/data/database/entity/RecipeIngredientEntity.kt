@@ -31,6 +31,5 @@ data class RecipeIngredientEntity(
     val name: String,
     val weightUnitId: Long,
     val requireQuantity: Int,
-    val stockQuantity: Int,
     val recipeId: Long
 )
