@@ -35,6 +35,23 @@ interface IngredientDao {
 
     @Query(
         """
+        SELECT 
+            ingredient.id AS id,
+            ingredient.name AS name,
+            ingredient.purchaseDate AS purchaseDate,
+            ingredient.expirationDate AS expirationDate,
+            ingredient.weight AS weight,
+            weight_unit.name AS weightUnit,
+            ingredient.description AS description
+        FROM ingredient
+        INNER JOIN weight_unit ON ingredient.weightUnitId = weight_unit.id
+        WHERE ingredient.name = :name
+    """
+    )
+    suspend fun getIngredients(name: String): List<IngredientModel>
+
+    @Query(
+        """
         SELECT
             ingredient.id AS id,
             ingredient.name AS name,
