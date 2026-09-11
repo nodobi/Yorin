@@ -97,6 +97,9 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
 
     testImplementation(libs.junit)
+    testImplementation(libs.sqlite.bundled)
+    testImplementation(libs.sqlite.bundled.jvm)
+    testImplementation(libs.coroutine.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

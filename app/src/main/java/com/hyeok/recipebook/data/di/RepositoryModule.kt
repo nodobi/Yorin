@@ -21,18 +21,18 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun providesIngredientRepository(
-        ingredientLocalDataSource: IngredientLocalDataSource,
-        weightUnitLocalDataSource: WeightUnitLocalDataSource
+        ingredientLocalDataSource: IngredientLocalDataSource
     ): IngredientRepository = IngredientRepositoryImpl(
-        ingredientLocalDataSource,
-        weightUnitLocalDataSource
+        ingredientLocalDataSource
     )
 
     @Provides
     @Singleton
     fun providesRecipeRepository(
-        recipeLocalDataSource: RecipeLocalDataSource
+        recipeLocalDataSource: RecipeLocalDataSource,
+        ingredientLocalDataSource: IngredientLocalDataSource
     ): RecipeRepository = RecipeRepositoryImpl(
-        recipeLocalDataSource
+        recipeLocalDataSource,
+        ingredientLocalDataSource
     )
 }
