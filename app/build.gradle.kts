@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.viewmodel.savedstate)
+    implementation(libs.timber)
 
     // network
     implementation(libs.retrofit)
