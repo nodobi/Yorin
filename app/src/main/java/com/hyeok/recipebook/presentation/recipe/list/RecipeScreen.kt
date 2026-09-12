@@ -104,10 +104,6 @@ fun RecipeScreen(
                 onSelectFilter = onSelectFilter
             )
 
-//            RecipesFilter(
-//
-//            )
-
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -154,11 +150,6 @@ private fun SearchFilters(
             onClick = { onSelectFilter(RecipeSearchFilter.BY_INGREDIENT) }
         )
     }
-}
-
-@Composable
-fun RecipesFilter(modifier: Modifier = Modifier) {
-    // TODO:: 출시 후 추가
 }
 
 @Composable
