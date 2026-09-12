@@ -20,6 +20,11 @@ data class RecipeDetailUiState(
             isEditing = false,
             recipe = RecipeUiModel.fake()
         )
+
+        fun empty() = RecipeDetailUiState(
+            isEditing = false,
+            recipe = RecipeUiModel.empty()
+        )
     }
 }
 
