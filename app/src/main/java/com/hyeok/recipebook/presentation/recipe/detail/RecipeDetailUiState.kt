@@ -11,21 +11,17 @@ import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiMod
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepEditState
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 
-data class RecipeDetailUiState(
-    val isEditing: Boolean = false,
-    val recipe: RecipeUiModel
-) {
-    companion object {
-        fun fake(): RecipeDetailUiState = RecipeDetailUiState(
-            isEditing = false,
-            recipe = RecipeUiModel.fake()
-        )
+sealed interface RecipeDetailUiState {
 
-        fun empty() = RecipeDetailUiState(
-            isEditing = false,
-            recipe = RecipeUiModel.empty()
-        )
-    }
+    data class Success(
+        val recipe: RecipeUiModel
+    ): RecipeDetailUiState
+
+    data class Edit(
+        val editState: RecipeDetailEditState
+    ): RecipeDetailUiState
+
+    object Loading: RecipeDetailUiState
 }
 
 class RecipeDetailEditState(
@@ -60,5 +56,17 @@ class RecipeDetailEditState(
     }
     val record = mutableStateListOf<RecipeRecordUiModel>().apply {
         addAll(initialRecord)
+    }
+
+    companion object {
+        fun fromUiModel(uiModel: RecipeUiModel): RecipeDetailEditState =
+            RecipeDetailEditState(
+                initialName = uiModel.name,
+                initialCookingTime = uiModel.cookingTime,
+                initialPhotoUrl = uiModel.photoUrl,
+                initialIngredients = uiModel.ingredients,
+                initialStep = uiModel.steps,
+                initialRecord = uiModel.cookingRecords
+            )
     }
 }
