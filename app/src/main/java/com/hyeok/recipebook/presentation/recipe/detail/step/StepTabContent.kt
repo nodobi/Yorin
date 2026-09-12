@@ -1,16 +1,9 @@
 package com.hyeok.recipebook.presentation.recipe.detail.step
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
@@ -19,17 +12,14 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
-import com.hyeok.recipebook.designsystem.components.YorinCard
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
 
 @Composable
 fun StepTabContent(
@@ -65,36 +55,18 @@ fun StepTabContent(
                 )
             }
 
-            YorinCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clickable {
-                        editedRecipeSteps.add(
-                            RecipeStepEditState(
-                                id = -1,
-                                initialOrder = editedRecipeSteps.size,
-                                initialDescription = ""
-                            )
+            AddItemCard(
+                modifier = Modifier,
+                onClick = {
+                    editedRecipeSteps.add(
+                        RecipeStepEditState(
+                            id = -1,
+                            initialOrder = editedRecipeSteps.size,
+                            initialDescription = ""
                         )
-                    },
-                stroke = BorderStroke(
-                    width = 1.dp,
-                    color = YorinTheme.colors.black5
-                ),
-                backgroundColor = YorinTheme.colors.black7
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
-                        contentDescription = null
                     )
                 }
-            }
+            )
         } else {
             recipeSteps.forEach { step ->
                 RecipeStepCard(
