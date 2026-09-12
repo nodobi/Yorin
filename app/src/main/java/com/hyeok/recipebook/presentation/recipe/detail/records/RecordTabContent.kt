@@ -26,17 +26,17 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextChip
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordTabContent(
+    state: RecipeDetailUiState,
     modifier: Modifier = Modifier,
-    records: List<RecipeRecordUiModel> = listOf(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    isEditing: Boolean = true,
     onAddNewRecord: (RecipeRecordUiModel) -> Unit = {},
     onEditedRecord: (RecipeRecordUiModel) -> Unit = {}
 ) {
@@ -80,21 +80,27 @@ fun RecordTabContent(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(records) { record ->
-                if (isEditing) {
-                    EditingRecipeRecordCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        recipeRecord = record,
-                        onClick = { target ->
-                            selectedRecord = target
-                            showRecordSheet = true
-                        }
-                    )
-                } else {
-                    RecipeRecordCard(
-                        recipeRecord = record,
-                    )
+            when(state) {
+                is RecipeDetailUiState.Success -> {
+                    items(state.recipe.cookingRecords) { record ->
+                        RecipeRecordCard(
+                            recipeRecord = record,
+                        )
+                    }
                 }
+                is RecipeDetailUiState.Edit -> {
+                    items(state.editState.record) { record ->
+                        EditingRecipeRecordCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            recipeRecord = record,
+                            onClick = { target ->
+                                selectedRecord = target
+                                showRecordSheet = true
+                            }
+                        )
+                    }
+                }
+                RecipeDetailUiState.Loading -> { }
             }
         }
     }
@@ -113,8 +119,8 @@ fun RecordTabContent(
             onConfirm = { new ->
                 val newRecord = new
 
-                // 새로 추가되어 저장되지 않은 상태는 id 가 -1
-                if(new.id == -1L) {
+                // 새로 추가되어 저장되지 않은 상태는 id 가 0
+                if(new.id == 0L) {
                     onAddNewRecord(new)
                 } else {
                     onEditedRecord(new)
@@ -134,6 +140,8 @@ fun RecordTabContent(
 @Composable
 private fun RecordTabContentPreview() {
     YorinTheme {
-        RecordTabContent()
+        RecordTabContent(
+            state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake())
+        )
     }
 }

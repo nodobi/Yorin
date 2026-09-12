@@ -1,6 +1,5 @@
 package com.hyeok.recipebook.presentation.recipe.detail
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,20 +26,16 @@ class RecipeDetailViewModel @Inject constructor(
         recipeRepository.getRecipeDetailsById(it)
             .map { result ->
                 result.getOrElse {
-                    Log.d("RecipeDetailViewModel", "failed recipeRepository.getRecipeDetailsById| $it")
+                    Timber.d("failed recipeRepository.getRecipeDetailsById| $it")
                     RecipeUiModel.empty()
                 }
             }
     } ?: flowOf(RecipeUiModel.empty())
 
-    private val _uiState: MutableStateFlow<RecipeDetailUiState> = MutableStateFlow(
-        RecipeDetailUiState.fake()
-    )
+    private val _uiState = MutableStateFlow<RecipeDetailUiState>(RecipeDetailUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     fun updateIsEditing(isEditing: Boolean) {
-        _uiState.update {
-            it.copy(isEditing = isEditing)
-        }
+
     }
 }

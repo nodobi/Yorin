@@ -15,11 +15,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,13 +32,13 @@ import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
 
 @Composable
 fun IngredientsTabContent(
-    modifier: Modifier = Modifier,
-    ingredients: List<RecipeIngredientUiModel>,
-    editedIngredients: SnapshotStateList<RecipeIngredientEditState>,
-    isEditing: Boolean = false
+    state: RecipeDetailUiState,
+    modifier: Modifier = Modifier
 ) {
 
     Column(
@@ -58,28 +55,31 @@ fun IngredientsTabContent(
             style = YorinTheme.typography.body1
         )
 
-        if (isEditing) {
-            editedIngredients.forEach {
-                EditingRecipeIngredientCard(
-                    modifier = modifier.fillMaxWidth(),
-                    editState = it
-                )
-            }
-
-            AddItemCard(
-                modifier = Modifier,
-                onClick = {
-                    editedIngredients.add(RecipeIngredientEditState(id = -1))
+        when(state) {
+            is RecipeDetailUiState.Success -> {
+                state.recipe.ingredients.forEach {
+                    RecipeIngredientCard(
+                        modifier = modifier.fillMaxWidth(),
+                        recipeIngredient = it
+                    )
                 }
-            )
+            }
+            is RecipeDetailUiState.Edit -> {
+                state.editState.ingredients.forEach {
+                    EditingRecipeIngredientCard(
+                        modifier = modifier.fillMaxWidth(),
+                        editState = it
+                    )
+                }
 
-        } else {
-            ingredients.forEach {
-                RecipeIngredientCard(
-                    modifier = modifier.fillMaxWidth(),
-                    recipeIngredient = it
+                AddItemCard(
+                    modifier = Modifier,
+                    onClick = {
+                        state.editState.ingredients.add(RecipeIngredientEditState(id = -1))
+                    }
                 )
             }
+            RecipeDetailUiState.Loading -> {}
         }
     }
 }
@@ -255,12 +255,7 @@ private fun LabeledNumberTextField(
 private fun IngredientsTabContentPreview() {
     IngredientsTabContent(
         modifier = Modifier.fillMaxWidth(),
-        ingredients = listOf(
-            RecipeIngredientUiModel.dummy1,
-            RecipeIngredientUiModel.dummy2,
-        ),
-        editedIngredients = remember { mutableStateListOf() },
-        isEditing = false
+        state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake())
     )
 }
 

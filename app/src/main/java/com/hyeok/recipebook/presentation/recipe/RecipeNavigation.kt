@@ -55,15 +55,15 @@ fun NavGraphBuilder.recipeScreen(
 
         composable<Route.Recipe.Detail> { backStackEntry ->
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
-            val recipeDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             RecipeDetailRoute(
-                state = recipeDetailUiState,
+                state = state,
                 onEditRecipe = {
-                    viewModel.updateIsEditing(true)
+
                 },
-                onConfirmRecipe = {
-                    viewModel.updateIsEditing(false)
+                onCompleteEdit = {
+
                 },
             )
         }

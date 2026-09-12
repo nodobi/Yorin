@@ -55,19 +55,33 @@ import kotlinx.coroutines.launch
 fun RecipeDetailRoute(
     state: RecipeDetailUiState,
     onEditRecipe: () -> Unit,
-    onConfirmRecipe: () -> Unit
+    onCompleteEdit: () -> Unit
 ) {
-    val tabs = RecipeDetailTab.entries
-
     RecipeDetailScreen(
         state = state,
-        onClickEdit = {
-            if (state.isEditing) {
-                onConfirmRecipe()
-            } else {
-                onEditRecipe()
+        onClickAction = {
+            when(state) {
+                is RecipeDetailUiState.Success -> onEditRecipe()
+
+                is RecipeDetailUiState.Edit -> onCompleteEdit()
+
+                RecipeDetailUiState.Loading -> {}
             }
         }
+//        onStartEdit = {
+//            when(state) {
+//                is RecipeDetailUiState.Success -> {
+//                    onEditRecipe()
+//                }
+//                is RecipeDetailUiState.Edit -> {
+//                    onConfirmRecipe()
+//                }
+//                else -> {}
+//            }
+//        },
+//        onCompleteEdit = { editedState ->
+//
+//        }
     )
 }
 
@@ -77,7 +91,7 @@ fun RecipeDetailScreen(
     state: RecipeDetailUiState,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onClickEdit: () -> Unit = {}
+    onClickAction: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(0) { 3 }
     val currentPage = pagerState.currentPage
@@ -112,18 +126,10 @@ fun RecipeDetailScreen(
                 YorinText(
                     modifier = Modifier
                         .clickable {
-                            onClickEdit()
-                            editState = RecipeDetailEditState(
-                                initialName = state.recipe.name,
-                                initialCookingTime = state.recipe.cookingTime,
-                                initialPhotoUrl = state.recipe.photoUrl,
-                                initialIngredients = state.recipe.ingredients,
-                                initialStep = state.recipe.steps,
-                                initialRecord = state.recipe.cookingRecords
-                            )
+                            onClickAction()
                         },
                     text =
-                        if (state.isEditing)
+                        if (state is RecipeDetailUiState.Edit)
                             stringResource(R.string.btn_complete)
                         else
                             stringResource(R.string.btn_edit),
@@ -140,20 +146,25 @@ fun RecipeDetailScreen(
                 }
         ) {
             item {
-                if (state.isEditing) {
-                    EditingRecipeDetailHeader(
-                        modifier = Modifier.fillMaxWidth(),
-                        name = editState.name,
-                        cookingTime = editState.cookingTime,
-                        photoUrl = editState.photoUrl,
-                    )
-                } else {
-                    RecipeDetailHeader(
-                        modifier = Modifier.fillMaxWidth(),
-                        name = state.recipe.name,
-                        cookingTime = state.recipe.cookingTime,
-                        averageScore = state.recipe.averageScore,
-                    )
+                when(state) {
+                    is RecipeDetailUiState.Success -> {
+                        RecipeDetailHeader(
+                            modifier = Modifier.fillMaxWidth(),
+                            name = state.recipe.name,
+                            cookingTime = state.recipe.cookingTime,
+                            averageScore = state.recipe.averageScore,
+                        )
+                    }
+                    is RecipeDetailUiState.Edit -> {
+                        EditingRecipeDetailHeader(
+                            modifier = Modifier.fillMaxWidth(),
+                            name = editState.name,
+                            cookingTime = editState.cookingTime,
+                            photoUrl = editState.photoUrl,
+                        )
+                    }
+
+                    else -> {}
                 }
             }
             stickyHeader {
@@ -223,26 +234,20 @@ fun RecipeDetailScreen(
                         RecipeDetailTab.INGREDIENTS ->
                             IngredientsTabContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                ingredients = state.recipe.ingredients,
-                                editedIngredients = editState.ingredients,
-                                isEditing = state.isEditing
+                                state = state
                             )
 
                         RecipeDetailTab.COOKING_STEPS ->
                             StepTabContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                recipeSteps = state.recipe.steps,
-                                editedRecipeSteps = editState.steps,
-                                isEditing = state.isEditing
+                                state = state,
                             )
 
                         RecipeDetailTab.RECORD -> {
                             RecordTabContent(
                                 modifier = Modifier.fillMaxWidth(),
-                                records = state.recipe.cookingRecords,
-                                isEditing = state.isEditing,
+                                state = state,
                                 onAddNewRecord = { new ->
-
 
                                 },
                                 onEditedRecord = { edited ->
@@ -419,7 +424,7 @@ enum class RecipeDetailTab {
 private fun RecipeDetailScreenPreview() {
     YorinTheme {
         RecipeDetailScreen(
-            RecipeDetailUiState.fake()
+            state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake())
         )
     }
 }
@@ -429,7 +434,9 @@ private fun RecipeDetailScreenPreview() {
 private fun RecipeDetailEditScreenPreview() {
     YorinTheme {
         RecipeDetailScreen(
-            RecipeDetailUiState.fake().copy(isEditing = true)
+            state = RecipeDetailUiState.Success(
+                recipe = RecipeUiModel.fake()
+            )
         )
     }
 }
