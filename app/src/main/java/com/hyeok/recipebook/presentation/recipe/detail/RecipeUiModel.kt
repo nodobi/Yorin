@@ -4,6 +4,10 @@ import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredi
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 data class RecipeUiModel(
     val id: Long,
@@ -42,6 +46,19 @@ data class RecipeUiModel(
             ),
             steps = listOf(),
             cookingRecords = listOf(),
+        )
+
+        @OptIn(ExperimentalTime::class)
+        fun empty() = RecipeUiModel(
+            id = 0,
+            name = "",
+            registerDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+            cookingTime = 0,
+            averageScore = 0.0f,
+            photoUrl = null,
+            ingredients = listOf(),
+            steps = listOf(),
+            cookingRecords = listOf()
         )
     }
 }
