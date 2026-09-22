@@ -17,12 +17,12 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
 
 @Composable
 fun StepTabContent(
-    state: RecipeDetailUiState,
+    recipe: RecipeUiModel,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -39,45 +39,58 @@ fun StepTabContent(
             style = YorinTheme.typography.body1
         )
 
-        when (state) {
-            is RecipeDetailUiState.Success -> {
-                state.recipe.steps.forEach { step ->
-                    RecipeStepCard(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        recipeStepUiModel = step
-                    )
+        recipe.steps.forEach { step ->
+            RecipeStepCard(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                recipeStepUiModel = step
+            )
+        }
+    }
+}
+
+@Composable
+fun EditingStepTabContent(
+    state: RecipeDetailEditState,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp,
+                vertical = 24.dp
+            )
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        YorinText(
+            text = stringResource(R.string.recipe_detail_step_title),
+            style = YorinTheme.typography.body1
+        )
+
+        state.steps.forEach { stepEditState ->
+            EditingRecipeStepCard(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                editState = stepEditState,
+                onRemoveStep = { id ->
+
                 }
-            }
+            )
+        }
 
-            is RecipeDetailUiState.Edit -> {
-                state.editState.steps.forEach { editState ->
-                    EditingRecipeStepCard(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        editState = editState,
-                        onRemoveStep = { id ->
-
-                        }
+        AddItemCard(
+            modifier = Modifier,
+            onClick = {
+                state.steps.add(
+                    RecipeStepEditState(
+                        id = -1,
+                        initialOrder = state.steps.size,
+                        initialDescription = ""
                     )
-                }
-
-                AddItemCard(
-                    modifier = Modifier,
-                    onClick = {
-                        state.editState.steps.add(
-                            RecipeStepEditState(
-                                id = -1,
-                                initialOrder = state.editState.steps.size,
-                                initialDescription = ""
-                            )
-                        )
-                    }
                 )
             }
-
-            RecipeDetailUiState.Loading -> {}
-        }
+        )
     }
 }
 
@@ -95,18 +108,14 @@ class RecipeStepEditState(
 @Composable
 fun StepTabContentPreview() {
     StepTabContent(
-        state = RecipeDetailUiState.Success(
-            recipe = RecipeUiModel.fake()
-        )
+        recipe = RecipeUiModel.fake()
     )
 }
 
 @BackgroundPreview
 @Composable
 fun EditingStepTabContentPreview() {
-    StepTabContent(
-        state = RecipeDetailUiState.Success(
-            recipe = RecipeUiModel.fake()
-        )
+    EditingStepTabContent(
+        state = RecipeDetailEditState.fake()
     )
 }

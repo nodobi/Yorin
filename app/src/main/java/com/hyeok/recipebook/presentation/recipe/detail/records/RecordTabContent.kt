@@ -26,7 +26,7 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextChip
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordTabContent(
-    state: RecipeDetailUiState,
+    recipe: RecipeUiModel,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
     onAddNewRecord: (RecipeRecordUiModel) -> Unit = {},
@@ -80,27 +80,103 @@ fun RecordTabContent(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            when(state) {
-                is RecipeDetailUiState.Success -> {
-                    items(state.recipe.cookingRecords) { record ->
-                        RecipeRecordCard(
-                            recipeRecord = record,
-                        )
-                    }
+            items(recipe.cookingRecords) { record ->
+                RecipeRecordCard(
+                    recipeRecord = record,
+                )
+            }
+        }
+    }
+
+    if (showRecordSheet) {
+        RecipeRecordEditSheet(
+            sheetState = sheetState,
+            record = selectedRecord,
+            onDismiss = {
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    showRecordSheet = false
                 }
-                is RecipeDetailUiState.Edit -> {
-                    items(state.editState.record) { record ->
-                        EditingRecipeRecordCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            recipeRecord = record,
-                            onClick = { target ->
-                                selectedRecord = target
-                                showRecordSheet = true
-                            }
-                        )
-                    }
+            },
+            onConfirm = { new ->
+                val newRecord = new
+
+                // 새로 추가되어 저장되지 않은 상태는 id 가 0
+                if(new.id == 0L) {
+                    onAddNewRecord(new)
+                } else {
+                    onEditedRecord(new)
                 }
-                RecipeDetailUiState.Loading -> { }
+
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    showRecordSheet = false
+                }
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditRecordTabContent(
+    state: RecipeDetailEditState,
+    onAddNewRecord: (RecipeRecordUiModel) -> Unit,
+    onEditedRecord: (RecipeRecordUiModel) -> Unit,
+    modifier: Modifier = Modifier,
+    scope: CoroutineScope = rememberCoroutineScope(),
+) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    var showRecordSheet by remember { mutableStateOf(false) }
+
+    var selectedRecord: RecipeRecordUiModel? by remember { mutableStateOf(null) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 24.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            YorinText(
+                text = stringResource(R.string.recipe_detail_record_title),
+                style = YorinTheme.typography.body1
+            )
+
+            YorinTextChip(
+                text = stringResource(R.string.recipe_detail_record_add_label),
+                onClick = {
+                    selectedRecord = null
+                    showRecordSheet = true
+                },
+                shape = ChipShape.Round
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(state.record) { record ->
+                EditingRecipeRecordCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    recipeRecord = record,
+                    onClick = { target ->
+                        selectedRecord = target
+                        showRecordSheet = true
+                    }
+                )
             }
         }
     }
@@ -141,7 +217,7 @@ fun RecordTabContent(
 private fun RecordTabContentPreview() {
     YorinTheme {
         RecordTabContent(
-            state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake())
+            recipe = RecipeUiModel.fake()
         )
     }
 }

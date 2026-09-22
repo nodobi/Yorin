@@ -14,11 +14,13 @@ import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 sealed interface RecipeDetailUiState {
 
     data class Success(
-        val recipe: RecipeUiModel
+        val recipe: RecipeUiModel,
     ): RecipeDetailUiState
 
+    // TODO:: EditState 는 Viewmodel 에 유지되서는 안된다.
     data class Edit(
-        val editState: RecipeDetailEditState
+        val initialRecipe: RecipeUiModel,
+        val legacyState: RecipeDetailEditState
     ): RecipeDetailUiState
 
     object Loading: RecipeDetailUiState
@@ -26,14 +28,14 @@ sealed interface RecipeDetailUiState {
 
 class RecipeDetailEditState(
     initialName: String,
-    initialCookingTime: Int,
+    initialCookingTime: Int?,
     initialPhotoUrl: String? = null,
     initialIngredients: List<RecipeIngredientUiModel>,
     initialStep: List<RecipeStepUiModel>,
     initialRecord: List<RecipeRecordUiModel>
 ) {
     val name: TextFieldState = TextFieldState(initialName)
-    val cookingTime: TextFieldState = TextFieldState("$initialCookingTime")
+    val cookingTime: TextFieldState = TextFieldState("${initialCookingTime ?: ""}")
     var photoUrl by mutableStateOf(initialPhotoUrl)
     val ingredients = mutableStateListOf<RecipeIngredientEditState>().apply {
         addAll(initialIngredients.map { recipeIngredient ->
@@ -67,6 +69,19 @@ class RecipeDetailEditState(
                 initialIngredients = uiModel.ingredients,
                 initialStep = uiModel.steps,
                 initialRecord = uiModel.cookingRecords
+            )
+
+        fun fake(): RecipeDetailEditState =
+            RecipeDetailEditState(
+                initialName = "Recipe Name",
+                initialCookingTime = 20,
+                initialPhotoUrl = null,
+                initialIngredients = listOf(
+                    RecipeIngredientUiModel.dummy1,
+                    RecipeIngredientUiModel.dummy2
+                ),
+                initialStep = RecipeStepUiModel.fakes(),
+                initialRecord = RecipeRecordUiModel.fakes(),
             )
     }
 }
