@@ -32,15 +32,14 @@ import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
 
 @Composable
-fun IngredientsTabContent(
-    state: RecipeDetailUiState,
+fun IngredientTabContent(
+    recipe: RecipeUiModel,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier
             .padding(
@@ -55,32 +54,47 @@ fun IngredientsTabContent(
             style = YorinTheme.typography.body1
         )
 
-        when(state) {
-            is RecipeDetailUiState.Success -> {
-                state.recipe.ingredients.forEach {
-                    RecipeIngredientCard(
-                        modifier = modifier.fillMaxWidth(),
-                        recipeIngredient = it
-                    )
-                }
-            }
-            is RecipeDetailUiState.Edit -> {
-                state.editState.ingredients.forEach {
-                    EditingRecipeIngredientCard(
-                        modifier = modifier.fillMaxWidth(),
-                        editState = it
-                    )
-                }
-
-                AddItemCard(
-                    modifier = Modifier,
-                    onClick = {
-                        state.editState.ingredients.add(RecipeIngredientEditState(id = -1))
-                    }
-                )
-            }
-            RecipeDetailUiState.Loading -> {}
+        recipe.ingredients.forEach {
+            RecipeIngredientCard(
+                modifier = modifier.fillMaxWidth(),
+                recipeIngredient = it
+            )
         }
+    }
+}
+
+@Composable
+fun EditingIngredientTabContent(
+    state: RecipeDetailEditState,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(
+                horizontal = 16.dp,
+                vertical = 24.dp
+            )
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        YorinText(
+            text = stringResource(R.string.recipe_detail_ingredient_title),
+            style = YorinTheme.typography.body1
+        )
+
+        state.ingredients.forEach { ingredientEditState ->
+            EditingRecipeIngredientCard(
+                modifier = modifier.fillMaxWidth(),
+                editState = ingredientEditState
+            )
+        }
+
+        AddItemCard(
+            modifier = Modifier,
+            onClick = {
+                state.ingredients.add(RecipeIngredientEditState(id = 0))
+            }
+        )
     }
 }
 
@@ -252,17 +266,17 @@ private fun LabeledNumberTextField(
 
 @BackgroundPreview
 @Composable
-private fun IngredientsTabContentPreview() {
-    IngredientsTabContent(
-        modifier = Modifier.fillMaxWidth(),
-        state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake())
+private fun IngredientTabContentPreview() {
+    IngredientTabContent(
+        recipe = RecipeUiModel.fake(),
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
 @BackgroundPreview
 @Composable
-private fun EditingIngredientItemPreview() {
-    EditingRecipeIngredientCard(
-        editState = RecipeIngredientEditState(id = 0)
+private fun EditingIngredientTabContentPreview() {
+    EditingIngredientTabContent(
+        state = RecipeDetailEditState.fake()
     )
 }
