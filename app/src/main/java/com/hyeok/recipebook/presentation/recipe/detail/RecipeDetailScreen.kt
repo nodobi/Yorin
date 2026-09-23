@@ -60,7 +60,7 @@ fun RecipeDetailRoute(
     onCompleteEdit: () -> Unit,
     onAddRecord: (RecipeRecordUiModel) -> Unit
 ) {
-    when(state) {
+    when (state) {
         RecipeDetailUiState.Loading -> Unit
 
         is RecipeDetailUiState.Success -> RecipeDetailScreen(
@@ -120,10 +120,7 @@ private fun RecipeDetailScreen(
                     RecordTabContent(
                         modifier = Modifier.fillMaxWidth(),
                         recipe = state.recipe,
-                        onAddNewRecord = onAddNewRecord,
-                        onEditedRecord = {
-                            // TODO:: 일반 화면에서 수정하는 경우가 없음, 콜백 제거
-                        }
+                        onAddNewRecord = onAddNewRecord
                     )
                 }
             }
@@ -155,16 +152,15 @@ private fun EditingRecipeDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     state = editState
                 )
+
                 RecipeDetailTab.COOKING_STEPS -> EditingStepTabContent(
                     modifier = Modifier.fillMaxWidth(),
                     state = editState
                 )
+
                 RecipeDetailTab.RECORD -> EditingRecordTabContent(
                     modifier = Modifier.fillMaxWidth(),
                     state = editState,
-                    onAddNewRecord = {
-                        // TODO:: 수정 화면에서 추가 버튼 제거할지 고민
-                    },
                     onEditedRecord = { editedRecord ->
                         editState.record.add(
                             editedRecord
