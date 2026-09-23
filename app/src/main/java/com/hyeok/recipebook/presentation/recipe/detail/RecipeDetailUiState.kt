@@ -17,10 +17,8 @@ sealed interface RecipeDetailUiState {
         val recipe: RecipeUiModel,
     ): RecipeDetailUiState
 
-    // TODO:: EditState 는 Viewmodel 에 유지되서는 안된다.
     data class Edit(
         val initialRecipe: RecipeUiModel,
-        val legacyState: RecipeDetailEditState
     ): RecipeDetailUiState
 
     object Loading: RecipeDetailUiState
