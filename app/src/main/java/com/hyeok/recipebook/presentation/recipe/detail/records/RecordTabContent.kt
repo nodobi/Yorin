@@ -38,14 +38,11 @@ fun RecordTabContent(
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
     onAddNewRecord: (RecipeRecordUiModel) -> Unit = {},
-    onEditedRecord: (RecipeRecordUiModel) -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
     var showRecordSheet by remember { mutableStateOf(false) }
-
-    var selectedRecord: RecipeRecordUiModel? by remember { mutableStateOf(null) }
 
     Column(
         modifier = modifier
@@ -69,7 +66,6 @@ fun RecordTabContent(
             YorinTextChip(
                 text = stringResource(R.string.recipe_detail_record_add_label),
                 onClick = {
-                    selectedRecord = null
                     showRecordSheet = true
                 },
                 shape = ChipShape.Round
@@ -91,7 +87,6 @@ fun RecordTabContent(
     if (showRecordSheet) {
         RecipeRecordEditSheet(
             sheetState = sheetState,
-            record = selectedRecord,
             onDismiss = {
                 scope.launch {
                     sheetState.hide()
@@ -100,14 +95,7 @@ fun RecordTabContent(
                 }
             },
             onConfirm = { new ->
-                val newRecord = new
-
-                // 새로 추가되어 저장되지 않은 상태는 id 가 0
-                if(new.id == 0L) {
-                    onAddNewRecord(new)
-                } else {
-                    onEditedRecord(new)
-                }
+                onAddNewRecord(new)
 
                 scope.launch {
                     sheetState.hide()
@@ -123,7 +111,6 @@ fun RecordTabContent(
 @Composable
 fun EditingRecordTabContent(
     state: RecipeDetailEditState,
-    onAddNewRecord: (RecipeRecordUiModel) -> Unit,
     onEditedRecord: (RecipeRecordUiModel) -> Unit,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
@@ -146,21 +133,12 @@ fun EditingRecordTabContent(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Top
         ) {
             YorinText(
                 text = stringResource(R.string.recipe_detail_record_title),
                 style = YorinTheme.typography.body1
-            )
-
-            YorinTextChip(
-                text = stringResource(R.string.recipe_detail_record_add_label),
-                onClick = {
-                    selectedRecord = null
-                    showRecordSheet = true
-                },
-                shape = ChipShape.Round
             )
         }
 
@@ -192,15 +170,8 @@ fun EditingRecordTabContent(
                     showRecordSheet = false
                 }
             },
-            onConfirm = { new ->
-                val newRecord = new
-
-                // 새로 추가되어 저장되지 않은 상태는 id 가 0
-                if(new.id == 0L) {
-                    onAddNewRecord(new)
-                } else {
-                    onEditedRecord(new)
-                }
+            onConfirm = { edited ->
+                onEditedRecord(edited)
 
                 scope.launch {
                     sheetState.hide()
