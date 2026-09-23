@@ -57,7 +57,7 @@ import kotlinx.coroutines.launch
 fun RecipeDetailRoute(
     state: RecipeDetailUiState,
     onEditStart: () -> Unit,
-    onCompleteEdit: () -> Unit,
+    onCompleteEdit: (RecipeDetailEditState) -> Unit,
     onAddRecord: (RecipeRecordUiModel) -> Unit
 ) {
     when (state) {
@@ -78,7 +78,9 @@ fun RecipeDetailRoute(
             EditingRecipeDetailScreen(
                 modifier = Modifier,
                 editState = editState,
-                onCompleteEdit = onCompleteEdit
+                onCompleteEdit = {
+                    onCompleteEdit(editState)
+                }
             )
         }
     }
