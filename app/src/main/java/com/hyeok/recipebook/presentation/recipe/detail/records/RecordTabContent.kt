@@ -26,26 +26,23 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextChip
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordTabContent(
+    recipe: RecipeUiModel,
     modifier: Modifier = Modifier,
-    records: List<RecipeRecordUiModel> = listOf(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    isEditing: Boolean = true,
     onAddNewRecord: (RecipeRecordUiModel) -> Unit = {},
-    onEditedRecord: (RecipeRecordUiModel) -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
     var showRecordSheet by remember { mutableStateOf(false) }
-
-    var selectedRecord: RecipeRecordUiModel? by remember { mutableStateOf(null) }
 
     Column(
         modifier = modifier
@@ -69,7 +66,6 @@ fun RecordTabContent(
             YorinTextChip(
                 text = stringResource(R.string.recipe_detail_record_add_label),
                 onClick = {
-                    selectedRecord = null
                     showRecordSheet = true
                 },
                 shape = ChipShape.Round
@@ -80,21 +76,85 @@ fun RecordTabContent(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(records) { record ->
-                if (isEditing) {
-                    EditingRecipeRecordCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        recipeRecord = record,
-                        onClick = { target ->
-                            selectedRecord = target
-                            showRecordSheet = true
-                        }
-                    )
-                } else {
-                    RecipeRecordCard(
-                        recipeRecord = record,
-                    )
+            items(recipe.cookingRecords) { record ->
+                RecipeRecordCard(
+                    recipeRecord = record,
+                )
+            }
+        }
+    }
+
+    if (showRecordSheet) {
+        RecipeRecordEditSheet(
+            sheetState = sheetState,
+            onDismiss = {
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    showRecordSheet = false
                 }
+            },
+            onConfirm = { new ->
+                onAddNewRecord(new)
+
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    showRecordSheet = false
+                }
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditingRecordTabContent(
+    state: RecipeDetailEditState,
+    onEditedRecord: (RecipeRecordUiModel) -> Unit,
+    modifier: Modifier = Modifier,
+    scope: CoroutineScope = rememberCoroutineScope(),
+) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    var showRecordSheet by remember { mutableStateOf(false) }
+
+    var selectedRecord: RecipeRecordUiModel? by remember { mutableStateOf(null) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 24.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.Top
+        ) {
+            YorinText(
+                text = stringResource(R.string.recipe_detail_record_title),
+                style = YorinTheme.typography.body1
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(state.record) { record ->
+                EditingRecipeRecordCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    recipeRecord = record,
+                    onClick = { target ->
+                        selectedRecord = target
+                        showRecordSheet = true
+                    }
+                )
             }
         }
     }
@@ -110,15 +170,8 @@ fun RecordTabContent(
                     showRecordSheet = false
                 }
             },
-            onConfirm = { new ->
-                val newRecord = new
-
-                // 새로 추가되어 저장되지 않은 상태는 id 가 -1
-                if(new.id == -1L) {
-                    onAddNewRecord(new)
-                } else {
-                    onEditedRecord(new)
-                }
+            onConfirm = { edited ->
+                onEditedRecord(edited)
 
                 scope.launch {
                     sheetState.hide()
@@ -134,6 +187,8 @@ fun RecordTabContent(
 @Composable
 private fun RecordTabContentPreview() {
     YorinTheme {
-        RecordTabContent()
+        RecordTabContent(
+            recipe = RecipeUiModel.fake()
+        )
     }
 }
