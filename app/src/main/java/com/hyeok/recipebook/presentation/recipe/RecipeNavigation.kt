@@ -59,12 +59,15 @@ fun NavGraphBuilder.recipeScreen(
 
             RecipeDetailRoute(
                 state = state,
-                onEditRecipe = {
+                onEditStart = {
 
                 },
                 onCompleteEdit = {
 
                 },
+                onAddRecord = {
+
+                }
             )
         }
     }

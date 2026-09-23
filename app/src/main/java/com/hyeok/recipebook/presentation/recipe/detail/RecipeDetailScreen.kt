@@ -1,6 +1,5 @@
 package com.hyeok.recipebook.presentation.recipe.detail
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -45,8 +43,12 @@ import com.hyeok.recipebook.designsystem.components.YorinRatingBar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientsTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.ingredients.EditingIngredientTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.records.EditingRecordTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
+import com.hyeok.recipebook.presentation.recipe.detail.step.EditingStepTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,44 +56,135 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecipeDetailRoute(
     state: RecipeDetailUiState,
-    onEditRecipe: () -> Unit,
-    onCompleteEdit: () -> Unit
+    onEditStart: () -> Unit,
+    onCompleteEdit: () -> Unit,
+    onAddRecord: (RecipeRecordUiModel) -> Unit
 ) {
-    RecipeDetailScreen(
-        state = state,
-        onClickAction = {
-            when(state) {
-                is RecipeDetailUiState.Success -> onEditRecipe()
+    when(state) {
+        RecipeDetailUiState.Loading -> Unit
 
-                is RecipeDetailUiState.Edit -> onCompleteEdit()
+        is RecipeDetailUiState.Success -> RecipeDetailScreen(
+            modifier = Modifier,
+            state = state,
+            onEditStart = onEditStart,
+            onAddNewRecord = onAddRecord,
+        )
 
-                RecipeDetailUiState.Loading -> {}
+        is RecipeDetailUiState.Edit -> {
+            val editState = remember(state) {
+                RecipeDetailEditState.fromUiModel(state.initialRecipe)
             }
+
+            EditingRecipeDetailScreen(
+                modifier = Modifier,
+                editState = editState,
+                onCompleteEdit = onCompleteEdit
+            )
         }
-//        onStartEdit = {
-//            when(state) {
-//                is RecipeDetailUiState.Success -> {
-//                    onEditRecipe()
-//                }
-//                is RecipeDetailUiState.Edit -> {
-//                    onConfirmRecipe()
-//                }
-//                else -> {}
-//            }
-//        },
-//        onCompleteEdit = { editedState ->
-//
-//        }
+    }
+}
+
+@Composable
+private fun RecipeDetailScreen(
+    state: RecipeDetailUiState.Success,
+    onEditStart: () -> Unit,
+    onAddNewRecord: (RecipeRecordUiModel) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    RecipeDetailLayout(
+        modifier = modifier,
+        actionText = stringResource(R.string.btn_edit),
+        header = {
+            RecipeDetailHeader(
+                modifier = Modifier.fillMaxWidth(),
+                name = state.recipe.name,
+                cookingTime = state.recipe.cookingTime,
+                averageScore = state.recipe.averageScore,
+            )
+        },
+        pages = { page ->
+            when (page) {
+                RecipeDetailTab.INGREDIENTS ->
+                    IngredientTabContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        recipe = state.recipe
+                    )
+
+                RecipeDetailTab.COOKING_STEPS ->
+                    StepTabContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        recipe = state.recipe
+                    )
+
+                RecipeDetailTab.RECORD -> {
+                    RecordTabContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        recipe = state.recipe,
+                        onAddNewRecord = onAddNewRecord,
+                        onEditedRecord = {
+                            // TODO:: 일반 화면에서 수정하는 경우가 없음, 콜백 제거
+                        }
+                    )
+                }
+            }
+        },
+        onClickAppbarAction = onEditStart
     )
 }
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun RecipeDetailScreen(
-    state: RecipeDetailUiState,
+private fun EditingRecipeDetailScreen(
+    editState: RecipeDetailEditState,
+    modifier: Modifier = Modifier,
+    onCompleteEdit: () -> Unit = {}
+) {
+    RecipeDetailLayout(
+        modifier = modifier,
+        actionText = stringResource(R.string.btn_complete),
+        header = {
+            EditingRecipeDetailHeader(
+                modifier = Modifier.fillMaxWidth(),
+                name = editState.name,
+                cookingTime = editState.cookingTime,
+                photoUrl = editState.photoUrl,
+            )
+        },
+        pages = { page ->
+            when (page) {
+                RecipeDetailTab.INGREDIENTS -> EditingIngredientTabContent(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = editState
+                )
+                RecipeDetailTab.COOKING_STEPS -> EditingStepTabContent(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = editState
+                )
+                RecipeDetailTab.RECORD -> EditingRecordTabContent(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = editState,
+                    onAddNewRecord = {
+                        // TODO:: 수정 화면에서 추가 버튼 제거할지 고민
+                    },
+                    onEditedRecord = { editedRecord ->
+                        editState.record.add(
+                            editedRecord
+                        )
+                    },
+                )
+            }
+        },
+        onClickAppbarAction = onCompleteEdit,
+    )
+}
+
+@Composable
+private fun RecipeDetailLayout(
+    actionText: String,
+    header: @Composable () -> Unit,
+    pages: @Composable (RecipeDetailTab) -> Unit,
+    onClickAppbarAction: () -> Unit,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onClickAction: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(0) { 3 }
     val currentPage = pagerState.currentPage
@@ -101,21 +194,8 @@ fun RecipeDetailScreen(
     var tabBarHeightPx by remember { mutableIntStateOf(0) }
     var columnHeightPx by remember { mutableIntStateOf(0) }
 
-    var editState by remember {
-        mutableStateOf(
-            RecipeDetailEditState(
-                initialName = "",
-                initialCookingTime = 0,
-                initialPhotoUrl = null,
-                initialIngredients = listOf(),
-                initialStep = listOf(),
-                initialRecord = listOf()
-            )
-        )
-    }
-
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         YorinAppbar(
             modifier = Modifier.fillMaxWidth(),
@@ -126,13 +206,9 @@ fun RecipeDetailScreen(
                 YorinText(
                     modifier = Modifier
                         .clickable {
-                            onClickAction()
+                            onClickAppbarAction()
                         },
-                    text =
-                        if (state is RecipeDetailUiState.Edit)
-                            stringResource(R.string.btn_complete)
-                        else
-                            stringResource(R.string.btn_edit),
+                    text = actionText,
                     style = YorinTheme.typography.title1
                 )
             }
@@ -146,26 +222,7 @@ fun RecipeDetailScreen(
                 }
         ) {
             item {
-                when(state) {
-                    is RecipeDetailUiState.Success -> {
-                        RecipeDetailHeader(
-                            modifier = Modifier.fillMaxWidth(),
-                            name = state.recipe.name,
-                            cookingTime = state.recipe.cookingTime,
-                            averageScore = state.recipe.averageScore,
-                        )
-                    }
-                    is RecipeDetailUiState.Edit -> {
-                        EditingRecipeDetailHeader(
-                            modifier = Modifier.fillMaxWidth(),
-                            name = editState.name,
-                            cookingTime = editState.cookingTime,
-                            photoUrl = editState.photoUrl,
-                        )
-                    }
-
-                    else -> {}
-                }
+                header
             }
             stickyHeader {
                 TabRow(
@@ -217,7 +274,6 @@ fun RecipeDetailScreen(
                     }
                 }
             }
-
             item {
                 val pagerHeight = with(LocalDensity.current) {
                     (columnHeightPx - tabBarHeightPx).toDp()
@@ -230,42 +286,9 @@ fun RecipeDetailScreen(
                     state = pagerState,
                     verticalAlignment = Alignment.Top
                 ) { page ->
-                    when (tabs[page]) {
-                        RecipeDetailTab.INGREDIENTS ->
-                            IngredientsTabContent(
-                                modifier = Modifier.fillMaxWidth(),
-                                state = state
-                            )
-
-                        RecipeDetailTab.COOKING_STEPS ->
-                            StepTabContent(
-                                modifier = Modifier.fillMaxWidth(),
-                                state = state,
-                            )
-
-                        RecipeDetailTab.RECORD -> {
-                            RecordTabContent(
-                                modifier = Modifier.fillMaxWidth(),
-                                state = state,
-                                onAddNewRecord = { new ->
-
-                                },
-                                onEditedRecord = { edited ->
-                                    editState.record.map { old ->
-                                        if(old.id == edited.id)
-                                            edited
-                                        else
-                                            old
-                                    }
-                                }
-                            )
-                        }
-                    }
+                    pages(tabs[page])
                 }
-
-
             }
-
         }
     }
 }
@@ -424,7 +447,9 @@ enum class RecipeDetailTab {
 private fun RecipeDetailScreenPreview() {
     YorinTheme {
         RecipeDetailScreen(
-            state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake())
+            state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake()),
+            onEditStart = { },
+            onAddNewRecord = { },
         )
     }
 }
@@ -433,10 +458,9 @@ private fun RecipeDetailScreenPreview() {
 @Composable
 private fun RecipeDetailEditScreenPreview() {
     YorinTheme {
-        RecipeDetailScreen(
-            state = RecipeDetailUiState.Success(
-                recipe = RecipeUiModel.fake()
-            )
+        EditingRecipeDetailScreen(
+            editState = RecipeDetailEditState.fake(),
+            onCompleteEdit = { },
         )
     }
 }
