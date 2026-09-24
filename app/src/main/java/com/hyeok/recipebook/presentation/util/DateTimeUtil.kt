@@ -11,9 +11,8 @@ object DateTimeUtil {
 
     @OptIn(ExperimentalTime::class)
     fun currentLocalDate(
-        timeZone: TimeZone
+        timeZone: TimeZone = TimeZone.currentSystemDefault()
     ): LocalDate = Clock.System.now().toLocalDateTime(timeZone).date
-
 
     object Patterns {
         val YYYYMMDD = LocalDate.Format {

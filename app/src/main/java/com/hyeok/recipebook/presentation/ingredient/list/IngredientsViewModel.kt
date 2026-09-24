@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.datetime.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,7 +36,7 @@ class IngredientsViewModel @Inject constructor(
     val ingredientsUiState: StateFlow<IngredientsUiState> = combine(
         _ingredients, searchQueryFlow
     ) { ingredients, searchQuery ->
-        val currentEpochDays = DateTimeUtil.currentLocalDate(timeZone = TimeZone.currentSystemDefault()).toEpochDays()
+        val currentEpochDays = DateTimeUtil.currentLocalDate().toEpochDays()
 
         IngredientsUiState(
             ingredients = ingredients.filter { it.name.contains(searchQuery) },

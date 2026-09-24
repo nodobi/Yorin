@@ -36,7 +36,6 @@ import com.hyeok.recipebook.presentation.ingredient.component.IngredientCard
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.until
 
 @Composable
@@ -72,7 +71,7 @@ fun IngredientScreen(
     val context = LocalContext.current
 
     val expirationDates = remember(ingredientsUiState.ingredients, context) {
-        val today = DateTimeUtil.currentLocalDate(TimeZone.currentSystemDefault())
+        val today = DateTimeUtil.currentLocalDate()
         ingredientsUiState.ingredients.map {
             it.formatExpirationDate() ?:
             context.getString(R.string.ingredient_after_purchase_days, it.purchaseDate.until(today, DateTimeUnit.DAY))
