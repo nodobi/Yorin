@@ -5,6 +5,7 @@ import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -48,4 +49,12 @@ class RecipeRepositoryImpl @Inject constructor(
         .catch {
             Result.failure<RecipeUiModel>(it)
         }
+
+    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit> {
+        TODO("Not yet implemented")
+    }
 }

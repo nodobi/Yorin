@@ -60,13 +60,15 @@ fun NavGraphBuilder.recipeScreen(
             RecipeDetailRoute(
                 state = state,
                 onEditStart = {
-
+                    viewModel.updateIsEditing(true)
                 },
-                onCompleteEdit = {
-
+                onCompleteEdit = { editedRecipe ->
+                    viewModel.updateRecipe(
+                        editedRecipe
+                    )
                 },
-                onAddRecord = {
-
+                onAddRecord = { newRecord ->
+                    viewModel.addRecord(newRecord)
                 }
             )
         }
