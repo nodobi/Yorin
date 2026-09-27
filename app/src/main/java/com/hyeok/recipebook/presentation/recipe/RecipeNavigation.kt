@@ -37,6 +37,7 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipesViewModel>()
             val recipesUiState by viewModel.state.collectAsStateWithLifecycle()
 
+            // TODO:: 레시피 삭제 모달 작성 #49
             RecipeRoute(
                 recipesUiState = recipesUiState,
                 searchQueryState = viewModel.searchQueryState,
@@ -54,16 +55,19 @@ fun NavGraphBuilder.recipeScreen(
 
         composable<Route.Recipe.Detail> { backStackEntry ->
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
-            val recipeDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             RecipeDetailRoute(
-                state = recipeDetailUiState,
-                onEditRecipe = {
-                    viewModel.updateIsEditing(true)
+                state = state,
+                onEditStart = {
+
                 },
-                onConfirmRecipe = {
-                    viewModel.updateIsEditing(false)
+                onCompleteEdit = {
+
                 },
+                onAddRecord = {
+
+                }
             )
         }
     }

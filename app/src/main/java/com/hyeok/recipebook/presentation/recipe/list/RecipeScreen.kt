@@ -104,10 +104,6 @@ fun RecipeScreen(
                 onSelectFilter = onSelectFilter
             )
 
-//            RecipesFilter(
-//
-//            )
-
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -154,11 +150,6 @@ private fun SearchFilters(
             onClick = { onSelectFilter(RecipeSearchFilter.BY_INGREDIENT) }
         )
     }
-}
-
-@Composable
-fun RecipesFilter(modifier: Modifier = Modifier) {
-    // TODO:: 출시 후 추가
 }
 
 @Composable
@@ -236,7 +227,7 @@ private fun RecipeCard(
                         tint = YorinTheme.colors.main2
                     )
                     YorinText(
-                        text = "$averageScore",
+                        text = stringResource(R.string.format_score, averageScore),
                         color = YorinTheme.colors.black3,
                         style = YorinTheme.typography.caption2
                     )
@@ -269,7 +260,7 @@ private fun RecipeScreenPreview() {
                         name = "김치찌개",
                         photoUri = null,
                         ingredients = listOf("김치, 두부"),
-                        averageScore = 4.2f,
+                        averageScore = 4.2123123f,
                         cookingTime = 30
                     )
                 )

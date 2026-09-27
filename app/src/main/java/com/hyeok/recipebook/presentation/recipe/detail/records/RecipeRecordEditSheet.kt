@@ -173,7 +173,7 @@ private fun RecipeRecordEditSheetContent(
                             description = description.text.toString(),
                             score = score
                         ) ?: RecipeRecordUiModel(
-                            id = -1,
+                            id = 0,
                             cookedAt = date!!,
                             title = title.text.toString(),
                             description = description.text.toString(),

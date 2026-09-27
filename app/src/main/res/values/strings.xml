@@ -73,4 +73,8 @@
     <string name="recipe_detail_record_title_title">한줄 평</string>
     <string name="recipe_detail_record_description_title">코멘트</string>
     <string name="recipe_detail_record_score_title">맛 평가</string>
+
+
+
+    <string name="format_score">%.1f</string>
 </resources>
