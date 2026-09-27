@@ -51,7 +51,20 @@ fun RecipeIngredientModel.toUiModel(stockQuantity: Int) = RecipeIngredientUiMode
     stockQuantity = stockQuantity
 )
 
+fun RecipeIngredientUiModel.toModel() = RecipeIngredientModel(
+    id = id,
+    name = name,
+    weightUnit = unit,
+    requireQuantity = requireQuantity
+)
+
 fun RecipeStepModel.toUiModel() = RecipeStepUiModel(
+    id = id,
+    order = order,
+    description = description
+)
+
+fun RecipeStepUiModel.toModel() = RecipeStepModel(
     id = id,
     order = order,
     description = description
@@ -60,6 +73,14 @@ fun RecipeStepModel.toUiModel() = RecipeStepUiModel(
 fun RecipeRecordModel.toUiModel() = RecipeRecordUiModel(
     id = id,
     cookedAt = LocalDate.fromEpochDays(cookedAt),
+    title = title,
+    description = description,
+    score = score
+)
+
+fun RecipeRecordUiModel.toModel() = RecipeRecordModel(
+    id = id,
+    cookedAt = cookedAt.toEpochDays(),
     title = title,
     description = description,
     score = score
@@ -75,4 +96,15 @@ fun RecipeDetailsModel.toUiModel(stockQuantity: Map<String, Int>) = RecipeUiMode
     ingredients = ingredients.map { ingredient -> ingredient.toUiModel(stockQuantity[ingredient.name] ?: 0) },
     steps = steps.map(RecipeStepModel::toUiModel),
     cookingRecords = records.map(RecipeRecordModel::toUiModel)
+)
+
+fun RecipeUiModel.toModel() = RecipeDetailsModel(
+    id = id,
+    name = name,
+    registerDate = registerDate.toEpochDays(),
+    cookingTime = cookingTime,
+    photoUrl = photoUrl,
+    ingredients = ingredients.map { it.toModel() },
+    steps = steps.map { it.toModel() },
+    records = cookingRecords.map { it.toModel() }
 )

@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.data.repository.impl
 
+import com.hyeok.recipebook.data.database.model.toModel
 import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
@@ -50,11 +51,16 @@ class RecipeRepositoryImpl @Inject constructor(
             Result.failure<RecipeUiModel>(it)
         }
 
-    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Unit> = runCatching {
+        recipeLocalDataSource.upsertRecipeWithDetails(
+            recipeWithDetails = recipe.toModel()
+        )
     }
 
-    override suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit> = runCatching {
+        recipeLocalDataSource.addRecipeRecord(
+            recipeId = recipeId,
+            record = record.toModel()
+        )
     }
 }
