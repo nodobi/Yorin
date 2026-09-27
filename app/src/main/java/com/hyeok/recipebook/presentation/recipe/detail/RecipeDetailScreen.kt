@@ -349,7 +349,7 @@ private fun RecipeDetailHeader(
                 Spacer(modifier = Modifier.size(8.dp))
 
                 YorinText(
-                    text = "$averageScore",
+                    text = stringResource(R.string.format_score, averageScore),
                     color = YorinTheme.colors.main2,
                     style = YorinTheme.typography.body2
                 )
