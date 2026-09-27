@@ -220,7 +220,7 @@ private fun RecipeDetailLayout(
                 }
         ) {
             item {
-                header
+                header()
             }
             stickyHeader {
                 TabRow(
