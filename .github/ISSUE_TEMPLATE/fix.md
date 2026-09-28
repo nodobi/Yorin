@@ -1,9 +1,10 @@
 ---
-name: New feature
-about: 프로젝트에 추가한 새로운 기능
-title: "[Feature] "
-labels: new feature
+name: Fix
+about: 프로젝트에 필요한 수정사항
+title: "[Fix] "
+labels: fix
 assignees: nodobi
+
 ---
 
 ## 개요

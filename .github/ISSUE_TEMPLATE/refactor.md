@@ -1,8 +1,8 @@
 ---
-name: New feature
-about: 프로젝트에 추가한 새로운 기능
-title: "[Feature] "
-labels: new feature
+name: Refactor
+about: 기능 변경이 없는 코드 수정사항
+title: "[Refactor] "
+labels: enhancement
 assignees: nodobi
 ---
 
