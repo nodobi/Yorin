@@ -4,27 +4,34 @@ import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
 import androidx.room3.Transaction
+import androidx.room3.Upsert
 import com.hyeok.recipebook.data.database.entity.RecipeEntity
 import com.hyeok.recipebook.data.database.entity.RecipeIngredientEntity
 import com.hyeok.recipebook.data.database.entity.RecipeRecordEntity
 import com.hyeok.recipebook.data.database.entity.RecipeStepEntity
 import com.hyeok.recipebook.data.database.entity.RecipeWithDetailsRecord
+import com.hyeok.recipebook.data.database.model.RecipeIngredientModel
+import com.hyeok.recipebook.data.database.model.RecipeRecordModel
+import com.hyeok.recipebook.data.database.model.RecipeStepModel
 import com.hyeok.recipebook.data.database.model.RecipeSummaryModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
-    @Insert
-    suspend fun addRecipe(recipe: RecipeEntity)
+    @Upsert
+    suspend fun upsertRecipe(recipe: RecipeEntity): Long
+
+    @Upsert
+    suspend fun upsertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
+
+    @Upsert
+    suspend fun upsertRecipeSteps(steps: List<RecipeStepEntity>)
 
     @Insert
-    suspend fun addRecipeIngredient(ingredients: List<RecipeIngredientEntity>)
+    suspend fun insertRecipeRecord(record: RecipeRecordEntity)
 
-    @Insert
-    suspend fun addRecipeSteps(steps: List<RecipeStepEntity>)
-
-    @Insert
-    suspend fun addRecipeRecords(records: List<RecipeRecordEntity>)
+    @Upsert
+    suspend fun upsertRecipeRecords(records: List<RecipeRecordEntity>)
 
     @Query(
         """
@@ -50,4 +57,52 @@ interface RecipeDao {
     @Transaction
     @Query("SELECT * FROM recipe WHERE id = :id")
     fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord>
+
+    @Transaction
+    suspend fun upsertRecipeWithDetails(
+        recipe: RecipeEntity,
+        ingredientModels: List<RecipeIngredientModel>,
+        stepModels: List<RecipeStepModel>,
+        recordModels: List<RecipeRecordModel>,
+        weightUnitMap: Map<String, Long>
+    ) {
+        // Upsert 는 Update 동작을 수행하면 -1 을 반환
+        val recipeId = upsertRecipe(recipe).takeIf { it != -1L } ?: recipe.id
+
+        upsertRecipeIngredients(
+            ingredientModels.map { model ->
+                RecipeIngredientEntity(
+                    id = model.id,
+                    name = model.name,
+                    weightUnitId = weightUnitMap.getValue(model.weightUnit),
+                    requireQuantity = model.requireQuantity,
+                    recipeId = recipeId
+                )
+            }
+        )
+
+        upsertRecipeSteps(
+            stepModels.map { model ->
+                RecipeStepEntity(
+                    id = model.id,
+                    order = model.order,
+                    description = model.description,
+                    recipeId = recipeId
+                )
+            }
+        )
+
+        upsertRecipeRecords(
+            recordModels.map { model ->
+                RecipeRecordEntity(
+                    id = model.id,
+                    cookedAt = model.cookedAt,
+                    title = model.title,
+                    description = model.description,
+                    score = model.score,
+                    recipeId = recipeId
+                )
+            }
+        )
+    }
 }

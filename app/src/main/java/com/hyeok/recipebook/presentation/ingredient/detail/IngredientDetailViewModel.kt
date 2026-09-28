@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.until
 import javax.inject.Inject
 
@@ -50,7 +49,7 @@ class IngredientDetailViewModel @Inject constructor(
         ingredient,
         recipes
     ) { ingredient, recipes ->
-        val today = DateTimeUtil.currentLocalDate(TimeZone.currentSystemDefault())
+        val today = DateTimeUtil.currentLocalDate()
 
         val remainExpirationDays = ingredient.expirationDate?.let {
             val day = today.until(it, DateTimeUnit.DAY).toInt()
