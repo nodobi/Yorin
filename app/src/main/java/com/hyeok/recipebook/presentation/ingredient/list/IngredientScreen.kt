@@ -35,6 +35,7 @@ import com.hyeok.recipebook.presentation.ingredient.component.ExpirationWarningC
 import com.hyeok.recipebook.presentation.ingredient.component.IngredientCard
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
+import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.until
 
@@ -47,7 +48,8 @@ fun IngredientRoute(
 ) {
     IngredientScreen(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .hideKeyboardOnTapOutside(),
         searchQueryState = searchQueryState,
         ingredientsUiState = ingredientsUiState,
         onClickIngredient = { ingredient ->

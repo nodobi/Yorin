@@ -50,6 +50,7 @@ import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiMod
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.EditingStepTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
+import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -76,7 +77,8 @@ fun RecipeDetailRoute(
             }
 
             EditingRecipeDetailScreen(
-                modifier = Modifier,
+                modifier = Modifier
+                    .hideKeyboardOnTapOutside(),
                 editState = editState,
                 onCompleteEdit = {
                     onCompleteEdit(editState)

@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -21,6 +22,7 @@ import com.hyeok.recipebook.presentation.ingredient.edit.IngredientEditViewModel
 import com.hyeok.recipebook.presentation.ingredient.list.IngredientRoute
 import com.hyeok.recipebook.presentation.ingredient.list.IngredientsViewModel
 import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 
 
 fun NavController.navigateToIngredient(navOptions: NavOptions? = null) {
@@ -74,6 +76,8 @@ fun NavGraphBuilder.ingredientScreen(
             val ingredientDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             IngredientDetailSheet(
+                modifier = Modifier
+                    .hideKeyboardOnTapOutside(),
                 ingredientDetailUiState = ingredientDetailUiState,
                 onDismiss = {
                     navController.popBackStack()
@@ -99,6 +103,8 @@ fun NavGraphBuilder.ingredientScreen(
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
             IngredientEditSheet(
+                modifier = Modifier
+                    .hideKeyboardOnTapOutside(),
                 ingredientEditUiState = uiState,
                 sheetState = sheetState,
                 onDismiss = {
