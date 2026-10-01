@@ -44,7 +44,9 @@ class RecipeDetailViewModel @Inject constructor(
     private val recipeDetail: StateFlow<RecipeUiModel> = recipeDetailFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeUiModel.empty())
 
-    private val _isEditing = MutableStateFlow(false)
+    private val _isEditing = MutableStateFlow(
+        recipeId == null
+    )
 
     val uiState = recipeDetail
         .combine(_isEditing) { recipeDetail, isEditing ->
