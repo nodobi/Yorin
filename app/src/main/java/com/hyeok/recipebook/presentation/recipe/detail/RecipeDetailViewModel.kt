@@ -67,25 +67,25 @@ class RecipeDetailViewModel @Inject constructor(
     fun updateRecipe(editState: RecipeDetailEditState) {
         val recipeUiState = RecipeUiModel(
             id = recipeDetail.value.id,
-            name = editState.name.toString(),
+            name = editState.name.text.toString(),
             registerDate = DateTimeUtil.currentLocalDate(),
-            cookingTime = editState.cookingTime.toString().toInt(),
+            cookingTime = editState.cookingTime.text.toString().toInt(),
             averageScore = 0f,
             photoUrl = editState.photoUrl,
             ingredients = editState.ingredients.map { ingredientEditState ->
                 RecipeIngredientUiModel(
                     id = ingredientEditState.id,
-                    name = ingredientEditState.name.toString(),
+                    name = ingredientEditState.name.text.toString(),
                     unit = ingredientEditState.unit,
-                    requireQuantity = ingredientEditState.quantity.toString().toInt(),
+                    requireQuantity = ingredientEditState.quantity.text.toString().toInt(),
                     stockQuantity = 0
                 )
             },
             steps = editState.steps.map { stepEditState ->
                 RecipeStepUiModel(
                     id = stepEditState.id,
-                    order = stepEditState.order.toString().toInt(),
-                    description = stepEditState.description.toString()
+                    order = stepEditState.order.text.toString().toInt(),
+                    description = stepEditState.description.text.toString()
                 )
             },
             cookingRecords = editState.record.toList(),
