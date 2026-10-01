@@ -36,6 +36,7 @@ import com.hyeok.recipebook.designsystem.components.YorinRadioButton
 import com.hyeok.recipebook.designsystem.components.YorinSearchbar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 
 @Composable
 fun RecipeRoute(
@@ -47,7 +48,9 @@ fun RecipeRoute(
 ) {
 
     RecipeScreen(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .hideKeyboardOnTapOutside(),
         recipesUiState = recipesUiState,
         searchQueryState = searchQueryState,
         onAddRecipe = onAddRecipe,

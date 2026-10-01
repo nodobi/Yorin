@@ -28,6 +28,7 @@ import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -86,6 +87,8 @@ fun RecordTabContent(
 
     if (showRecordSheet) {
         RecipeRecordEditSheet(
+            modifier = Modifier
+                .hideKeyboardOnTapOutside(),
             sheetState = sheetState,
             onDismiss = {
                 scope.launch {
