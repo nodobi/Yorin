@@ -2,6 +2,7 @@ package com.hyeok.recipebook
 
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.hyeok.recipebook.data.database.AppDatabase
 import com.hyeok.recipebook.data.database.entity.RecipeEntity
 import com.hyeok.recipebook.data.database.entity.RecipeIngredientEntity
@@ -13,10 +14,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.After
-import org.junit.Assert.assertTrue
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class RecipeDaoTest {
     lateinit var db: AppDatabase
         private set
@@ -107,22 +110,22 @@ class RecipeDaoTest {
 
 
     @Test
-    fun `레시피 요약 모델 로드 테스트`() = runTest {
+    fun 레시피_요약_모델_로드_테스트() = runTest {
         val recipeSummaries = db.recipeDao().getRecipesSummaries().first()
         println(recipeSummaries)
-        assertTrue(recipeSummaries[0].rawIngredients == "재료1,재료2,재료3")
+        Assert.assertTrue(recipeSummaries[0].rawIngredients == "재료1,재료2,재료3")
     }
 
     @Test
-    fun `레시피 세부사항 로드 테스트`() = runTest {
+    fun 레시피_세부사항_로드_테스트() = runTest {
         val recipeWithDetails = db.recipeDao().getRecipeWithDetailsByRecipeId(1L).first()
         println(recipeWithDetails)
 
-        assertTrue(recipeWithDetails.records.isNotEmpty())
+        Assert.assertTrue(recipeWithDetails.records.isNotEmpty())
     }
 
     @Test
-    fun `레시피 기록 추가 테스트`() = runTest {
+    fun 레시피_기록_추가_테스트() = runTest {
         val new = RecipeRecordEntity(
             id = 2,
             cookedAt = LocalDate(2026, 10, 1).toEpochDays(),
@@ -137,7 +140,22 @@ class RecipeDaoTest {
         val recipeWithDetails = db.recipeDao().getRecipeWithDetailsByRecipeId(1L).first()
 
         println(recipeWithDetails.records)
-        assertTrue(recipeWithDetails.records.size == 2)
+        Assert.assertTrue(recipeWithDetails.records.size == 2)
+    }
+
+    @Test
+    fun 레시피_재료_추가() = runTest {
+        val new = listOf(
+            RecipeIngredientEntity(
+                id = 1,
+                name = "ingredient1",
+                weightUnitId = 1,
+                requireQuantity = 60,
+                recipeId = 1
+            )
+        )
+
+        db.recipeDao().upsertRecipeIngredients(new)
     }
 
     @After

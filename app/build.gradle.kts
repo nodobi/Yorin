@@ -61,6 +61,9 @@ dependencies {
 
     implementation(libs.datastore)
     implementation(libs.room.runtime)
+    implementation(libs.sqlite.bundled)
+    implementation(libs.sqlite.bundled.jvm)
+
     ksp(libs.room.compiler)
     implementation(libs.hilt)
     implementation(libs.androidx.lifecycle.runtime.ktx)
