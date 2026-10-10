@@ -52,7 +52,6 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqlite"}
-sqlite-bundled-jvm = { group = "androidx.sqlite", name = "sqlite-bundled-jvm", version.ref = "sqlite"}
 room-runtime = { group = "androidx.room3", name = "room3-runtime", version.ref = "room"}
 room-compiler = { group = "androidx.room3", name = "room3-compiler", version.ref = "room"}
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
