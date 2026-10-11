@@ -56,12 +56,12 @@ class RecipeLocalDataSource @Inject constructor(
 
     suspend fun upsertRecipeWithDetails(
         recipeWithDetails: RecipeDetailsModel
-    ) {
+    ): Long {
         val weightUnitMap = weightUnitDao.getAllUnits().associate { (id, unit) ->
             unit to id
         }
 
-        recipeDao.upsertRecipeWithDetails(
+        return recipeDao.upsertRecipeWithDetails(
             recipe = RecipeEntity(
                 id = recipeWithDetails.id,
                 name = recipeWithDetails.name,

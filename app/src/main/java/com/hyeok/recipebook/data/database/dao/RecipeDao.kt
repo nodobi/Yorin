@@ -109,7 +109,7 @@ interface RecipeDao {
         stepModels: List<RecipeStepModel>,
         recordModels: List<RecipeRecordModel>,
         weightUnitMap: Map<String, Long>
-    ) {
+    ): Long {
         // Upsert 는 Update 동작을 수행하면 -1 을 반환
         val recipeId = upsertRecipe(recipe).takeIf { it != -1L } ?: recipe.id
 
@@ -151,5 +151,7 @@ interface RecipeDao {
                 }
             )
         }
+
+        return recipeId
     }
 }

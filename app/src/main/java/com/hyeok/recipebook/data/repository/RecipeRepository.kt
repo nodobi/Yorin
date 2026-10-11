@@ -13,7 +13,7 @@ interface RecipeRepository {
 
     fun getRecipeDetailsById(recipeId: Long): Flow<Result<RecipeUiModel>>
 
-    suspend fun updateRecipe(recipe: RecipeUiModel): Result<Unit>
+    suspend fun updateRecipe(recipe: RecipeUiModel): Result<Long>
 
     suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit>
 }
