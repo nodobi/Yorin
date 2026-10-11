@@ -137,17 +137,19 @@ interface RecipeDao {
         )
 
         // 레시피 기록은 새로 추가되거나 삭제되지 않고 갱신만 된다.
-        upsertRecipeRecords(
-            recordModels.map { model ->
-                RecipeRecordEntity(
-                    id = model.id,
-                    cookedAt = model.cookedAt,
-                    title = model.title,
-                    description = model.description,
-                    score = model.score,
-                    recipeId = recipeId
-                )
-            }
-        )
+        if(recordModels.isNotEmpty()) {
+            upsertRecipeRecords(
+                recordModels.map { model ->
+                    RecipeRecordEntity(
+                        id = model.id,
+                        cookedAt = model.cookedAt,
+                        title = model.title,
+                        description = model.description,
+                        score = model.score,
+                        recipeId = recipeId
+                    )
+                }
+            )
+        }
     }
 }
