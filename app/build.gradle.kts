@@ -61,6 +61,7 @@ dependencies {
 
     implementation(libs.datastore)
     implementation(libs.room.runtime)
+
     ksp(libs.room.compiler)
     implementation(libs.hilt)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -99,8 +100,8 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.sqlite.bundled)
-    testImplementation(libs.sqlite.bundled.jvm)
     testImplementation(libs.coroutine.test)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.sqlite.bundled)
     androidTestImplementation(libs.androidx.espresso.core)
 }

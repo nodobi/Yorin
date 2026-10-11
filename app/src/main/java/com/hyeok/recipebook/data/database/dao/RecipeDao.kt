@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.data.database.dao
 
 import androidx.room3.Dao
+import androidx.room3.Delete
 import androidx.room3.Insert
 import androidx.room3.Query
 import androidx.room3.Transaction
@@ -24,8 +25,51 @@ interface RecipeDao {
     @Upsert
     suspend fun upsertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
 
+    @Delete
+    suspend fun deleteRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
+
+    @Query("SELECT * FROM recipe_ingredient WHERE recipeId = :recipeId")
+    suspend fun getRecipeIngredientsByRecipeId(recipeId: Long): List<RecipeIngredientEntity>
+
+    /**
+     * 레시피 재료를 새로 들어온 리스트로 교체
+     */
+    @Transaction
+    suspend fun replaceAllRecipeIngredients(newIngredients: List<RecipeIngredientEntity>) {
+        val oldIngredients = getRecipeIngredientsByRecipeId(newIngredients.first().recipeId)
+
+        // 새로운 재료에 없는 기존 재료는 삭제되어야 한다
+        val ingredientsToDelete = oldIngredients.filter { oldIngredient ->
+            newIngredients.none { it.id == oldIngredient.id }
+        }
+
+
+        deleteRecipeIngredients(ingredientsToDelete)
+
+        upsertRecipeIngredients(newIngredients)
+    }
+
     @Upsert
     suspend fun upsertRecipeSteps(steps: List<RecipeStepEntity>)
+
+    @Query("SELECT * FROM recipe_step WHERE recipeId = :recipeId")
+    suspend fun getRecipeStepsByRecipeId(recipeId: Long): List<RecipeStepEntity>
+
+    @Delete
+    suspend fun deleteRecipeSteps(steps: List<RecipeStepEntity>)
+
+    @Transaction
+    suspend fun replaceRecipeSteps(newSteps: List<RecipeStepEntity>) {
+        val savedSteps = getRecipeStepsByRecipeId(newSteps.first().recipeId)
+
+        val stepsToDelete = savedSteps.filter { oldStep ->
+            newSteps.none { it.id == oldStep.id}
+        }
+
+        deleteRecipeSteps(stepsToDelete)
+
+        upsertRecipeSteps(newSteps)
+    }
 
     @Insert
     suspend fun insertRecipeRecord(record: RecipeRecordEntity)
@@ -69,7 +113,7 @@ interface RecipeDao {
         // Upsert 는 Update 동작을 수행하면 -1 을 반환
         val recipeId = upsertRecipe(recipe).takeIf { it != -1L } ?: recipe.id
 
-        upsertRecipeIngredients(
+        replaceAllRecipeIngredients(
             ingredientModels.map { model ->
                 RecipeIngredientEntity(
                     id = model.id,
@@ -81,7 +125,7 @@ interface RecipeDao {
             }
         )
 
-        upsertRecipeSteps(
+        replaceRecipeSteps(
             stepModels.map { model ->
                 RecipeStepEntity(
                     id = model.id,
@@ -92,6 +136,7 @@ interface RecipeDao {
             }
         )
 
+        // 레시피 기록은 새로 추가되거나 삭제되지 않고 갱신만 된다.
         upsertRecipeRecords(
             recordModels.map { model ->
                 RecipeRecordEntity(
