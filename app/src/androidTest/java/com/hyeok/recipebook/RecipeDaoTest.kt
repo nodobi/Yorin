@@ -4,6 +4,7 @@ import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.hyeok.recipebook.data.database.AppDatabase
+import com.hyeok.recipebook.data.database.dao.RecipeDao
 import com.hyeok.recipebook.data.database.entity.RecipeEntity
 import com.hyeok.recipebook.data.database.entity.RecipeIngredientEntity
 import com.hyeok.recipebook.data.database.entity.RecipeRecordEntity
@@ -15,6 +16,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.After
 import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +27,8 @@ class RecipeDaoTest {
     lateinit var db: AppDatabase
         private set
 
+    lateinit var recipeDao: RecipeDao
+
     @Before
     fun createDB() {
         db = Room.inMemoryDatabaseBuilder<AppDatabase>()
@@ -32,7 +37,7 @@ class RecipeDaoTest {
 
         runBlocking {
             val weightUnitDao = db.weightUnitDao()
-            val recipeDao = db.recipeDao()
+            recipeDao = db.recipeDao()
 
             weightUnitDao.run {
                 addUnit(WeightUnitEntity(name = "g"))
@@ -111,14 +116,14 @@ class RecipeDaoTest {
 
     @Test
     fun 레시피_요약_모델_로드_테스트() = runTest {
-        val recipeSummaries = db.recipeDao().getRecipesSummaries().first()
+        val recipeSummaries = recipeDao.getRecipesSummaries().first()
         println(recipeSummaries)
         Assert.assertTrue(recipeSummaries[0].rawIngredients == "재료1,재료2,재료3")
     }
 
     @Test
     fun 레시피_세부사항_로드_테스트() = runTest {
-        val recipeWithDetails = db.recipeDao().getRecipeWithDetailsByRecipeId(1L).first()
+        val recipeWithDetails = recipeDao.getRecipeWithDetailsByRecipeId(1L).first()
         println(recipeWithDetails)
 
         Assert.assertTrue(recipeWithDetails.records.isNotEmpty())
@@ -135,16 +140,16 @@ class RecipeDaoTest {
             recipeId = 1
         )
 
-        db.recipeDao().insertRecipeRecord(new)
+        recipeDao.insertRecipeRecord(new)
 
-        val recipeWithDetails = db.recipeDao().getRecipeWithDetailsByRecipeId(1L).first()
+        val recipeWithDetails = recipeDao.getRecipeWithDetailsByRecipeId(1L).first()
 
         println(recipeWithDetails.records)
         Assert.assertTrue(recipeWithDetails.records.size == 2)
     }
 
     @Test
-    fun 레시피_재료_추가() = runTest {
+    fun 기존_재료가_입력에_없으면_삭제된다() = runTest {
         val new = listOf(
             RecipeIngredientEntity(
                 id = 1,
@@ -155,7 +160,123 @@ class RecipeDaoTest {
             )
         )
 
-        db.recipeDao().upsertRecipeIngredients(new)
+        recipeDao.replaceAllRecipeIngredients(new)
+
+        val result = recipeDao.getRecipeIngredientsByRecipeId(1)
+
+        assertEquals(
+            result,
+            new
+        )
+    }
+
+    @Test
+    fun 기존_재료가_입력에_있으면_최신화된다() = runTest {
+        val new = listOf(
+            RecipeIngredientEntity(
+                id = 1,
+                name = "UpdatedIngredient",
+                weightUnitId = 2,
+                requireQuantity = 600,
+                recipeId = 1
+            )
+        )
+
+        recipeDao.replaceAllRecipeIngredients(new)
+
+        assertEquals(
+            recipeDao.getRecipeIngredientsByRecipeId(1).find { it.id == 1L },
+            new.first()
+        )
+    }
+
+    @Test
+    fun 새로운_재료가_입력되면_추가된다() = runTest {
+        val new = recipeDao.getRecipeIngredientsByRecipeId(1) +
+                RecipeIngredientEntity(
+                    id = 0,
+                    name = "newIngredient",
+                    weightUnitId = 1,
+                    requireQuantity = 60,
+                    recipeId = 1
+                )
+
+        recipeDao.replaceAllRecipeIngredients(new)
+
+        val result = recipeDao.getRecipeIngredientsByRecipeId(1)
+
+        assertNotNull(
+            result.find { it.name == "newIngredient" }
+        )
+        assertEquals(
+            result.size,
+            new.size
+        )
+    }
+
+    @Test
+    fun 기존_순서가_입력에_없으면_삭제된다() = runTest {
+        val new = listOf(
+            RecipeStepEntity(
+                id = 1,
+                order = 1,
+                description = "updatedStep",
+                recipeId = 1,
+            )
+        )
+
+        recipeDao.replaceRecipeSteps(new)
+
+        val result = recipeDao.getRecipeStepsByRecipeId(1)
+
+        assertEquals(
+            result,
+            new
+        )
+    }
+
+    @Test
+    fun 기존_순서가_입력에_있으면_최신화된다() = runTest {
+        val new = listOf(
+            RecipeStepEntity(
+                id = 1,
+                order = 1,
+                description = "updatedStep",
+                recipeId = 1,
+            )
+        )
+
+        recipeDao.replaceRecipeSteps(new)
+
+        val result = recipeDao.getRecipeStepsByRecipeId(1)
+
+        assertEquals(
+            result.first(),
+            new.first()
+        )
+    }
+
+    @Test
+    fun 새로운_순서가_입력되면_추가된다() = runTest {
+        val new = recipeDao.getRecipeStepsByRecipeId(1) +
+                RecipeStepEntity(
+                    id = 0,
+                    order = 3,
+                    description = "newStep",
+                    recipeId = 1,
+                )
+
+        recipeDao.replaceRecipeSteps(new)
+
+        val result = recipeDao.getRecipeStepsByRecipeId(1)
+
+        assertNotNull(
+            result.find { it.description == "newStep" }
+        )
+        assertEquals(
+            result.size,
+            new.size
+        )
     }
 
     @After
