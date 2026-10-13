@@ -74,7 +74,7 @@ fun EditingStepTabContent(
                     .fillMaxWidth(),
                 editState = stepEditState,
                 onRemoveStep = { id ->
-
+                    state.steps.removeIf { it.id == id }
                 }
             )
         }
@@ -84,7 +84,7 @@ fun EditingStepTabContent(
             onClick = {
                 state.steps.add(
                     RecipeStepEditState(
-                        id = -1,
+                        id = 0,
                         initialOrder = state.steps.size,
                         initialDescription = ""
                     )
