@@ -57,6 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecipeDetailRoute(
     state: RecipeDetailUiState,
+    navigateUp: () -> Unit,
     onEditStart: () -> Unit,
     onCompleteEdit: (RecipeDetailEditState) -> Unit,
     onAddRecord: (RecipeRecordUiModel) -> Unit
@@ -67,6 +68,7 @@ fun RecipeDetailRoute(
         is RecipeDetailUiState.Success -> RecipeDetailScreen(
             modifier = Modifier,
             state = state,
+            navigateUp = navigateUp,
             onEditStart = onEditStart,
             onAddNewRecord = onAddRecord,
         )
@@ -80,6 +82,7 @@ fun RecipeDetailRoute(
                 modifier = Modifier
                     .hideKeyboardOnTapOutside(),
                 editState = editState,
+                navigateUp = navigateUp,
                 onCompleteEdit = {
                     onCompleteEdit(editState)
                 }
@@ -91,6 +94,7 @@ fun RecipeDetailRoute(
 @Composable
 private fun RecipeDetailScreen(
     state: RecipeDetailUiState.Success,
+    navigateUp: () -> Unit,
     onEditStart: () -> Unit,
     onAddNewRecord: (RecipeRecordUiModel) -> Unit,
     modifier: Modifier = Modifier
@@ -129,6 +133,7 @@ private fun RecipeDetailScreen(
                 }
             }
         },
+        navigateUp = navigateUp,
         onClickAppbarAction = onEditStart
     )
 }
@@ -137,7 +142,8 @@ private fun RecipeDetailScreen(
 private fun EditingRecipeDetailScreen(
     editState: RecipeDetailEditState,
     modifier: Modifier = Modifier,
-    onCompleteEdit: () -> Unit = {}
+    navigateUp: () -> Unit,
+    onCompleteEdit: () -> Unit
 ) {
     RecipeDetailLayout(
         modifier = modifier,
@@ -173,6 +179,7 @@ private fun EditingRecipeDetailScreen(
                 )
             }
         },
+        navigateUp = navigateUp,
         onClickAppbarAction = onCompleteEdit,
     )
 }
@@ -182,6 +189,7 @@ private fun RecipeDetailLayout(
     actionText: String,
     header: @Composable () -> Unit,
     pages: @Composable (RecipeDetailTab) -> Unit,
+    navigateUp: () -> Unit,
     onClickAppbarAction: () -> Unit,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
@@ -202,6 +210,9 @@ private fun RecipeDetailLayout(
             title = "",
             titleAlignment = Alignment.CenterStart,
             useNavigation = true,
+            navigateUp = {
+                navigateUp()
+            },
             action = {
                 YorinText(
                     modifier = Modifier
@@ -448,6 +459,7 @@ private fun RecipeDetailScreenPreview() {
     YorinTheme {
         RecipeDetailScreen(
             state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake()),
+            navigateUp = { },
             onEditStart = { },
             onAddNewRecord = { },
         )
@@ -460,6 +472,7 @@ private fun RecipeDetailEditScreenPreview() {
     YorinTheme {
         EditingRecipeDetailScreen(
             editState = RecipeDetailEditState.fake(),
+            navigateUp = { },
             onCompleteEdit = { },
         )
     }

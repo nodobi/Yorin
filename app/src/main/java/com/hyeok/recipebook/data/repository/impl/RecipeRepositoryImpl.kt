@@ -51,7 +51,7 @@ class RecipeRepositoryImpl @Inject constructor(
             Result.failure<RecipeUiModel>(it)
         }
 
-    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Unit> = runCatching {
+    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Long> = runCatching {
         recipeLocalDataSource.upsertRecipeWithDetails(
             recipeWithDetails = recipe.toModel()
         )

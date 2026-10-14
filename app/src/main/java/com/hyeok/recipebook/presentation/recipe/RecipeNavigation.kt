@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.presentation.recipe
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -11,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
+import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailViewModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
@@ -57,8 +59,25 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+            BackHandler {
+                when(state) {
+                    is RecipeDetailUiState.Loading -> Unit
+
+                    is RecipeDetailUiState.Edit -> viewModel.updateIsEditing(false)
+                    is RecipeDetailUiState.Success -> navController.navigateUp()
+                }
+            }
+
             RecipeDetailRoute(
                 state = state,
+                navigateUp = {
+                    when(state) {
+                        is RecipeDetailUiState.Loading -> Unit
+
+                        is RecipeDetailUiState.Edit -> viewModel.updateIsEditing(false)
+                        is RecipeDetailUiState.Success -> navController.navigateUp()
+                    }
+                },
                 onEditStart = {
                     viewModel.updateIsEditing(true)
                 },

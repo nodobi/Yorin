@@ -2,23 +2,30 @@ package com.hyeok.recipebook.presentation.recipe.detail.ingredients
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
@@ -85,7 +92,10 @@ fun EditingIngredientTabContent(
         state.ingredients.forEach { ingredientEditState ->
             EditingRecipeIngredientCard(
                 modifier = modifier.fillMaxWidth(),
-                editState = ingredientEditState
+                editState = ingredientEditState,
+                onRemoveIngredient = { id ->
+                    state.ingredients.removeIf { it.id == id }
+                }
             )
         }
 
@@ -115,6 +125,7 @@ class RecipeIngredientEditState(
 private fun EditingRecipeIngredientCard(
     editState: RecipeIngredientEditState,
     modifier: Modifier = Modifier,
+    onRemoveIngredient: (Long) -> Unit
 ) {
 
     // TODO:: 상수로 분리
@@ -133,12 +144,45 @@ private fun EditingRecipeIngredientCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            LabeledTextField(
-                modifier = Modifier.fillMaxWidth(),
-                state = editState.name,
-                label = stringResource(R.string.recipe_detail_ingredient_name_label),
-                placeHolder = stringResource(R.string.recipe_detail_ingredient_name_hint)
-            )
+            Column(
+                modifier = modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    YorinText(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.recipe_detail_ingredient_name_label),
+                        textAlign = TextAlign.Start,
+                        style = YorinTheme.typography.caption1,
+                        color = YorinTheme.colors.black3
+                    )
+
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                onRemoveIngredient(editState.id)
+                            },
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_close_circle),
+                        contentDescription = null,
+                        tint = YorinTheme.colors.black3
+                    )
+                }
+
+                YorinTextField(
+                    modifier = Modifier
+                        .height(36.dp)
+                        .fillMaxWidth(),
+                    state = editState.name,
+                    textStyle = YorinTheme.typography.button1,
+                    placeHolderColor = YorinTheme.colors.black3,
+                    placeHolder = stringResource(R.string.recipe_detail_ingredient_name_hint)
+                )
+            }
 
             Row(
                 modifier = Modifier
@@ -197,38 +241,6 @@ private fun EditingRecipeIngredientCard(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun LabeledTextField(
-    state: TextFieldState,
-    label: String,
-    modifier: Modifier = Modifier,
-    placeHolder: String = ""
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        YorinText(
-            modifier = Modifier
-                .fillMaxWidth(),
-            text = label,
-            textAlign = TextAlign.Start,
-            style = YorinTheme.typography.caption1,
-            color = YorinTheme.colors.black3
-        )
-
-        YorinTextField(
-            modifier = Modifier
-                .height(36.dp)
-                .fillMaxWidth(),
-            state = state,
-            textStyle = YorinTheme.typography.button1,
-            placeHolderColor = YorinTheme.colors.black3,
-            placeHolder = placeHolder
-        )
     }
 }
 
