@@ -1,6 +1,8 @@
 package com.hyeok.recipebook.presentation.recipe.component.formfield
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextFieldState.Saver.restore
+import androidx.compose.foundation.text.input.TextFieldState.Saver.save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -14,13 +16,19 @@ import com.hyeok.recipebook.data.validation.FormValidator
 import com.hyeok.recipebook.presentation.util.ext.toUiText
 
 @Stable
-class FormFieldState(
-    initialText: String,
+class FormFieldState private constructor(
+    val fieldState: TextFieldState,
     private val type: FormType
 ) {
-    val fieldState = TextFieldState(initialText)
+    constructor(
+        initialText: String,
+        type: FormType
+    ) : this(
+        fieldState = TextFieldState(initialText),
+        type = type
+    )
 
-    val text get() = fieldState.text.toString()
+    val text get() = this@FormFieldState.fieldState.text.toString()
 
     private val error by derivedStateOf { FormValidator.validate(text, type) }
 
@@ -45,10 +53,16 @@ class FormFieldState(
     companion object {
         fun saver(type: FormType) = listSaver(
             save = {
-                listOf(it.text, it.shouldShownError, it.type.toString())
+                listOf(
+                    save(it.fieldState)!!,
+                    it.shouldShownError,
+                )
             },
             restore = {
-                FormFieldState(it[0] as String, type).apply {
+                FormFieldState(
+                    fieldState = restore(it[0])!!,
+                    type
+                ).apply {
                     shouldShownError = it[1] as Boolean
                 }
             }
