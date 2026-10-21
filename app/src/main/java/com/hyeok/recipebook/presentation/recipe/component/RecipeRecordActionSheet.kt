@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.recipe.detail.records
+package com.hyeok.recipebook.presentation.recipe.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
