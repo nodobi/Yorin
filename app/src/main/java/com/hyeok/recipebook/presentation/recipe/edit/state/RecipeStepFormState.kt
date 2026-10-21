@@ -64,7 +64,7 @@ class RecipeStepFormState(
     fun isValid() = items.all { it.isValid() }
 
     companion object {
-        fun saver() = listSaver(
+        val saver = listSaver(
             save = { state ->
                 listOf(
                     state.nextId,
@@ -102,6 +102,6 @@ class RecipeStepFormState(
 @Composable
 fun rememberRecipeStepFormState(
     initial: List<RecipeStepUiModel>
-) = rememberSaveable(saver = RecipeStepFormState.saver()) {
+) = rememberSaveable(saver = RecipeStepFormState.saver) {
     RecipeStepFormState(initial = initial)
 }

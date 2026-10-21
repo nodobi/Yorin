@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.presentation.recipe.edit.state
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
@@ -42,10 +43,11 @@ class RecipeRecordState(
 
     fun remove(id: Long) {
         items.removeIf { it.id == id }
+        TextFieldState.Saver
     }
 
     companion object {
-        fun saver() = listSaver(
+        val saver = listSaver(
             save = { state ->
                 listOf(
                     state.nextId,
@@ -90,6 +92,6 @@ class RecipeRecordState(
 @Composable
 fun rememberRecipeRecordState(
     initial: List<RecipeRecordUiModel>
-) = rememberSaveable(saver = RecipeRecordState.saver()) {
+) = rememberSaveable(saver = RecipeRecordState.saver) {
     RecipeRecordState(initial = initial)
 }
