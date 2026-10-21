@@ -10,6 +10,7 @@ import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredi
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepEditState
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 
 sealed interface RecipeDetailUiState {
 

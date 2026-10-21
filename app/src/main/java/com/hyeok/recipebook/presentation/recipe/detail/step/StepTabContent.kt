@@ -18,7 +18,7 @@ import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 
 @Composable
 fun StepTabContent(

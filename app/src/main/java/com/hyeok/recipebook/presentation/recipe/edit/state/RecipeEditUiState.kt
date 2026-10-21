@@ -1,7 +1,7 @@
 package com.hyeok.recipebook.presentation.recipe.edit.state
 
 import androidx.compose.runtime.Stable
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 
 
 @Stable

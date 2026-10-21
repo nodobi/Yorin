@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailTab
+import com.hyeok.recipebook.presentation.recipe.model.RecipeDetailTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

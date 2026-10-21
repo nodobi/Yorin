@@ -1,7 +1,6 @@
 package com.hyeok.recipebook.presentation.recipe.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,33 +10,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
-import com.hyeok.recipebook.designsystem.components.YorinAppbar
 import com.hyeok.recipebook.designsystem.components.YorinNumberTextField
 import com.hyeok.recipebook.designsystem.components.YorinRatingBar
 import com.hyeok.recipebook.designsystem.components.YorinText
@@ -51,9 +35,9 @@ import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiMod
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.EditingStepTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
+import com.hyeok.recipebook.presentation.recipe.model.RecipeDetailTab
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun RecipeDetailRoute(
@@ -306,30 +290,6 @@ private fun EditingRecipeDetailHeader(
                     )
                 }
             )
-        }
-    }
-}
-
-enum class RecipeDetailTab {
-    INGREDIENTS,
-    COOKING_STEPS,
-    RECORD;
-
-    @Composable
-    fun toLabel(): String {
-        return when (this) {
-            INGREDIENTS -> stringResource(R.string.recipe_detail_tab_ingredient)
-            COOKING_STEPS -> stringResource(R.string.recipe_detail_tab_step)
-            RECORD -> stringResource(R.string.recipe_detail_tab_record)
-        }
-    }
-
-    @Composable
-    fun toImage(): ImageVector {
-        return when (this) {
-            INGREDIENTS -> ImageVector.vectorResource(R.drawable.ic_refrigerator)
-            COOKING_STEPS -> ImageVector.vectorResource(R.drawable.ic_article)
-            RECORD -> ImageVector.vectorResource(R.drawable.ic_chat_bubble)
         }
     }
 }
