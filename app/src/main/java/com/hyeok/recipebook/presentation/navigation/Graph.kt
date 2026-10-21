@@ -16,7 +16,10 @@ object Route {
         object Recipes
 
         @Serializable
-        data class Detail(val recipeId: Long?)
+        data class Detail(val recipeId: Long)
+
+        @Serializable
+        data class Edit(val recipeId: Long?)
     }
 
     @Serializable

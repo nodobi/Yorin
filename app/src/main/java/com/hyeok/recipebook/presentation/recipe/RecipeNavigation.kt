@@ -21,9 +21,17 @@ fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
     navigate(Route.Recipe.Recipes, navOptions)
 }
 
-fun NavController.navigateToRecipeDetail(navOptions: NavOptions? = null, recipeId: Long?) {
+fun NavController.navigateToRecipeDetail(navOptions: NavOptions? = null, recipeId: Long) {
     navigate(
         Route.Recipe.Detail(
+            recipeId
+        ), navOptions
+    )
+}
+
+fun NavController.navigateToRecipeEdit(navOptions: NavOptions? = null, recipeId: Long?) {
+    navigate(
+        Route.Recipe.Edit(
             recipeId
         ), navOptions
     )
@@ -44,7 +52,7 @@ fun NavGraphBuilder.recipeScreen(
                 recipesUiState = recipesUiState,
                 searchQueryState = viewModel.searchQueryState,
                 onAddRecipe = {
-                    navController.navigateToRecipeDetail(recipeId = null)
+                    navController.navigateToRecipeEdit(recipeId = null)
                 },
                 onClickRecipe = { recipeId ->
                     navController.navigateToRecipeDetail(recipeId = recipeId)
@@ -57,16 +65,8 @@ fun NavGraphBuilder.recipeScreen(
 
         composable<Route.Recipe.Detail> { backStackEntry ->
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
+            val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-            BackHandler {
-                when(state) {
-                    is RecipeDetailUiState.Loading -> Unit
-
-                    is RecipeDetailUiState.Edit -> viewModel.updateIsEditing(false)
-                    is RecipeDetailUiState.Success -> navController.navigateUp()
-                }
-            }
 
             RecipeDetailRoute(
                 state = state,
@@ -79,7 +79,7 @@ fun NavGraphBuilder.recipeScreen(
                     }
                 },
                 onEditStart = {
-                    viewModel.updateIsEditing(true)
+                    navController.navigateToRecipeEdit(recipeId = recipeId)
                 },
                 onCompleteEdit = { editedRecipe ->
                     viewModel.updateRecipe(
@@ -90,6 +90,10 @@ fun NavGraphBuilder.recipeScreen(
                     viewModel.addRecord(newRecord)
                 }
             )
+        }
+
+        composable<Route.Recipe.Edit> {
+
         }
     }
 }

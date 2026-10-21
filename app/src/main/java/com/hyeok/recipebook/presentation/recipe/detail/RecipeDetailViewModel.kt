@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -33,6 +34,7 @@ class RecipeDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _recipeId = MutableStateFlow(savedStateHandle.toRoute<Route.Recipe.Detail>().recipeId)
+    val recipeId = _recipeId.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val recipeDetailFlow: Flow<RecipeUiModel> = _recipeId.flatMapLatest { recipeId ->
