@@ -28,7 +28,6 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.RecipeDetailLayout
-import com.hyeok.recipebook.presentation.recipe.detail.ingredients.EditingIngredientTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.records.EditingRecordTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
@@ -143,10 +142,7 @@ private fun EditingRecipeDetailScreen(
         },
         pages = { page ->
             when (page) {
-                RecipeDetailTab.INGREDIENTS -> EditingIngredientTabContent(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = editState
-                )
+                RecipeDetailTab.INGREDIENTS -> {}
 
                 RecipeDetailTab.COOKING_STEPS -> EditingStepTabContent(
                     modifier = Modifier.fillMaxWidth(),
