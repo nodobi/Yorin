@@ -36,8 +36,16 @@ class RecipeIngredientItemFormState(
         initialUnit = unit
     )
 
-    var unit by mutableStateOf<String>(initialUnit.name)
+    var unit by mutableStateOf<WeightUnitUiModel>(initialUnit)
         private set
+
+    fun updateUnit(unit: WeightUnitUiModel) {
+        this.unit = unit
+    }
+
+    fun updateUnit(unit: String) {
+        this.unit = WeightUnitUiModel.valueOf(unit)
+    }
 
     fun isValid() = name.isValid && quantity.isValid
 }
@@ -91,7 +99,7 @@ class RecipeIngredientFormState(
                             it.ingredientId,
                             with(nameSaver) { save(it.name) },
                             with(quantitySaver) { save(it.quantity) },
-                            it.unit
+                            it.unit.name
                         )
                     }
                 )
@@ -124,7 +132,7 @@ fun RecipeIngredientFormState.toEditUiModel(): List<RecipeIngredientEditUiModel>
         RecipeIngredientEditUiModel(
             id = item.ingredientId,
             name = item.name.text,
-            unit = item.unit,
+            unit = item.unit.name,
             requireQuantity = item.quantity.text.toIntOrNull() ?: throw IllegalStateException("requireQuantity must be an int, ${item.quantity.text}")
         )
     }
