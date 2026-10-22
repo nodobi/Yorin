@@ -27,6 +27,8 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.RecipeDetailLayout
+import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.toEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeIngredientFormState
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeRecordState
@@ -48,9 +50,9 @@ fun RecipeEditRoute(
         is RecipeEditUiState.Success -> {
             val name = rememberTextFieldState(state.recipe.name)
             val cookingTime = rememberTextFieldState(state.recipe.cookingTime.toString())
-            var photoUrl by remember { mutableStateOf("")}
+            var photoUrl by remember { mutableStateOf("") }
 
-            val ingredientFormState = rememberRecipeIngredientFormState(state.recipe.ingredients)
+            val ingredientFormState = rememberRecipeIngredientFormState(state.recipe.ingredients.map(RecipeIngredientUiModel::toEditUiModel))
             val stepFormState = rememberRecipeStepFormState(state.recipe.steps)
             val recordState = rememberRecipeRecordState(state.recipe.cookingRecords)
 

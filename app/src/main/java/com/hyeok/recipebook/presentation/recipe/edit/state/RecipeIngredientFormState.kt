@@ -11,8 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.hyeok.recipebook.data.validation.FormType
 import com.hyeok.recipebook.presentation.recipe.component.formfield.FormFieldState
-import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.WeightUnitUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeIngredientEditUiModel
 
 @Stable
 class RecipeIngredientItemFormState(
@@ -44,18 +44,20 @@ class RecipeIngredientItemFormState(
 
 @Stable
 class RecipeIngredientFormState(
-    initial: List<RecipeIngredientUiModel>,
+    initial: List<RecipeIngredientEditUiModel>,
     private var nextId: Long = 0L
 ) {
     val items = mutableStateListOf<RecipeIngredientItemFormState>().apply {
         initial.forEach { uiModel ->
-            add(RecipeIngredientItemFormState(
-                id = nextId++,
-                ingredientId = uiModel.id,
-                name = uiModel.name,
-                quantity = uiModel.requireQuantity.toString(),
-                unit = WeightUnitUiModel.valueOf(uiModel.unit),
-            ))
+            add(
+                RecipeIngredientItemFormState(
+                    id = nextId++,
+                    ingredientId = uiModel.id,
+                    name = uiModel.name,
+                    quantity = uiModel.requireQuantity.toString(),
+                    unit = WeightUnitUiModel.valueOf(uiModel.unit),
+                )
+            )
         }
     }
 
@@ -117,9 +119,20 @@ class RecipeIngredientFormState(
     }
 }
 
+fun RecipeIngredientFormState.toEditUiModel(): List<RecipeIngredientEditUiModel> =
+    items.map { item ->
+        RecipeIngredientEditUiModel(
+            id = item.ingredientId,
+            name = item.name.text,
+            unit = item.unit,
+            requireQuantity = item.quantity.text.toIntOrNull() ?: throw IllegalStateException("requireQuantity must be an int, ${item.quantity.text}")
+        )
+    }
+
+
 @Composable
 fun rememberRecipeIngredientFormState(
-    initial: List<RecipeIngredientUiModel>
+    initial: List<RecipeIngredientEditUiModel>
 ): RecipeIngredientFormState = rememberSaveable(saver = RecipeIngredientFormState.saver) {
     RecipeIngredientFormState(initial = initial)
 }
