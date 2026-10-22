@@ -11,7 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.hyeok.recipebook.data.validation.FormType
 import com.hyeok.recipebook.presentation.recipe.component.formfield.FormFieldState
-import com.hyeok.recipebook.presentation.recipe.edit.WeightUnitUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.WeightUnitUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeIngredientEditUiModel
 
 @Stable
