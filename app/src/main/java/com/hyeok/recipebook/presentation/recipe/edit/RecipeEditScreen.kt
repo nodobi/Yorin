@@ -38,6 +38,7 @@ import com.hyeok.recipebook.presentation.recipe.edit.state.rememberRecipeRecordS
 import com.hyeok.recipebook.presentation.recipe.edit.state.rememberRecipeStepFormState
 import com.hyeok.recipebook.presentation.recipe.model.RecipeDetailTab
 import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
+import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 
 @Composable
 fun RecipeEditRoute(
@@ -49,7 +50,7 @@ fun RecipeEditRoute(
         RecipeEditUiState.Loading -> Unit
         is RecipeEditUiState.Success -> {
             val name = rememberTextFieldState(state.recipe.name)
-            val cookingTime = rememberTextFieldState(state.recipe.cookingTime.toString())
+            val cookingTime = rememberTextFieldState(state.recipe.cookingTime.let { if(it == 0) "" else it.toString() })
             var photoUrl by remember { mutableStateOf("") }
 
             val ingredientFormState = rememberRecipeIngredientFormState(state.recipe.ingredients.map(RecipeIngredientUiModel::toEditUiModel))
@@ -57,6 +58,8 @@ fun RecipeEditRoute(
             val recordState = rememberRecipeRecordState(state.recipe.cookingRecords)
 
             RecipeEditScreen(
+                modifier = Modifier
+                    .hideKeyboardOnTapOutside(),
                 name = name,
                 cookingTime = cookingTime,
                 photoUrl = photoUrl,
