@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
+import com.hyeok.recipebook.data.validation.FormValidator
 import com.hyeok.recipebook.designsystem.components.DefaultSpinnerDropdown
 import com.hyeok.recipebook.designsystem.components.DefaultSpinnerHeader
 import com.hyeok.recipebook.designsystem.components.YorinCard
@@ -180,7 +181,7 @@ private fun RecipeIngredientEditCard(
                         placeHolder = stringResource(R.string.recipe_detail_ingredient_amount_hint),
                         keyboardAction = KeyboardOptions(keyboardType = KeyboardType.Number),
                         inputTransformation = InputTransformation.byValue { current, proposed ->
-                            if (proposed.all { it.isDigit() } && proposed.length <= 8) proposed
+                            if (proposed.all { it.isDigit() } && proposed.length <= FormValidator.WEIGHT_QUANTITY_MAX.toString().length) proposed
                             else current
                         },
                     )
