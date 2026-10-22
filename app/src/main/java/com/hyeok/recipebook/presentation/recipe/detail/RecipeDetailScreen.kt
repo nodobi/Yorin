@@ -32,7 +32,6 @@ import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientTab
 import com.hyeok.recipebook.presentation.recipe.detail.records.EditingRecordTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
-import com.hyeok.recipebook.presentation.recipe.detail.step.EditingStepTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import com.hyeok.recipebook.presentation.recipe.model.RecipeDetailTab
 import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
@@ -144,10 +143,7 @@ private fun EditingRecipeDetailScreen(
             when (page) {
                 RecipeDetailTab.INGREDIENTS -> {}
 
-                RecipeDetailTab.COOKING_STEPS -> EditingStepTabContent(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = editState
-                )
+                RecipeDetailTab.COOKING_STEPS -> {}
 
                 RecipeDetailTab.RECORD -> EditingRecordTabContent(
                     modifier = Modifier.fillMaxWidth(),
