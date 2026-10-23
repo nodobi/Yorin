@@ -31,6 +31,7 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextChip
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.recipe.component.RecipeRecordActionSheet
 import com.hyeok.recipebook.presentation.recipe.component.RecipeRecordEditSheet
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeRecordState
@@ -47,7 +48,9 @@ fun RecordTabEditContent(
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
-    val sheetState = rememberModalBottomSheetState(
+    val actionSheetState = rememberModalBottomSheetState()
+
+    val editSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
@@ -87,21 +90,46 @@ fun RecordTabEditContent(
             RecipeRecordEditCard(
                 modifier = Modifier.fillMaxWidth(),
                 recipeRecord = recordState.record,
-                onClick = { target ->
-                    state.showRecordEditSheet(target)
+                onClick = {
+                    state.showRecordActionSheet(recordState)
                 }
             )
         }
+    }
+
+    if(state.isShowRecordActionSheet) {
+        RecipeRecordActionSheet(
+            modifier = Modifier,
+            sheetState = actionSheetState,
+            onDismiss = {
+                state.closeRecordActionSheet()
+            },
+            onEditRecord = {
+                state.showRecordEditSheet()
+            },
+            onRemoveRecord = {
+                state.remove()
+                state.closeRecordActionSheet()
+            },
+            onCancel = {
+                scope.launch {
+                    actionSheetState.hide()
+                }.invokeOnCompletion {
+                    state.closeRecordActionSheet()
+                }
+            },
+        )
     }
 
     if (state.isShowRecordEditSheet) {
         RecipeRecordEditSheet(
             modifier = Modifier
                 .hideKeyboardOnTapOutside(),
-            sheetState = sheetState,
+            sheetState = editSheetState,
+            record = state.itemToEdit?.record,
             onDismiss = {
                 scope.launch {
-                    sheetState.hide()
+                    editSheetState.hide()
                 }.invokeOnCompletion {
                     state.closeRecordEditSheet()
                 }
@@ -110,7 +138,7 @@ fun RecordTabEditContent(
                 state.add(new)
 
                 scope.launch {
-                    sheetState.hide()
+                    editSheetState.hide()
                 }.invokeOnCompletion {
                     state.closeRecordEditSheet()
                 }

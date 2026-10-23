@@ -5,13 +5,10 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
-import kotlinx.datetime.LocalDate
-import kotlinx.serialization.json.Json
 
 @Stable
 data class RecipeRecordItemState(
@@ -35,33 +32,60 @@ class RecipeRecordState(
         }
     }
 
-    var itemToEdit by mutableStateOf<RecipeRecordUiModel?>(null)
+    var itemToEdit by mutableStateOf<RecipeRecordItemState?>(null)
         private set
 
     var isShowRecordEditSheet by mutableStateOf(false)
         private set
 
+    var isShowRecordActionSheet by mutableStateOf(false)
+        private set
+
     fun add(record: RecipeRecordUiModel) {
-        items.add(
-            RecipeRecordItemState(
-                id = nextId++,
+        val isNewRecord = itemToEdit == null
+
+        if(isNewRecord) {
+            items.add(
+                RecipeRecordItemState(
+                    id = nextId++,
+                    record = record
+                )
+            )
+        } else {
+            val idx = items.indexOfFirst { it.id == itemToEdit!!.id }
+
+            check(idx != -1) { "Fail to find itemToEdit idx, id: ${itemToEdit!!.id}" }
+
+            items[idx] = items[idx].copy(
                 record = record
             )
-        )
+        }
     }
 
-    fun remove(id: Long) {
-        items.removeIf { it.id == id }
+    fun remove() {
+        itemToEdit?.let { itemToEdit ->
+            items.removeIf { it.id == itemToEdit.id }
+        } ?: return
     }
 
-    fun showRecordEditSheet(record: RecipeRecordUiModel? = null) {
-        itemToEdit = record
+    fun showRecordEditSheet() {
+        if(isShowRecordActionSheet) isShowRecordActionSheet = false
         isShowRecordEditSheet = true
     }
 
     fun closeRecordEditSheet() {
         itemToEdit = null
         isShowRecordEditSheet = false
+    }
+
+    fun showRecordActionSheet(item: RecipeRecordItemState?) {
+        itemToEdit = item
+        isShowRecordActionSheet = true
+    }
+
+    fun closeRecordActionSheet() {
+        itemToEdit = null
+        isShowRecordActionSheet = false
     }
 
     companion object {
@@ -75,7 +99,12 @@ class RecipeRecordState(
                             with(RecipeRecordUiModel.saver) { save(it.record) }
                         )
                     },
-                    with(RecipeRecordUiModel.saver) { state.itemToEdit?.let { save(it) } },
+                    state.itemToEdit?.let { itemToEdit ->
+                        listOf(
+                            itemToEdit.id,
+                            with(RecipeRecordUiModel.saver) { save(itemToEdit.record) },
+                        )
+                    },
                     state.isShowRecordEditSheet
                 )
             },
@@ -85,16 +114,22 @@ class RecipeRecordState(
                     nextId = it[0] as Long,
                 ).apply {
                     @Suppress("UNCHECKED_CAST")
-                    val rows = it[1] as List<List<Any>>
+                    val itemRows = it[1] as List<List<Any>>
+                    @Suppress("UNCHECKED_CAST")
+                    val itemToEditRows = it[2] as List<Any>?
 
-                    rows.forEach { row ->
+                    itemRows.forEach { row ->
                         items += RecipeRecordItemState(
                             id = row[0] as Long,
                             record = RecipeRecordUiModel.saver.restore(row[1]) as RecipeRecordUiModel
                         )
                     }
-
-                    itemToEdit = it[2]?.let { RecipeRecordUiModel.saver.restore(it) }
+                    itemToEdit = itemToEditRows?.let { row ->
+                        RecipeRecordItemState(
+                            id = row[0] as Long,
+                            record = RecipeRecordUiModel.saver.restore(row[1]) as RecipeRecordUiModel
+                        )
+                    }
                     isShowRecordEditSheet = it[3] as Boolean
                 }
             }

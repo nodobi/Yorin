@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.designsystem.components.ButtonColor
 import com.hyeok.recipebook.designsystem.components.ButtonShape
+import com.hyeok.recipebook.designsystem.components.ButtonSize
 import com.hyeok.recipebook.designsystem.components.YorinModalBottomSheet
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
@@ -22,13 +24,12 @@ import com.hyeok.recipebook.designsystem.theme.YorinTheme
 @Composable
 fun RecipeRecordActionSheet(
     modifier: Modifier = Modifier,
+    sheetState: SheetState = rememberModalBottomSheetState(),
     onDismiss: () -> Unit,
     onEditRecord: () -> Unit,
     onRemoveRecord: () -> Unit,
     onCancel: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-
     YorinModalBottomSheet(
         modifier = modifier
             .fillMaxWidth(),
@@ -61,7 +62,8 @@ private fun RecipeRecordActionContent(
             modifier = Modifier.fillMaxWidth(),
             text = "수정하기",
             onClick = onEditRecord,
-            shape = ButtonShape.Round
+            shape = ButtonShape.Round,
+            size = ButtonSize.Large
         )
 
         YorinTextButton(
@@ -69,6 +71,7 @@ private fun RecipeRecordActionContent(
             text = "삭제하기",
             onClick = onRemoveRecord,
             shape = ButtonShape.Round,
+            size = ButtonSize.Large,
             color = ButtonColor.Warning
         )
 
@@ -79,6 +82,7 @@ private fun RecipeRecordActionContent(
                 text = "취소",
                 onClick = onCancel,
                 shape = ButtonShape.Round,
+                size = ButtonSize.Large,
                 color = ButtonColor.Secondary
             )
         }
