@@ -86,78 +86,6 @@ fun RecipeRecordCard(
     }
 }
 
-@Composable
-fun EditingRecipeRecordCard(
-    recipeRecord: RecipeRecordUiModel,
-    modifier: Modifier = Modifier,
-    onClick: (RecipeRecordUiModel) -> Unit = {},
-) {
-    val recordDate = remember(recipeRecord.cookedAt) {
-        recipeRecord.cookedAt.format(LocalDate.Formats.ISO)
-    }
-
-    YorinCard(
-        modifier = modifier
-            .clickable {
-                onClick(recipeRecord)
-            },
-        stroke = BorderStroke(1.dp, YorinTheme.colors.black5)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
-                        contentDescription = null,
-                        tint = YorinTheme.colors.black3
-                    )
-                    YorinText(
-                        text = recordDate,
-                        color = YorinTheme.colors.black3,
-                        style = YorinTheme.typography.body4
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                YorinRatingBar(
-                    score = recipeRecord.score
-                )
-
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
-                    contentDescription = null,
-                    tint = YorinTheme.colors.black3
-                )
-            }
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                YorinText(
-                    text = recipeRecord.title,
-                    style = YorinTheme.typography.body4,
-                )
-                YorinText(
-                    text = recipeRecord.description,
-                    color = YorinTheme.colors.black3,
-                    style = YorinTheme.typography.body5,
-                )
-            }
-        }
-    }
-}
 
 @Preview
 @Composable
@@ -174,20 +102,3 @@ private fun RecipeRecordCardPreview() {
         )
     }
 }
-
-@Preview
-@Composable
-private fun EditingRecipeRecordCardPreview() {
-    YorinTheme {
-        EditingRecipeRecordCard(
-            RecipeRecordUiModel(
-                id = 1,
-                cookedAt = LocalDate(2026, 1, 1),
-                title = "요리 기록",
-                description = "요리 기록 내부",
-                score = 4
-            )
-        )
-    }
-}
-
