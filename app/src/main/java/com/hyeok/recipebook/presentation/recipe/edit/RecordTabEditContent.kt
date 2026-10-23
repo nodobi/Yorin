@@ -15,11 +15,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,16 +44,12 @@ import kotlinx.datetime.format
 @Composable
 fun RecordTabEditContent(
     state: RecipeRecordState,
-    onAddNewRecord: (RecipeRecordUiModel) -> Unit,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var showRecordSheet by remember { mutableStateOf(false) }
-
-    var selectedRecord: RecipeRecordUiModel? by remember { mutableStateOf(null) }
 
     LazyColumn(
         modifier = modifier
@@ -80,7 +73,7 @@ fun RecordTabEditContent(
                 YorinTextChip(
                     text = stringResource(R.string.recipe_detail_record_add_label),
                     onClick = {
-                        showRecordSheet = true
+                        state.showRecordEditSheet()
                     },
                     shape = ChipShape.Round
                 )
@@ -91,18 +84,17 @@ fun RecordTabEditContent(
             items = state.items,
             key = { it.id }
         ) { recordState ->
-            EditingRecipeRecordCard(
+            RecipeRecordEditCard(
                 modifier = Modifier.fillMaxWidth(),
                 recipeRecord = recordState.record,
                 onClick = { target ->
-                    selectedRecord = target
-                    showRecordSheet = true
+                    state.showRecordEditSheet(target)
                 }
             )
         }
     }
 
-    if (showRecordSheet) {
+    if (state.isShowRecordEditSheet) {
         RecipeRecordEditSheet(
             modifier = Modifier
                 .hideKeyboardOnTapOutside(),
@@ -111,25 +103,24 @@ fun RecordTabEditContent(
                 scope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {
-                    showRecordSheet = false
+                    state.closeRecordEditSheet()
                 }
             },
             onConfirm = { new ->
-                onAddNewRecord(new)
+                state.add(new)
 
                 scope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {
-                    showRecordSheet = false
+                    state.closeRecordEditSheet()
                 }
             }
         )
     }
 }
 
-
 @Composable
-private fun EditingRecipeRecordCard(
+private fun RecipeRecordEditCard(
     recipeRecord: RecipeRecordUiModel,
     modifier: Modifier = Modifier,
     onClick: (RecipeRecordUiModel) -> Unit = {},
@@ -199,4 +190,12 @@ private fun EditingRecipeRecordCard(
             }
         }
     }
+}
+
+@BackgroundPreview
+@Composable
+private fun RecordTabEditContentPreview() {
+    RecordTabEditContent(
+        state = RecipeRecordState(RecipeRecordUiModel.fakes())
+    )
 }
