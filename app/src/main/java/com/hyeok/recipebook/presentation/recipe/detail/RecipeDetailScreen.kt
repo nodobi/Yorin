@@ -10,22 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
-import com.hyeok.recipebook.designsystem.components.YorinNumberTextField
 import com.hyeok.recipebook.designsystem.components.YorinRatingBar
 import com.hyeok.recipebook.designsystem.components.YorinText
-import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.RecipeDetailLayout
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientTabContent
@@ -33,19 +28,17 @@ import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiMod
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.step.StepTabContent
 import com.hyeok.recipebook.presentation.recipe.model.RecipeDetailTab
-import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
-import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 
 @Composable
 fun RecipeDetailRoute(
     state: RecipeDetailUiState,
     navigateUp: () -> Unit,
     onEditStart: () -> Unit,
-    onCompleteEdit: (RecipeDetailEditState) -> Unit,
     onAddRecord: (RecipeRecordUiModel) -> Unit
 ) {
     when (state) {
         RecipeDetailUiState.Loading -> Unit
+        is RecipeDetailUiState.Edit -> Unit
 
         is RecipeDetailUiState.Success -> RecipeDetailScreen(
             modifier = Modifier,
@@ -54,22 +47,6 @@ fun RecipeDetailRoute(
             onEditStart = onEditStart,
             onAddNewRecord = onAddRecord,
         )
-
-        is RecipeDetailUiState.Edit -> {
-            val editState = remember(state) {
-                RecipeDetailEditState.fromUiModel(state.initialRecipe)
-            }
-
-            EditingRecipeDetailScreen(
-                modifier = Modifier
-                    .hideKeyboardOnTapOutside(),
-                editState = editState,
-                navigateUp = navigateUp,
-                onCompleteEdit = {
-                    onCompleteEdit(editState)
-                }
-            )
-        }
     }
 }
 
@@ -117,38 +94,6 @@ private fun RecipeDetailScreen(
         },
         navigateUp = navigateUp,
         onClickAppbarAction = onEditStart
-    )
-}
-
-@Composable
-private fun EditingRecipeDetailScreen(
-    editState: RecipeDetailEditState,
-    modifier: Modifier = Modifier,
-    navigateUp: () -> Unit,
-    onCompleteEdit: () -> Unit
-) {
-    RecipeDetailLayout(
-        modifier = modifier,
-        actionText = stringResource(R.string.btn_complete),
-        header = {
-            EditingRecipeDetailHeader(
-                modifier = Modifier.fillMaxWidth(),
-                name = editState.name,
-                cookingTime = editState.cookingTime,
-                photoUrl = editState.photoUrl,
-            )
-        },
-        pages = { page ->
-            when (page) {
-                RecipeDetailTab.INGREDIENTS -> {}
-
-                RecipeDetailTab.COOKING_STEPS -> {}
-
-                RecipeDetailTab.RECORD -> {}
-            }
-        },
-        navigateUp = navigateUp,
-        onClickAppbarAction = onCompleteEdit,
     )
 }
 
@@ -219,85 +164,3 @@ private fun RecipeDetailHeader(
     }
 }
 
-
-@Composable
-private fun EditingRecipeDetailHeader(
-    name: TextFieldState,
-    cookingTime: TextFieldState,
-    photoUrl: String?,
-    modifier: Modifier = Modifier
-) {
-
-    Column(
-        modifier = modifier
-            .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-
-        // TODO:: 이미지 로드 photoUrl 사용
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(YorinTheme.colors.black5)
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            YorinText(
-                text = "레시피 이름",
-                style = YorinTheme.typography.body2
-            )
-
-            YorinTextField(
-                state = name,
-                placeHolder = "예: 김치찌개"
-            )
-
-            YorinText(
-                text = "요리 시간(분)",
-                style = YorinTheme.typography.body2
-            )
-
-            YorinNumberTextField(
-                state = cookingTime,
-                placeHolder = "30(분)",
-                leadingIcon = {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_clock),
-                        contentDescription = null
-                    )
-                }
-            )
-        }
-    }
-}
-
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
-@Composable
-private fun RecipeDetailScreenPreview() {
-    YorinTheme {
-        RecipeDetailScreen(
-            state = RecipeDetailUiState.Success(recipe = RecipeUiModel.fake()),
-            navigateUp = { },
-            onEditStart = { },
-            onAddNewRecord = { },
-        )
-    }
-}
-
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
-@Composable
-private fun RecipeDetailEditScreenPreview() {
-    YorinTheme {
-        EditingRecipeDetailScreen(
-            editState = RecipeDetailEditState.fake(),
-            navigateUp = { },
-            onCompleteEdit = { },
-        )
-    }
-}

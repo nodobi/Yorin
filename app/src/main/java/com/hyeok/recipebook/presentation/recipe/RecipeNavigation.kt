@@ -73,19 +73,13 @@ fun NavGraphBuilder.recipeScreen(
                 state = state,
                 navigateUp = {
                     when (state) {
-                        is RecipeDetailUiState.Loading -> Unit
+                        is RecipeDetailUiState.Edit, RecipeDetailUiState.Loading -> Unit
 
-                        is RecipeDetailUiState.Edit -> viewModel.updateIsEditing(false)
                         is RecipeDetailUiState.Success -> navController.navigateUp()
                     }
                 },
                 onEditStart = {
                     navController.navigateToRecipeEdit(recipeId = recipeId)
-                },
-                onCompleteEdit = { editedRecipe ->
-                    viewModel.updateRecipe(
-                        editedRecipe
-                    )
                 },
                 onAddRecord = { newRecord ->
                     viewModel.addRecord(newRecord)
