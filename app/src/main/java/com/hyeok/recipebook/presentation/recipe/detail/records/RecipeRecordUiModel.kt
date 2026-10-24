@@ -1,7 +1,9 @@
 package com.hyeok.recipebook.presentation.recipe.detail.records
 
+import androidx.compose.runtime.saveable.listSaver
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.json.Json
 
 data class RecipeRecordUiModel(
     val id: Long,
@@ -12,6 +14,27 @@ data class RecipeRecordUiModel(
 ) {
 
     companion object {
+        val saver = listSaver(
+            save = { model ->
+                listOf(
+                    model.id,
+                    Json.encodeToString(LocalDate.serializer(), model.cookedAt),
+                    model.title,
+                    model.description,
+                    model.score
+                )
+            },
+            restore = {
+                RecipeRecordUiModel(
+                    id = it[0] as Long,
+                    cookedAt = Json.decodeFromString(LocalDate.serializer(), it[1] as String),
+                    title = it[2] as String,
+                    description = it[3] as String,
+                    score = it[4] as Int
+                )
+            }
+        )
+
         fun fake() = RecipeRecordUiModel(
             id = 1,
             cookedAt = LocalDate(2026, 9, 21),

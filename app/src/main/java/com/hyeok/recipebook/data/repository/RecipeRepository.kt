@@ -1,6 +1,6 @@
 package com.hyeok.recipebook.data.repository
 
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
 import kotlinx.coroutines.flow.Flow

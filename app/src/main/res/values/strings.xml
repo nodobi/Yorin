@@ -13,7 +13,7 @@
     <string name="btn_do_delete">삭제하기</string>
     <string name="btn_do_save">저장하기</string>
 
-
+    <!-- 최상단 메뉴 -->
     <string name="menu_home">홈</string>
     <string name="menu_recipe">레시피</string>
     <string name="menu_ingredient">재료</string>
@@ -75,6 +75,12 @@
     <string name="recipe_detail_record_score_title">맛 평가</string>
 
 
+    <!-- 입력 폼 에러 메세지 -->
+    <string name="error_ingredient_name_contains_special_char">이름에는 1~20자로 입력해야 합니다.</string>
+    <string name="error_ingredient_name_out_of_range">이름은 1~20자로 입력해야 합니다.</string>
+
+    <string name="error_weight_quantity_not_numeric">수량은 숫자로 입력해야 합니다.</string>
+    <string name="error_weight_quantity_out_of_range">수량은 10000 미만의 수로 입력해야 합니다.</string>
 
     <string name="format_score">%.1f</string>
 </resources>

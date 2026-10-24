@@ -26,8 +26,8 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextChip
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.recipe.component.RecipeRecordEditSheet
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -99,82 +99,6 @@ fun RecordTabContent(
             },
             onConfirm = { new ->
                 onAddNewRecord(new)
-
-                scope.launch {
-                    sheetState.hide()
-                }.invokeOnCompletion {
-                    showRecordSheet = false
-                }
-            }
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditingRecordTabContent(
-    state: RecipeDetailEditState,
-    onEditedRecord: (RecipeRecordUiModel) -> Unit,
-    modifier: Modifier = Modifier,
-    scope: CoroutineScope = rememberCoroutineScope(),
-) {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    var showRecordSheet by remember { mutableStateOf(false) }
-
-    var selectedRecord: RecipeRecordUiModel? by remember { mutableStateOf(null) }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 24.dp
-            ),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.Top
-        ) {
-            YorinText(
-                text = stringResource(R.string.recipe_detail_record_title),
-                style = YorinTheme.typography.body1
-            )
-        }
-
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(state.record) { record ->
-                EditingRecipeRecordCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    recipeRecord = record,
-                    onClick = { target ->
-                        selectedRecord = target
-                        showRecordSheet = true
-                    }
-                )
-            }
-        }
-    }
-
-    if (showRecordSheet) {
-        RecipeRecordEditSheet(
-            sheetState = sheetState,
-            record = selectedRecord,
-            onDismiss = {
-                scope.launch {
-                    sheetState.hide()
-                }.invokeOnCompletion {
-                    showRecordSheet = false
-                }
-            },
-            onConfirm = { edited ->
-                onEditedRecord(edited)
 
                 scope.launch {
                     sheetState.hide()

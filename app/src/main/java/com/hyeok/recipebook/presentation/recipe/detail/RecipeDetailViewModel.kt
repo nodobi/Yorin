@@ -9,6 +9,7 @@ import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -33,6 +35,7 @@ class RecipeDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _recipeId = MutableStateFlow(savedStateHandle.toRoute<Route.Recipe.Detail>().recipeId)
+    val recipeId = _recipeId.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val recipeDetailFlow: Flow<RecipeUiModel> = _recipeId.flatMapLatest { recipeId ->

@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.recipe.detail
+package com.hyeok.recipebook.presentation.recipe.model
 
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel

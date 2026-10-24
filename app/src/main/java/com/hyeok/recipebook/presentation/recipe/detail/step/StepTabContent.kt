@@ -1,24 +1,32 @@
 package com.hyeok.recipebook.presentation.recipe.detail.step
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
+import com.hyeok.recipebook.designsystem.components.YorinCard
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailEditState
-import com.hyeok.recipebook.presentation.recipe.detail.RecipeUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 
 @Composable
 fun StepTabContent(
@@ -50,46 +58,52 @@ fun StepTabContent(
 }
 
 @Composable
-fun EditingStepTabContent(
-    state: RecipeDetailEditState,
-    modifier: Modifier = Modifier
+private fun RecipeStepCard(
+    modifier: Modifier = Modifier,
+    recipeStepUiModel: RecipeStepUiModel
 ) {
-    Column(
+    YorinCard(
         modifier = modifier
-            .padding(
-                horizontal = 16.dp,
-                vertical = 24.dp
-            )
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .fillMaxWidth(),
+        stroke = BorderStroke(1.dp, YorinTheme.colors.black5)
     ) {
-        YorinText(
-            text = stringResource(R.string.recipe_detail_step_title),
-            style = YorinTheme.typography.body1
-        )
+        Row(
+            modifier = modifier
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            StepIcon(
+                modifier = Modifier.size(32.dp),
+                order = recipeStepUiModel.order
+            )
 
-        state.steps.forEach { stepEditState ->
-            EditingRecipeStepCard(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                editState = stepEditState,
-                onRemoveStep = { id ->
-                    state.steps.removeIf { it.id == id }
-                }
+            YorinText(
+                modifier = Modifier.fillMaxWidth(),
+                text = recipeStepUiModel.description,
+                style = YorinTheme.typography.body2,
             )
         }
+    }
+}
 
-        AddItemCard(
-            modifier = Modifier,
-            onClick = {
-                state.steps.add(
-                    RecipeStepEditState(
-                        id = 0,
-                        initialOrder = state.steps.size,
-                        initialDescription = ""
-                    )
-                )
-            }
+@Composable
+private fun StepIcon(
+    modifier: Modifier,
+    order: Int
+) {
+    Box(
+        modifier = modifier
+            .background(
+                color = YorinTheme.colors.black6,
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        YorinText(
+            text = "$order",
+            style = YorinTheme.typography.body4,
+            color = YorinTheme.colors.black3
         )
     }
 }
@@ -106,16 +120,19 @@ class RecipeStepEditState(
 
 @BackgroundPreview
 @Composable
-fun StepTabContentPreview() {
+private fun StepTabContentPreview() {
     StepTabContent(
         recipe = RecipeUiModel.fake()
     )
 }
 
-@BackgroundPreview
+@Preview
 @Composable
-fun EditingStepTabContentPreview() {
-    EditingStepTabContent(
-        state = RecipeDetailEditState.fake()
-    )
+private fun RecipeStepCardPreview() {
+    YorinTheme {
+        RecipeStepCard(
+            modifier = Modifier.wrapContentSize(),
+            recipeStepUiModel = RecipeStepUiModel(1, 1, "엄청나게 심오하고 특별한 조리법에 대한 글이라 아무래도 길어질 수 밖에 없다 이거지")
+        )
+    }
 }

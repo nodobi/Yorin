@@ -1,4 +1,4 @@
-package com.hyeok.recipebook.presentation.recipe.detail.records
+package com.hyeok.recipebook.presentation.recipe.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -44,6 +44,7 @@ import com.hyeok.recipebook.designsystem.components.YorinTextButton
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import com.hyeok.recipebook.presentation.util.ext.toLocalDate
 import kotlinx.datetime.LocalDate
