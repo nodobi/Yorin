@@ -1,6 +1,9 @@
 package com.hyeok.recipebook.presentation.recipe.detail.step
 
+import androidx.compose.runtime.Stable
+
 // TODO:: 순서 변경은 나중에 구현
+@Stable
 data class RecipeStepUiModel(
     val id: Long,
     val order: Int,

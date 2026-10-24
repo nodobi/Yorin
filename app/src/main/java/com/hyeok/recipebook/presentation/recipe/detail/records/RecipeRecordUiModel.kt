@@ -1,10 +1,12 @@
 package com.hyeok.recipebook.presentation.recipe.detail.records
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.listSaver
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 
+@Stable
 data class RecipeRecordUiModel(
     val id: Long,
     val cookedAt: LocalDate,
