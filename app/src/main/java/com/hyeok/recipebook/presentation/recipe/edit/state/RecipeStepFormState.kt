@@ -39,12 +39,14 @@ class RecipeStepFormState(
 ) {
     val items = mutableStateListOf<RecipeStepItemFormState>().apply {
         initial.forEach { uiModel ->
-            add(RecipeStepItemFormState(
-                id = nextId++,
-                stepId = uiModel.id,
-                order = uiModel.order,
-                description = uiModel.description
-            ))
+            add(
+                RecipeStepItemFormState(
+                    id = nextId++,
+                    stepId = uiModel.id,
+                    order = uiModel.order,
+                    description = uiModel.description
+                )
+            )
         }
     }
 
@@ -98,6 +100,15 @@ class RecipeStepFormState(
         )
     }
 }
+
+fun RecipeStepFormState.toUiModel(): List<RecipeStepUiModel> =
+    items.mapIndexed { index, state ->
+        RecipeStepUiModel(
+            id = state.stepId,
+            order = index + 1,
+            description = state.description.text.toString()
+        )
+    }
 
 @Composable
 fun rememberRecipeStepFormState(

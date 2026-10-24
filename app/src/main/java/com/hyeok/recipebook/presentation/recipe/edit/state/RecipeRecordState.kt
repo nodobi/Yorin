@@ -44,7 +44,7 @@ class RecipeRecordState(
     fun add(record: RecipeRecordUiModel) {
         val isNewRecord = itemToEdit == null
 
-        if(isNewRecord) {
+        if (isNewRecord) {
             items.add(
                 RecipeRecordItemState(
                     id = nextId++,
@@ -69,7 +69,7 @@ class RecipeRecordState(
     }
 
     fun showRecordEditSheet() {
-        if(isShowRecordActionSheet) isShowRecordActionSheet = false
+        if (isShowRecordActionSheet) isShowRecordActionSheet = false
         isShowRecordEditSheet = true
     }
 
@@ -115,6 +115,7 @@ class RecipeRecordState(
                 ).apply {
                     @Suppress("UNCHECKED_CAST")
                     val itemRows = it[1] as List<List<Any>>
+
                     @Suppress("UNCHECKED_CAST")
                     val itemToEditRows = it[2] as List<Any>?
 
@@ -136,6 +137,9 @@ class RecipeRecordState(
         )
     }
 }
+
+fun RecipeRecordState.toUiModel(): List<RecipeRecordUiModel> =
+    items.map { it.record }
 
 @Composable
 fun rememberRecipeRecordState(

@@ -11,8 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.hyeok.recipebook.data.validation.FormType
 import com.hyeok.recipebook.presentation.recipe.component.formfield.FormFieldState
-import com.hyeok.recipebook.presentation.recipe.edit.model.WeightUnitUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeIngredientEditUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.WeightUnitUiModel
 
 @Stable
 class RecipeIngredientItemFormState(
@@ -127,7 +127,7 @@ class RecipeIngredientFormState(
     }
 }
 
-fun RecipeIngredientFormState.toEditUiModel(): List<RecipeIngredientEditUiModel> =
+fun RecipeIngredientFormState.toUiModel(): List<RecipeIngredientEditUiModel> =
     items.map { item ->
         RecipeIngredientEditUiModel(
             id = item.ingredientId,
