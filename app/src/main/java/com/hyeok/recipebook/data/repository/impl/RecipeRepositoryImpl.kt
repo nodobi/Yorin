@@ -7,7 +7,9 @@ import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
 import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
+import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -51,9 +53,28 @@ class RecipeRepositoryImpl @Inject constructor(
             Result.failure<RecipeUiModel>(it)
         }
 
-    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Long> = runCatching {
-        recipeLocalDataSource.upsertRecipeWithDetails(
-            recipeWithDetails = recipe.toModel()
+    // TODO::updateRecipe, addRecipe 로 분리
+    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Long> {
+        TODO("Not yet implemented")
+    }
+
+    suspend fun updateRecipe(
+        recipeId: Long,
+        recipe: RecipeEditUiModel
+    ): Result<Long> = runCatching {
+        recipeLocalDataSource.updateRecipe(
+            recipe.toModel(
+                recipeId = recipeId
+            )
+        )
+    }
+
+    suspend fun addRecipe(
+        recipe: RecipeEditUiModel
+    ): Result<Long> = runCatching {
+        recipeLocalDataSource.addRecipe(
+            recipe.toModel(),
+            DateTimeUtil.currentLocalDate().toEpochDays()
         )
     }
 
