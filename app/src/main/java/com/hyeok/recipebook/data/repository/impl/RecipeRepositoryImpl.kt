@@ -53,12 +53,7 @@ class RecipeRepositoryImpl @Inject constructor(
             Result.failure<RecipeUiModel>(it)
         }
 
-    // TODO::updateRecipe, addRecipe 로 분리
-    override suspend fun updateRecipe(recipe: RecipeUiModel): Result<Long> {
-        TODO("Not yet implemented")
-    }
-
-    suspend fun updateRecipe(
+    override suspend fun updateRecipe(
         recipeId: Long,
         recipe: RecipeEditUiModel
     ): Result<Long> = runCatching {
@@ -69,7 +64,7 @@ class RecipeRepositoryImpl @Inject constructor(
         )
     }
 
-    suspend fun addRecipe(
+    override suspend fun addRecipe(
         recipe: RecipeEditUiModel
     ): Result<Long> = runCatching {
         recipeLocalDataSource.addRecipe(
