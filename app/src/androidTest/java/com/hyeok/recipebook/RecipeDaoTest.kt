@@ -160,7 +160,7 @@ class RecipeDaoTest {
             )
         )
 
-        recipeDao.replaceAllRecipeIngredients(new)
+        recipeDao.replaceRecipeIngredients(new)
 
         val result = recipeDao.getRecipeIngredientsByRecipeId(1)
 
@@ -182,7 +182,7 @@ class RecipeDaoTest {
             )
         )
 
-        recipeDao.replaceAllRecipeIngredients(new)
+        recipeDao.replaceRecipeIngredients(new)
 
         assertEquals(
             recipeDao.getRecipeIngredientsByRecipeId(1).find { it.id == 1L },
@@ -201,7 +201,7 @@ class RecipeDaoTest {
                     recipeId = 1
                 )
 
-        recipeDao.replaceAllRecipeIngredients(new)
+        recipeDao.replaceRecipeIngredients(new)
 
         val result = recipeDao.getRecipeIngredientsByRecipeId(1)
 

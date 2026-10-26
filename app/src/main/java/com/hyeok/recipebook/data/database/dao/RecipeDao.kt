@@ -40,6 +40,9 @@ interface RecipeDao {
         photoUrl: String?
     )
 
+    @Insert
+    suspend fun insertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
+
     @Upsert
     suspend fun upsertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
 
@@ -49,11 +52,8 @@ interface RecipeDao {
     @Query("SELECT * FROM recipe_ingredient WHERE recipeId = :recipeId")
     suspend fun getRecipeIngredientsByRecipeId(recipeId: Long): List<RecipeIngredientEntity>
 
-    /**
-     * 레시피 재료를 새로 들어온 리스트로 교체
-     */
     @Transaction
-    suspend fun replaceAllRecipeIngredients(newIngredients: List<RecipeIngredientEntity>) {
+    suspend fun replaceRecipeIngredients(newIngredients: List<RecipeIngredientEntity>) {
         val oldIngredients = getRecipeIngredientsByRecipeId(newIngredients.first().recipeId)
 
         // 새로운 재료에 없는 기존 재료는 삭제되어야 한다
@@ -66,6 +66,9 @@ interface RecipeDao {
 
         upsertRecipeIngredients(newIngredients)
     }
+
+    @Insert
+    suspend fun insertRecipeSteps(ingredients: List<RecipeStepEntity>)
 
     @Upsert
     suspend fun upsertRecipeSteps(steps: List<RecipeStepEntity>)
@@ -91,6 +94,9 @@ interface RecipeDao {
 
     @Insert
     suspend fun insertRecipeRecord(record: RecipeRecordEntity)
+
+    @Insert
+    suspend fun insertRecipeRecords(records: List<RecipeRecordEntity>)
 
     @Upsert
     suspend fun upsertRecipeRecords(records: List<RecipeRecordEntity>)
@@ -154,10 +160,9 @@ interface RecipeDao {
         )
 
         // 새 레시피에는 기존 데이터가 없으므로 교체 없이 그대로 저장
-        // TODO::Upsert 에서 insert 로 변경
-        upsertRecipeIngredients(recipe.ingredients.toEntities(recipeId, weightUnitMap))
-        upsertRecipeSteps(recipe.steps.toEntities(recipeId))
-        upsertRecipeRecords(recipe.records.toEntities(recipeId))
+        insertRecipeIngredients(recipe.ingredients.toEntities(recipeId, weightUnitMap))
+        insertRecipeSteps(recipe.steps.toEntities(recipeId))
+        insertRecipeRecords(recipe.records.toEntities(recipeId))
 
         return recipeId
     }
@@ -174,7 +179,7 @@ interface RecipeDao {
             photoUrl = recipe.photoUrl
         )
 
-        replaceAllRecipeIngredients(recipe.ingredients.toEntities(recipe.id, weightUnitMap))
+        replaceRecipeIngredients(recipe.ingredients.toEntities(recipe.id, weightUnitMap))
         replaceRecipeSteps(recipe.steps.toEntities(recipe.id))
         replaceRecipeRecords(recipe.records.toEntities(recipe.id))
     }
