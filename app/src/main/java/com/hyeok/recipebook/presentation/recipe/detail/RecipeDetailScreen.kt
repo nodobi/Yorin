@@ -38,7 +38,6 @@ fun RecipeDetailRoute(
 ) {
     when (state) {
         RecipeDetailUiState.Loading -> Unit
-        is RecipeDetailUiState.Edit -> Unit
 
         is RecipeDetailUiState.Success -> RecipeDetailScreen(
             modifier = Modifier,

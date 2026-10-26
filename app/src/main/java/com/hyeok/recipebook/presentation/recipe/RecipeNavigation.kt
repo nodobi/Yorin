@@ -75,7 +75,7 @@ fun NavGraphBuilder.recipeScreen(
                 state = state,
                 navigateUp = {
                     when (state) {
-                        is RecipeDetailUiState.Edit, RecipeDetailUiState.Loading -> Unit
+                        RecipeDetailUiState.Loading -> Unit
 
                         is RecipeDetailUiState.Success -> navController.navigateUp()
                     }
