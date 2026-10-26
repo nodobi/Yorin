@@ -16,6 +16,7 @@ sealed interface RecipeEditUiState {
         val photoUrl: String? = null,
         val ingredients: List<RecipeIngredientEditUiModel>,
         val steps: List<RecipeStepUiModel>,
-        val cookingRecords: List<RecipeRecordUiModel>
+        val cookingRecords: List<RecipeRecordUiModel>,
+        val isFinishEdit: Boolean = false,
     ) : RecipeEditUiState
 }
