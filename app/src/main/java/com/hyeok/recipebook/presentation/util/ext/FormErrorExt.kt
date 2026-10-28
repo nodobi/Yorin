@@ -12,4 +12,11 @@ fun FormError.toUiText(): String = when(this) {
     FormError.Ingredient.NameLengthOutOfRange -> stringResource(R.string.error_ingredient_name_out_of_range)
     FormError.Weight.QuantityNotNumeric -> stringResource(R.string.error_weight_quantity_not_numeric)
     FormError.Weight.QuantityOutOfRange -> stringResource(R.string.error_weight_quantity_out_of_range)
+    FormError.Recipe.CookingTimeNotNumeric -> TODO()
+    FormError.Recipe.CookingTimeOutOfRange -> TODO()
+    FormError.Recipe.NameContainsDisallowedChar -> TODO()
+    FormError.Recipe.NameLengthOutOfRange -> TODO()
+    FormError.Recipe.RecordDescriptionOutOfRange -> TODO()
+    FormError.Recipe.RecordTitleOutOfRange -> TODO()
+    FormError.Recipe.StepLengthOutOfRange -> TODO()
 }
