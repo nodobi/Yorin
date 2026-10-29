@@ -53,6 +53,11 @@
     <string name="recipe_search_filter_recipe_title">레시피로 검색</string>
     <string name="recipe_search_filter_ingredient_title">재료로 검색</string>
 
+    <string name="recipe_detail_recipe_title">레시피 이름</string>
+    <string name="recipe_detail_recipe_hint">예: 김치찌개</string>
+    <string name="recipe_detail_cooking_time_title">조리 시간(분)</string>
+    <string name="recipe_detail_cooking_time_hint">예: 30</string>
+
     <string name="recipe_detail_tab_ingredient">재료</string>
     <string name="recipe_detail_tab_step">조리 순서</string>
     <string name="recipe_detail_tab_record">기록</string>
