@@ -2,6 +2,7 @@ package com.hyeok.recipebook.data.repository
 
 import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
 import kotlinx.coroutines.flow.Flow
 
@@ -13,7 +14,9 @@ interface RecipeRepository {
 
     fun getRecipeDetailsById(recipeId: Long): Flow<Result<RecipeUiModel>>
 
-    suspend fun updateRecipe(recipe: RecipeUiModel): Result<Long>
+    suspend fun updateRecipe(recipeId: Long, recipe: RecipeEditUiModel): Result<Long>
+
+    suspend fun addRecipe(recipe: RecipeEditUiModel): Result<Long>
 
     suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit>
 }

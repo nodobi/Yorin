@@ -2,9 +2,9 @@ package com.hyeok.recipebook.data.source
 
 import com.hyeok.recipebook.data.database.dao.RecipeDao
 import com.hyeok.recipebook.data.database.dao.WeightUnitDao
-import com.hyeok.recipebook.data.database.entity.RecipeEntity
 import com.hyeok.recipebook.data.database.entity.RecipeRecordEntity
 import com.hyeok.recipebook.data.database.model.RecipeDetailsModel
+import com.hyeok.recipebook.data.database.model.RecipeEditModel
 import com.hyeok.recipebook.data.database.model.RecipeIngredientModel
 import com.hyeok.recipebook.data.database.model.RecipeRecordModel
 import com.hyeok.recipebook.data.database.model.RecipeStepModel
@@ -54,26 +54,34 @@ class RecipeLocalDataSource @Inject constructor(
             )
         }
 
-    suspend fun upsertRecipeWithDetails(
-        recipeWithDetails: RecipeDetailsModel
+    suspend fun addRecipe(
+        recipeEditModel: RecipeEditModel,
+        registerDate: Long,
     ): Long {
         val weightUnitMap = weightUnitDao.getAllUnits().associate { (id, unit) ->
             unit to id
         }
 
-        return recipeDao.upsertRecipeWithDetails(
-            recipe = RecipeEntity(
-                id = recipeWithDetails.id,
-                name = recipeWithDetails.name,
-                registerDate = recipeWithDetails.registerDate,
-                cookingTime = recipeWithDetails.cookingTime,
-                photoUrl = recipeWithDetails.photoUrl
-            ),
-            ingredientModels = recipeWithDetails.ingredients,
-            stepModels = recipeWithDetails.steps,
-            recordModels = recipeWithDetails.records,
+        return recipeDao.insertRecipeWithDetails(
+            recipe = recipeEditModel,
+            registerDate = registerDate,
             weightUnitMap = weightUnitMap,
         )
+    }
+
+    suspend fun updateRecipe(
+        recipeEditModel: RecipeEditModel
+    ): Long {
+        val weightUnitMap = weightUnitDao.getAllUnits().associate { (id, unit) ->
+            unit to id
+        }
+
+        recipeDao.updateRecipeWithDetails(
+            recipe = recipeEditModel,
+            weightUnitMap = weightUnitMap,
+        )
+
+        return recipeEditModel.id
     }
 
     suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordModel) {

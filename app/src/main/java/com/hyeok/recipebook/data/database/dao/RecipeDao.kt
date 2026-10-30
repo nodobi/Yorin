@@ -11,6 +11,7 @@ import com.hyeok.recipebook.data.database.entity.RecipeIngredientEntity
 import com.hyeok.recipebook.data.database.entity.RecipeRecordEntity
 import com.hyeok.recipebook.data.database.entity.RecipeStepEntity
 import com.hyeok.recipebook.data.database.entity.RecipeWithDetailsRecord
+import com.hyeok.recipebook.data.database.model.RecipeEditModel
 import com.hyeok.recipebook.data.database.model.RecipeIngredientModel
 import com.hyeok.recipebook.data.database.model.RecipeRecordModel
 import com.hyeok.recipebook.data.database.model.RecipeStepModel
@@ -19,8 +20,28 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
-    @Upsert
-    suspend fun upsertRecipe(recipe: RecipeEntity): Long
+    @Insert
+    suspend fun insertRecipe(recipe: RecipeEntity): Long
+
+    @Query(
+        """
+        UPDATE recipe
+        SET
+            name = :name,
+            cookingTime = :cookingTime,
+            photoUrl = :photoUrl
+        WHERE id = :id
+    """
+    )
+    suspend fun updateRecipe(
+        id: Long,
+        name: String,
+        cookingTime: Int,
+        photoUrl: String?
+    )
+
+    @Insert
+    suspend fun insertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
 
     @Upsert
     suspend fun upsertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
@@ -31,11 +52,8 @@ interface RecipeDao {
     @Query("SELECT * FROM recipe_ingredient WHERE recipeId = :recipeId")
     suspend fun getRecipeIngredientsByRecipeId(recipeId: Long): List<RecipeIngredientEntity>
 
-    /**
-     * 레시피 재료를 새로 들어온 리스트로 교체
-     */
     @Transaction
-    suspend fun replaceAllRecipeIngredients(newIngredients: List<RecipeIngredientEntity>) {
+    suspend fun replaceRecipeIngredients(newIngredients: List<RecipeIngredientEntity>) {
         val oldIngredients = getRecipeIngredientsByRecipeId(newIngredients.first().recipeId)
 
         // 새로운 재료에 없는 기존 재료는 삭제되어야 한다
@@ -48,6 +66,9 @@ interface RecipeDao {
 
         upsertRecipeIngredients(newIngredients)
     }
+
+    @Insert
+    suspend fun insertRecipeSteps(ingredients: List<RecipeStepEntity>)
 
     @Upsert
     suspend fun upsertRecipeSteps(steps: List<RecipeStepEntity>)
@@ -63,7 +84,7 @@ interface RecipeDao {
         val savedSteps = getRecipeStepsByRecipeId(newSteps.first().recipeId)
 
         val stepsToDelete = savedSteps.filter { oldStep ->
-            newSteps.none { it.id == oldStep.id}
+            newSteps.none { it.id == oldStep.id }
         }
 
         deleteRecipeSteps(stepsToDelete)
@@ -74,8 +95,29 @@ interface RecipeDao {
     @Insert
     suspend fun insertRecipeRecord(record: RecipeRecordEntity)
 
+    @Insert
+    suspend fun insertRecipeRecords(records: List<RecipeRecordEntity>)
+
     @Upsert
     suspend fun upsertRecipeRecords(records: List<RecipeRecordEntity>)
+
+    @Query("SELECT * FROM recipe_record WHERE recipeId = :recipeId")
+    suspend fun getRecipeRecordsByRecipeId(recipeId: Long): List<RecipeRecordEntity>
+
+    @Delete
+    suspend fun deleteRecipeRecords(records: List<RecipeRecordEntity>)
+
+    @Transaction
+    suspend fun replaceRecipeRecords(newRecords: List<RecipeRecordEntity>) {
+        val savedRecords = getRecipeRecordsByRecipeId(newRecords.first().recipeId)
+
+        val recordsToDelete = savedRecords.filter { oldRecord ->
+            newRecords.none { it.id == oldRecord.id }
+        }
+
+        deleteRecipeRecords(recordsToDelete)
+        upsertRecipeRecords(newRecords)
+    }
 
     @Query(
         """
@@ -103,55 +145,78 @@ interface RecipeDao {
     fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord>
 
     @Transaction
-    suspend fun upsertRecipeWithDetails(
-        recipe: RecipeEntity,
-        ingredientModels: List<RecipeIngredientModel>,
-        stepModels: List<RecipeStepModel>,
-        recordModels: List<RecipeRecordModel>,
+    suspend fun insertRecipeWithDetails(
+        recipe: RecipeEditModel,
+        registerDate: Long,
         weightUnitMap: Map<String, Long>
     ): Long {
-        // Upsert 는 Update 동작을 수행하면 -1 을 반환
-        val recipeId = upsertRecipe(recipe).takeIf { it != -1L } ?: recipe.id
-
-        replaceAllRecipeIngredients(
-            ingredientModels.map { model ->
-                RecipeIngredientEntity(
-                    id = model.id,
-                    name = model.name,
-                    weightUnitId = weightUnitMap.getValue(model.weightUnit),
-                    requireQuantity = model.requireQuantity,
-                    recipeId = recipeId
-                )
-            }
-        )
-
-        replaceRecipeSteps(
-            stepModels.map { model ->
-                RecipeStepEntity(
-                    id = model.id,
-                    order = model.order,
-                    description = model.description,
-                    recipeId = recipeId
-                )
-            }
-        )
-
-        // 레시피 기록은 새로 추가되거나 삭제되지 않고 갱신만 된다.
-        if(recordModels.isNotEmpty()) {
-            upsertRecipeRecords(
-                recordModels.map { model ->
-                    RecipeRecordEntity(
-                        id = model.id,
-                        cookedAt = model.cookedAt,
-                        title = model.title,
-                        description = model.description,
-                        score = model.score,
-                        recipeId = recipeId
-                    )
-                }
+        val recipeId = insertRecipe(
+            RecipeEntity(
+                name = recipe.name,
+                registerDate = registerDate,
+                cookingTime = recipe.cookingTime,
+                photoUrl = recipe.photoUrl
             )
-        }
+        )
+
+        // 새 레시피에는 기존 데이터가 없으므로 교체 없이 그대로 저장
+        insertRecipeIngredients(recipe.ingredients.toEntities(recipeId, weightUnitMap))
+        insertRecipeSteps(recipe.steps.toEntities(recipeId))
+        insertRecipeRecords(recipe.records.toEntities(recipeId))
 
         return recipeId
     }
+
+    @Transaction
+    suspend fun updateRecipeWithDetails(
+        recipe: RecipeEditModel,
+        weightUnitMap: Map<String, Long>
+    ) {
+        updateRecipe(
+            id = recipe.id,
+            name = recipe.name,
+            cookingTime = recipe.cookingTime,
+            photoUrl = recipe.photoUrl
+        )
+
+        replaceRecipeIngredients(recipe.ingredients.toEntities(recipe.id, weightUnitMap))
+        replaceRecipeSteps(recipe.steps.toEntities(recipe.id))
+        replaceRecipeRecords(recipe.records.toEntities(recipe.id))
+    }
+}
+
+@JvmName("ingredientModelToEntities")
+private fun List<RecipeIngredientModel>.toEntities(
+    recipeId: Long,
+    weightUnitMap: Map<String, Long>
+) = map { model ->
+    RecipeIngredientEntity(
+        id = model.id,
+        name = model.name,
+        weightUnitId = weightUnitMap.getValue(model.weightUnit),
+        requireQuantity = model.requireQuantity,
+        recipeId = recipeId
+    )
+}
+
+@JvmName("stepModelToEntities")
+private fun List<RecipeStepModel>.toEntities(recipeId: Long) = map { model ->
+    RecipeStepEntity(
+        id = model.id,
+        order = model.order,
+        description = model.description,
+        recipeId = recipeId
+    )
+}
+
+@JvmName("recordModelToEntities")
+private fun List<RecipeRecordModel>.toEntities(recipeId: Long) = map { model ->
+    RecipeRecordEntity(
+        id = model.id,
+        cookedAt = model.cookedAt,
+        title = model.title,
+        description = model.description,
+        score = model.score,
+        recipeId = recipeId
+    )
 }

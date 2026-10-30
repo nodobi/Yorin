@@ -27,8 +27,7 @@ import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.RecipeDetailLayout
-import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
-import com.hyeok.recipebook.presentation.recipe.edit.model.toEditUiModel
+import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeIngredientFormState
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeRecordState
@@ -36,26 +35,26 @@ import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeStepFormState
 import com.hyeok.recipebook.presentation.recipe.edit.state.rememberRecipeIngredientFormState
 import com.hyeok.recipebook.presentation.recipe.edit.state.rememberRecipeRecordState
 import com.hyeok.recipebook.presentation.recipe.edit.state.rememberRecipeStepFormState
+import com.hyeok.recipebook.presentation.recipe.edit.state.toUiModel
 import com.hyeok.recipebook.presentation.recipe.model.RecipeDetailTab
-import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
 
 @Composable
 fun RecipeEditRoute(
     state: RecipeEditUiState,
     navigateUp: () -> Unit,
-    onCompleteEdit: (RecipeUiModel) -> Unit
+    onCompleteEdit: (RecipeEditUiModel) -> Unit
 ) {
     when (state) {
         RecipeEditUiState.Loading -> Unit
         is RecipeEditUiState.Success -> {
-            val name = rememberTextFieldState(state.recipe.name)
-            val cookingTime = rememberTextFieldState(state.recipe.cookingTime.let { if(it == 0) "" else it.toString() })
-            var photoUrl by remember { mutableStateOf("") }
+            val name = rememberTextFieldState(state.name)
+            val cookingTime = rememberTextFieldState(state.cookingTime?.toString() ?: "")
+            var photoUrl by remember { mutableStateOf(state.photoUrl) }
 
-            val ingredientFormState = rememberRecipeIngredientFormState(state.recipe.ingredients.map(RecipeIngredientUiModel::toEditUiModel))
-            val stepFormState = rememberRecipeStepFormState(state.recipe.steps)
-            val recordState = rememberRecipeRecordState(state.recipe.cookingRecords)
+            val ingredientFormState = rememberRecipeIngredientFormState(state.ingredients)
+            val stepFormState = rememberRecipeStepFormState(state.steps)
+            val recordState = rememberRecipeRecordState(state.cookingRecords)
 
             RecipeEditScreen(
                 modifier = Modifier
@@ -68,14 +67,21 @@ fun RecipeEditRoute(
                 recordState = recordState,
                 navigateUp = navigateUp,
                 onCompleteEdit = {
-                    onCompleteEdit(
-                        state.recipe.copy(
-                            name = name.text.toString(),
-                            cookingTime = cookingTime.text.toString().toInt(),
-                            photoUrl = photoUrl
-                            // TODO:: .. 추가 구현
+                    val isValid = true
+                    // TODO:: 세부 로직 구현
+
+                    if(isValid) {
+                        onCompleteEdit(
+                            RecipeEditUiModel(
+                                name = name.text.toString(),
+                                cookingTime = cookingTime.text.toString().toInt(),
+                                photoUrl = photoUrl,
+                                ingredients = ingredientFormState.toUiModel(),
+                                steps = stepFormState.toUiModel(),
+                                cookingRecords = recordState.toUiModel(),
+                            )
                         )
-                    )
+                    }
                 }
             )
         }
