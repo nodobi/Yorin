@@ -48,13 +48,13 @@ class RecipeIngredientItemFormState(
     }
 
     fun revealError() {
-        name.enableError()
-        quantity.enableError()
+        name.revealError()
+        quantity.revealError()
     }
 
     fun hideError() {
-        name.disableError()
-        quantity.disableError()
+        name.hideError()
+        quantity.hideError()
     }
 
     fun isValid() = name.isValid && quantity.isValid

@@ -31,11 +31,11 @@ class RecipeStepItemFormState(
     fun isValid() = description.isValid
 
     fun revealError() {
-        description.enableError()
+        description.revealError()
     }
 
     fun hideError() {
-        description.disableError()
+        description.hideError()
     }
 }
 

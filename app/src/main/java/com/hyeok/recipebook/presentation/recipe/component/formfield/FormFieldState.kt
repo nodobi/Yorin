@@ -39,11 +39,11 @@ class FormFieldState private constructor(
         private set
 
     // 에러를 활성화 하더라도, 검증 결과가 유효하면 에러 메세지는 보이지 않는다.
-    fun enableError() {
+    fun revealError() {
         shouldShownError = true
     }
 
-    fun disableError() {
+    fun hideError() {
         shouldShownError = false
     }
 

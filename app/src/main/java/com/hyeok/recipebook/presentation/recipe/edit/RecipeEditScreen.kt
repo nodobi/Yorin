@@ -73,8 +73,8 @@ fun RecipeEditRoute(
                 recordState = recordState,
                 navigateUp = navigateUp,
                 onCompleteEdit = {
-                    name.enableError()
-                    cookingTime.enableError()
+                    name.revealError()
+                    cookingTime.revealError()
 
                     val isValid = name.isValid
                             && cookingTime.isValid

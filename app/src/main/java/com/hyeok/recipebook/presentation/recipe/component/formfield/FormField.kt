@@ -55,7 +55,7 @@ fun BasicFormField(
 
         val hideErrorTransformation = remember(state) {
             InputTransformation {
-                if (asCharSequence().toString() != originalText.toString()) state.disableError()
+                if (asCharSequence().toString() != originalText.toString()) state.hideError()
             }
         }
 
@@ -110,7 +110,7 @@ private fun BasicFormFieldPreview() {
             val ingredientNameFieldState = rememberFormFieldState(
                 initialText = "Initial Text!@#*",
                 type = FormType.IngredientName
-            ).also { it.enableError() }
+            ).also { it.revealError() }
 
             BasicFormField(
                 state = ingredientNameFieldState,
@@ -121,7 +121,7 @@ private fun BasicFormFieldPreview() {
             val ingredientNameFieldState2 = rememberFormFieldState(
                 initialText = "ValidIngredientName",
                 type = FormType.IngredientName
-            ).also { it.enableError() }
+            ).also { it.revealError() }
 
             BasicFormField(
                 state = ingredientNameFieldState2,
@@ -131,7 +131,7 @@ private fun BasicFormFieldPreview() {
             val weightQuantityFieldState = rememberFormFieldState(
                 initialText = "alphabet",
                 type = FormType.WeightQuantity
-            ).also { it.enableError() }
+            ).also { it.revealError() }
 
             BasicFormField(
                 state = weightQuantityFieldState,
