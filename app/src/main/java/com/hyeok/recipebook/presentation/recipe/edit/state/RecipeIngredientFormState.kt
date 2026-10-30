@@ -72,7 +72,7 @@ class RecipeIngredientFormState(
                     id = nextId++,
                     ingredientId = uiModel.id,
                     name = uiModel.name,
-                    quantity = uiModel.requireQuantity.toString(),
+                    quantity = uiModel.requireQuantity.takeIf { it != 0 }?.toString() ?: "",
                     unit = WeightUnitUiModel.valueOf(uiModel.unit),
                 )
             )

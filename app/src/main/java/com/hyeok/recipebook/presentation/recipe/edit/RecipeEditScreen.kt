@@ -55,7 +55,12 @@ fun RecipeEditRoute(
         RecipeEditUiState.Loading -> Unit
         is RecipeEditUiState.Success -> {
             val name = rememberFormFieldState(state.name, FormType.RecipeName)
-            val cookingTime = rememberFormFieldState(state.cookingTime?.toString() ?: "", FormType.RecipeCookingTime)
+            val cookingTime = rememberFormFieldState(
+                initialText = state.cookingTime.let {
+                    if (it == 0 || it == null) "" else it.toString()
+                },
+                type = FormType.RecipeCookingTime
+            )
             var photoUrl by remember { mutableStateOf(state.photoUrl) }
 
             val ingredientFormState = rememberRecipeIngredientFormState(state.ingredients)
