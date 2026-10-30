@@ -47,6 +47,16 @@ class RecipeIngredientItemFormState(
         this.unit = WeightUnitUiModel.valueOf(unit)
     }
 
+    fun revealError() {
+        name.enableError()
+        quantity.enableError()
+    }
+
+    fun hideError() {
+        name.disableError()
+        quantity.disableError()
+    }
+
     fun isValid() = name.isValid && quantity.isValid
 }
 
@@ -83,7 +93,13 @@ class RecipeIngredientFormState(
         }
     }
 
-    fun isValid() = items.all { it.isValid() }
+    /**
+     * 재료의 이름, 수량이 입력되지 않은 항목에 대해서는 저장이 되지 않게 할 예정이기 때문에 에러만 보여주고 검증 결과에는 포함하지 않는다.
+     */
+    fun isValid() = items
+        .onEach { it.revealError() }
+        .filter { it.name.text.isNotBlank() || it.quantity.text.isNotBlank() }
+        .all { it.isValid() }
 
     companion object {
         private val nameSaver: Saver<FormFieldState, Any> = FormFieldState.saver(FormType.IngredientName)
@@ -128,15 +144,15 @@ class RecipeIngredientFormState(
 }
 
 fun RecipeIngredientFormState.toUiModel(): List<RecipeIngredientEditUiModel> =
-    items.map { item ->
-        RecipeIngredientEditUiModel(
-            id = item.ingredientId,
-            name = item.name.text,
-            unit = item.unit.name,
-            requireQuantity = item.quantity.text.toIntOrNull() ?: throw IllegalStateException("requireQuantity must be an int, ${item.quantity.text}")
-        )
-    }
-
+    items.filter { it.name.text.isNotBlank() || it.quantity.text.isNotBlank() }
+        .map { item ->
+            RecipeIngredientEditUiModel(
+                id = item.ingredientId,
+                name = item.name.text,
+                unit = item.unit.name,
+                requireQuantity = item.quantity.text.toIntOrNull() ?: throw IllegalStateException("requireQuantity must be an int, ${item.quantity.text}")
+            )
+        }
 
 @Composable
 fun rememberRecipeIngredientFormState(

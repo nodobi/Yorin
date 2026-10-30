@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,10 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.components.YorinCard
 import com.hyeok.recipebook.designsystem.components.YorinText
-import com.hyeok.recipebook.designsystem.components.YorinTextField
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.AddItemCard
+import com.hyeok.recipebook.presentation.recipe.component.formfield.BasicFormField
+import com.hyeok.recipebook.presentation.recipe.component.formfield.FormFieldState
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeStepFormState
 
@@ -76,7 +76,7 @@ fun StepTabEditContent(
 
 @Composable
 private fun RecipeStepEditCard(
-    description: TextFieldState,
+    description: FormFieldState,
     onRemoveStep: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -89,7 +89,7 @@ private fun RecipeStepEditCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            YorinTextField(
+            BasicFormField(
                 modifier = Modifier
                     .weight(1f),
                 state = description,
@@ -113,9 +113,11 @@ private fun RecipeStepEditCard(
 @BackgroundPreview
 @Composable
 private fun StepTabEditContentPreview() {
-    StepTabEditContent(
-        state = RecipeStepFormState(
-            RecipeStepUiModel.fakes()
+    YorinTheme {
+        StepTabEditContent(
+            state = RecipeStepFormState(
+                RecipeStepUiModel.fakes()
+            )
         )
-    )
+    }
 }

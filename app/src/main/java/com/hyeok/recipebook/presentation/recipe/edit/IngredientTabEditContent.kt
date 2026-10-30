@@ -109,12 +109,12 @@ private fun RecipeIngredientEditCard(
         backgroundColor = YorinTheme.colors.black7
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(12.dp),
             verticalArrangement = spacedBy(8.dp)
         ) {
             Column(
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = spacedBy(8.dp)
             ) {
                 Row(
@@ -144,7 +144,6 @@ private fun RecipeIngredientEditCard(
 
                 BasicFormField(
                     modifier = Modifier
-                        .height(36.dp)
                         .fillMaxWidth(),
                     state = state.name,
                     textStyle = YorinTheme.typography.button1,
@@ -159,7 +158,7 @@ private fun RecipeIngredientEditCard(
                 horizontalArrangement = spacedBy(8.dp)
             ) {
                 Column(
-                    modifier = modifier.weight(1f),
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = spacedBy(8.dp)
                 ) {
                     YorinText(
@@ -173,7 +172,6 @@ private fun RecipeIngredientEditCard(
 
                     BasicFormField(
                         modifier = Modifier
-                            .height(36.dp)
                             .fillMaxWidth(),
                         state = state.quantity,
                         textStyle = YorinTheme.typography.button1,
@@ -201,11 +199,10 @@ private fun RecipeIngredientEditCard(
                     )
 
                     YorinSpinner(
-                        modifier = Modifier,
                         header = { expended, onClick ->
                             DefaultSpinnerHeader(
                                 modifier = Modifier
-                                    .height(36.dp)
+                                    .height(44.dp)
                                     .background(
                                         color = YorinTheme.colors.black6,
                                         shape = RoundedCornerShape(10.dp)
@@ -219,7 +216,6 @@ private fun RecipeIngredientEditCard(
                         },
                         dropdown = { onDismiss ->
                             DefaultSpinnerDropdown(
-                                modifier = Modifier,
                                 items = unitGroup,
                                 selectedItem = state.unit.name,
                                 onItemSelected = { unit ->
@@ -238,13 +234,15 @@ private fun RecipeIngredientEditCard(
 @BackgroundPreview
 @Composable
 private fun IngredientTabEditContentPreview() {
-    IngredientTabEditContent(
-        state = RecipeIngredientFormState(
-            listOf(
-                RecipeIngredientEditUiModel(1, "재료1", WeightUnitUiModel.g.name, 111),
-                RecipeIngredientEditUiModel(2, "재료2", WeightUnitUiModel.kg.name, 222),
-                RecipeIngredientEditUiModel(3, "재료3", WeightUnitUiModel.ml.name, 333)
+    YorinTheme {
+        IngredientTabEditContent(
+            state = RecipeIngredientFormState(
+                listOf(
+                    RecipeIngredientEditUiModel(1, "재료1", WeightUnitUiModel.g.name, 111),
+                    RecipeIngredientEditUiModel(2, "재료2", WeightUnitUiModel.kg.name, 222),
+                    RecipeIngredientEditUiModel(3, "재료3", WeightUnitUiModel.ml.name, 333)
+                )
             )
         )
-    )
+    }
 }

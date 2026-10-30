@@ -73,14 +73,19 @@ fun RecipeEditRoute(
                 recordState = recordState,
                 navigateUp = navigateUp,
                 onCompleteEdit = {
-                    val isValid = true
-                    // TODO:: 세부 로직 구현
+                    name.enableError()
+                    cookingTime.enableError()
 
-                    if(isValid) {
+                    val isValid = name.isValid
+                            && cookingTime.isValid
+                            && ingredientFormState.isValid()
+                            && stepFormState.isValid()
+
+                    if (isValid) {
                         onCompleteEdit(
                             RecipeEditUiModel(
-                                name = name.text.toString(),
-                                cookingTime = cookingTime.text.toString().toInt(),
+                                name = name.text,
+                                cookingTime = cookingTime.text.toIntOrNull() ?: 0,
                                 photoUrl = photoUrl,
                                 ingredients = ingredientFormState.toUiModel(),
                                 steps = stepFormState.toUiModel(),
