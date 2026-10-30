@@ -68,12 +68,13 @@ fun IngredientTabEditContent(
             }
 
             items(
-                state.items,
+                items = state.items,
                 key = { it.id }
             ) { formState ->
                 RecipeIngredientEditCard(
                     modifier = Modifier,
                     state = formState,
+                    isShowRemoveIcon = state.isRemovable,
                     onRemoveIngredient = {
                         state.remove(formState.id)
                     }
@@ -95,8 +96,9 @@ fun IngredientTabEditContent(
 @Composable
 private fun RecipeIngredientEditCard(
     state: RecipeIngredientItemFormState,
+    onRemoveIngredient: () -> Unit,
     modifier: Modifier = Modifier,
-    onRemoveIngredient: () -> Unit
+    isShowRemoveIcon: Boolean = true
 ) {
     val unitGroup = remember { WeightUnitUiModel.entries.map { it.name } }
 
@@ -130,16 +132,18 @@ private fun RecipeIngredientEditCard(
                         color = YorinTheme.colors.black3
                     )
 
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                onRemoveIngredient()
-                            },
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_close_circle),
-                        contentDescription = null,
-                        tint = YorinTheme.colors.black3
-                    )
+                    if(isShowRemoveIcon) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    onRemoveIngredient()
+                                },
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_close_circle),
+                            contentDescription = null,
+                            tint = YorinTheme.colors.black3
+                        )
+                    }
                 }
 
                 BasicFormField(

@@ -57,6 +57,7 @@ fun StepTabEditContent(
                 modifier = Modifier
                     .fillMaxWidth(),
                 description = formState.description,
+                isShowRemoveIcon = state.isRemovable,
                 onRemoveStep = {
                     state.remove(formState.id)
                 }
@@ -78,7 +79,8 @@ fun StepTabEditContent(
 private fun RecipeStepEditCard(
     description: FormFieldState,
     onRemoveStep: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isShowRemoveIcon: Boolean = true
 ) {
     YorinCard(
         modifier = modifier
@@ -96,16 +98,18 @@ private fun RecipeStepEditCard(
                 lineLimits = TextFieldLineLimits.MultiLine()
             )
 
-            Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        onRemoveStep()
-                    },
-                imageVector = ImageVector.vectorResource(R.drawable.ic_close_circle),
-                contentDescription = null,
-                tint = YorinTheme.colors.black3
-            )
+            if(isShowRemoveIcon) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            onRemoveStep()
+                        },
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_close_circle),
+                    contentDescription = null,
+                    tint = YorinTheme.colors.black3
+                )
+            }
         }
     }
 }

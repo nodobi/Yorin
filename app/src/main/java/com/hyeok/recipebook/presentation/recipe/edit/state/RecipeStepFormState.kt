@@ -57,6 +57,8 @@ class RecipeStepFormState(
         }
     }
 
+    val isRemovable: Boolean get() = items.size > 1
+
     fun add() {
         items.add(
             RecipeStepItemFormState(
@@ -67,6 +69,7 @@ class RecipeStepFormState(
     }
 
     fun remove(id: Long) {
+        if (!isRemovable) return
         items.removeIf { it.id == id }
     }
 
@@ -88,14 +91,15 @@ class RecipeStepFormState(
                             state.id,
                             state.stepId,
                             index + 1,
-                            with(FormFieldState.saver(FormType.IngredientName)) { save(state.description) }
+                            with(FormFieldState.saver(FormType.RecipeStepDescription)) { save(state.description) }
                         )
                     }
                 )
             },
             restore = {
                 RecipeStepFormState(
-                    initial = emptyList()
+                    initial = emptyList(),
+                    nextId = it[0] as Long
                 ).apply {
                     @Suppress("UNCHECKED_CAST")
                     val rows = it[1] as List<List<Any>>
@@ -105,7 +109,7 @@ class RecipeStepFormState(
                             id = row[0] as Long,
                             stepId = row[1] as Long,
                             order = row[2] as Int,
-                            description = FormFieldState.saver(FormType.IngredientName).restore(row[3])!!
+                            description = FormFieldState.saver(FormType.RecipeStepDescription).restore(row[3])!!
                         )
                     }
                 }
@@ -128,5 +132,7 @@ fun RecipeStepFormState.toUiModel(): List<RecipeStepUiModel> =
 fun rememberRecipeStepFormState(
     initial: List<RecipeStepUiModel>
 ) = rememberSaveable(saver = RecipeStepFormState.saver) {
-    RecipeStepFormState(initial = initial)
+    RecipeStepFormState(
+        initial = initial
+    ).apply { if (initial.isEmpty()) add() }
 }

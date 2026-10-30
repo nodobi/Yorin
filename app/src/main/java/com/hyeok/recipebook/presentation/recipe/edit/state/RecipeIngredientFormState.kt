@@ -79,6 +79,8 @@ class RecipeIngredientFormState(
         }
     }
 
+    val isRemovable: Boolean get() = items.size > 1
+
     fun add() {
         items.add(
             RecipeIngredientItemFormState(
@@ -88,6 +90,8 @@ class RecipeIngredientFormState(
     }
 
     fun remove(id: Long) {
+        if (!isRemovable) return
+
         items.removeIf {
             it.id == id
         }
@@ -158,5 +162,7 @@ fun RecipeIngredientFormState.toUiModel(): List<RecipeIngredientEditUiModel> =
 fun rememberRecipeIngredientFormState(
     initial: List<RecipeIngredientEditUiModel>
 ): RecipeIngredientFormState = rememberSaveable(saver = RecipeIngredientFormState.saver) {
-    RecipeIngredientFormState(initial = initial)
+    RecipeIngredientFormState(
+        initial = initial
+    ).apply { if (initial.isEmpty()) add() }
 }
