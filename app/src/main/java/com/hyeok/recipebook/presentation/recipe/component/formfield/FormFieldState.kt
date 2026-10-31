@@ -39,11 +39,11 @@ class FormFieldState private constructor(
         private set
 
     // 에러를 활성화 하더라도, 검증 결과가 유효하면 에러 메세지는 보이지 않는다.
-    fun enableError() {
+    fun revealError() {
         shouldShownError = true
     }
 
-    fun disableError() {
+    fun hideError() {
         shouldShownError = false
     }
 
@@ -51,19 +51,20 @@ class FormFieldState private constructor(
     fun errorMessage(): String? = error?.toUiText()
 
     companion object {
-        fun saver(type: FormType) = listSaver(
+        val saver = listSaver(
             save = {
                 listOf(
                     save(it.fieldState)!!,
+                    it.type.name,
                     it.shouldShownError,
                 )
             },
             restore = {
                 FormFieldState(
                     fieldState = restore(it[0])!!,
-                    type
+                    type = FormType.valueOf(it[1] as String)
                 ).apply {
-                    shouldShownError = it[1] as Boolean
+                    shouldShownError = it[2] as Boolean
                 }
             }
         )
@@ -74,6 +75,6 @@ class FormFieldState private constructor(
 fun rememberFormFieldState(
     initialText: String,
     type: FormType
-): FormFieldState = rememberSaveable(saver = FormFieldState.saver(type)) {
+): FormFieldState = rememberSaveable(saver = FormFieldState.saver) {
     FormFieldState(initialText, type)
 }

@@ -9,7 +9,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.then
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -30,6 +32,7 @@ fun BasicFormField(
     placeHolder: String = "",
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    hideErrorOnInput: Boolean = true,
     size: TextFieldSize = TextFieldSize.Large,
     lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     backgroundColor: Color = YorinTextFieldDefault.backgroundColor,
@@ -50,6 +53,18 @@ fun BasicFormField(
             TextFieldSize.Small -> PaddingValues(horizontal = 4.dp)
         }
 
+        val hideErrorTransformation = remember(state) {
+            InputTransformation {
+                if (asCharSequence().toString() != originalText.toString()) state.hideError()
+            }
+        }
+
+        val combinedInputTransformation = if (hideErrorOnInput) {
+            inputTransformation?.then(hideErrorTransformation) ?: hideErrorTransformation
+        } else {
+            inputTransformation
+        }
+
         YorinTextField(
             state = state.fieldState,
             placeHolder = placeHolder,
@@ -61,16 +76,16 @@ fun BasicFormField(
             textStyle = textStyle,
             placeHolderColor = placeHolderColor,
             keyboardAction = keyboardAction,
-            inputTransformation = inputTransformation,
+            inputTransformation = combinedInputTransformation,
             outputTransformation = outputTransformation,
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
             onKeyboardAction = onKeyboardAction
         )
 
-        if(error == null) {
+        if (error == null) {
             val message = state.errorMessage()
-            if(state.shouldShownError && message != null) {
+            if (state.shouldShownError && message != null) {
                 YorinText(
                     modifier = Modifier
                         .padding(horizontalPaddingValues),
@@ -95,7 +110,7 @@ private fun BasicFormFieldPreview() {
             val ingredientNameFieldState = rememberFormFieldState(
                 initialText = "Initial Text!@#*",
                 type = FormType.IngredientName
-            ).also { it.enableError() }
+            ).also { it.revealError() }
 
             BasicFormField(
                 state = ingredientNameFieldState,
@@ -106,7 +121,7 @@ private fun BasicFormFieldPreview() {
             val ingredientNameFieldState2 = rememberFormFieldState(
                 initialText = "ValidIngredientName",
                 type = FormType.IngredientName
-            ).also { it.enableError() }
+            ).also { it.revealError() }
 
             BasicFormField(
                 state = ingredientNameFieldState2,
@@ -116,7 +131,7 @@ private fun BasicFormFieldPreview() {
             val weightQuantityFieldState = rememberFormFieldState(
                 initialText = "alphabet",
                 type = FormType.WeightQuantity
-            ).also { it.enableError() }
+            ).also { it.revealError() }
 
             BasicFormField(
                 state = weightQuantityFieldState,

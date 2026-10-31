@@ -53,6 +53,12 @@
     <string name="recipe_search_filter_recipe_title">레시피로 검색</string>
     <string name="recipe_search_filter_ingredient_title">재료로 검색</string>
 
+    <string name="recipe_detail_recipe_title">레시피 이름</string>
+    <string name="recipe_detail_recipe_hint">예: 김치찌개</string>
+    <string name="recipe_detail_cooking_time_title">조리 시간(분)</string>
+    <string name="recipe_detail_cooking_time_hint">예: 30</string>
+    <string name="recipe_detail_cooking_time_empty">-</string>
+
     <string name="recipe_detail_tab_ingredient">재료</string>
     <string name="recipe_detail_tab_step">조리 순서</string>
     <string name="recipe_detail_tab_record">기록</string>
@@ -76,11 +82,21 @@
 
 
     <!-- 입력 폼 에러 메세지 -->
-    <string name="error_ingredient_name_contains_special_char">이름에는 1~20자로 입력해야 합니다.</string>
+    <string name="error_ingredient_name_contains_special_char">이름에는 한글, 영문, 숫자만 사용할 수 있습니다.</string>
     <string name="error_ingredient_name_out_of_range">이름은 1~20자로 입력해야 합니다.</string>
 
-    <string name="error_weight_quantity_not_numeric">수량은 숫자로 입력해야 합니다.</string>
+    <string name="error_weight_quantity_not_numeric">수량에는 숫자만 사용할 수 있습니다.</string>
     <string name="error_weight_quantity_out_of_range">수량은 10000 미만의 수로 입력해야 합니다.</string>
 
+    <string name="error_recipe_name_length">이름은 1~30자로 입력해야 합니다.</string>
+    <string name="error_recipe_name_disallowed_char">레시피 이름에 사용할 수 없는 특수문자가 포함되어 있습니다.</string>
+    <string name="error_cooking_time_not_numeric">조리 시간에는 숫자만 사용할 수 있습니다.</string>
+    <string name="error_cooking_time_out_of_range">조리 시간은 1000 미만의 수로 입력해야 합니다.</string>
+
+    <string name="error_step_length">내용은 1~300자로 입력해야 합니다</string>
+    <string name="error_record_title_out_of_range">한줄 평은 30자 이내로 입력해야 합니다</string>
+    <string name="error_record_description_out_of_range">코멘트는 1000자 이내로 입력해야 합니다</string>
+
     <string name="format_score">%.1f</string>
+    <string name="format_cooking_time_min">%1$d분</string>
 </resources>
