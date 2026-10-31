@@ -5,7 +5,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -106,9 +105,6 @@ class RecipeIngredientFormState(
         .all { it.isValid() }
 
     companion object {
-        private val nameSaver: Saver<FormFieldState, Any> = FormFieldState.saver(FormType.IngredientName)
-        private val quantitySaver: Saver<FormFieldState, Any> = FormFieldState.saver(FormType.WeightQuantity)
-
         val saver = listSaver(
             save = { state ->
                 listOf(
@@ -117,8 +113,8 @@ class RecipeIngredientFormState(
                         listOf(
                             it.id,
                             it.ingredientId,
-                            with(nameSaver) { save(it.name) },
-                            with(quantitySaver) { save(it.quantity) },
+                            with(FormFieldState.saver) { save(it.name) },
+                            with(FormFieldState.saver) { save(it.quantity) },
                             it.unit.name
                         )
                     }
@@ -136,8 +132,8 @@ class RecipeIngredientFormState(
                         items += RecipeIngredientItemFormState(
                             id = row[0] as Long,
                             ingredientId = row[1] as Long,
-                            name = nameSaver.restore(row[2])!!,
-                            quantity = quantitySaver.restore(row[3])!!,
+                            name = FormFieldState.saver.restore(row[2])!!,
+                            quantity = FormFieldState.saver.restore(row[3])!!,
                             initialUnit = WeightUnitUiModel.valueOf(row[4] as String)
                         )
                     }

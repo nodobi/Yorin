@@ -1,44 +1,42 @@
 package com.hyeok.recipebook.data.validation
 
 sealed interface FormError {
-    sealed interface Ingredient : FormError {
+    enum class Ingredient : FormError {
         // 이름의 글자수가 범위를 벗어난 경우
-        data object NameLengthOutOfRange : Ingredient
+        NameLengthOutOfRange,
 
         // 이름에 특수문자가 포함된 경우
-        data object NameContainsSpecialChar : Ingredient
-
+        NameContainsSpecialChar
     }
 
-    sealed interface Recipe : FormError {
+    enum class Recipe : FormError {
         // 레시피 이름의 글자수가 범위를 벗어난 경우
-        data object NameLengthOutOfRange : Recipe
+        NameLengthOutOfRange,
 
         // 레시피 이름에 허용하지 않은 특수문자가 포함된 경우
-        data object NameContainsDisallowedChar : Recipe
+        NameContainsDisallowedChar,
 
         // 레시피 조리 시간이 숫자가 아닌 경우
-        data object CookingTimeNotNumeric : Recipe
+        CookingTimeNotNumeric,
 
         // 레시피 조리 시간의 범위를 벗어난 경우
-        data object CookingTimeOutOfRange : Recipe
+        CookingTimeOutOfRange,
 
         // 레시피 조리 순서의 내용 글자수가 범위를 벗어난 경우
-        data object StepLengthOutOfRange : Recipe
+        StepLengthOutOfRange,
 
         // 레시피 기록의 한줄 평 글자수가 범위를 벗어난 경우
-        data object RecordTitleOutOfRange : Recipe
+        RecordTitleOutOfRange,
 
         // 레시피 기록의 코멘트 글자수가 범위를 벗어난 경우
-        data object RecordDescriptionOutOfRange : Recipe
-
+        RecordDescriptionOutOfRange
     }
 
-    sealed interface Weight : FormError {
+    enum class Weight : FormError {
         // 중량이 숫자가 아닌 경우
-        data object QuantityNotNumeric : Weight
+        QuantityNotNumeric,
 
         // 중량의 범위를 벗어난 경우
-        data object QuantityOutOfRange : Weight
+        QuantityOutOfRange
     }
 }

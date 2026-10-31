@@ -91,7 +91,7 @@ class RecipeStepFormState(
                             state.id,
                             state.stepId,
                             index + 1,
-                            with(FormFieldState.saver(FormType.RecipeStepDescription)) { save(state.description) }
+                            with(FormFieldState.saver) { save(state.description) }
                         )
                     }
                 )
@@ -109,7 +109,7 @@ class RecipeStepFormState(
                             id = row[0] as Long,
                             stepId = row[1] as Long,
                             order = row[2] as Int,
-                            description = FormFieldState.saver(FormType.RecipeStepDescription).restore(row[3])!!
+                            description = FormFieldState.saver.restore(row[3])!!
                         )
                     }
                 }
