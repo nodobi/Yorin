@@ -36,7 +36,7 @@ object FormValidator {
     private fun validateWeightQuantity(text: String): FormError.Weight? {
         val trimmedText = text.trimLeadingZero()
 
-        return if (!allowedNumberRegex.matches(trimmedText) || trimmedText.isEmpty())
+        return if (!allowedNumberRegex.matches(trimmedText) || (trimmedText.isEmpty() && text.isEmpty()))
             FormError.Weight.QuantityNotNumeric
         else if (trimmedText.toIntOrNull() !in 1..WEIGHT_QUANTITY_MAX)
             FormError.Weight.QuantityOutOfRange
