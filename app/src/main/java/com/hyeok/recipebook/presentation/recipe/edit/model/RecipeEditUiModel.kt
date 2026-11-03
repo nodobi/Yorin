@@ -12,4 +12,14 @@ data class RecipeEditUiModel(
     val ingredients: List<RecipeIngredientEditUiModel>,
     val steps: List<RecipeStepUiModel>,
     val cookingRecords: List<RecipeRecordUiModel>,
-)
+) {
+    companion object {
+        fun empty() = RecipeEditUiModel(
+            name = "",
+            cookingTime = 0,
+            ingredients = emptyList(),
+            steps = emptyList(),
+            cookingRecords = emptyList()
+        )
+    }
+}

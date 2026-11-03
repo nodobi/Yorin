@@ -241,7 +241,10 @@ private fun RecipeCard(
                         tint = YorinTheme.colors.black3
                     )
                     YorinText(
-                        text = "${cookingTime}분",
+                        text = if (cookingTime > 0)
+                            stringResource(R.string.format_cooking_time_min, cookingTime)
+                        else
+                            stringResource(R.string.recipe_detail_cooking_time_empty),
                         color = YorinTheme.colors.black3,
                         style = YorinTheme.typography.caption2
                     )

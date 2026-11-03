@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.byValue
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,13 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
-import com.hyeok.recipebook.designsystem.components.YorinNumberTextField
+import com.hyeok.recipebook.data.validation.FormType
+import com.hyeok.recipebook.data.validation.FormValidator
 import com.hyeok.recipebook.designsystem.components.YorinText
-import com.hyeok.recipebook.designsystem.components.YorinTextField
+import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.RecipeDetailLayout
+import com.hyeok.recipebook.presentation.recipe.component.formfield.BasicFormField
+import com.hyeok.recipebook.presentation.recipe.component.formfield.FormFieldState
+import com.hyeok.recipebook.presentation.recipe.component.formfield.rememberFormFieldState
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeIngredientFormState
@@ -48,8 +54,13 @@ fun RecipeEditRoute(
     when (state) {
         RecipeEditUiState.Loading -> Unit
         is RecipeEditUiState.Success -> {
-            val name = rememberTextFieldState(state.name)
-            val cookingTime = rememberTextFieldState(state.cookingTime?.toString() ?: "")
+            val name = rememberFormFieldState(state.name, FormType.RecipeName)
+            val cookingTime = rememberFormFieldState(
+                initialText = state.cookingTime.let {
+                    if (it == 0 || it == null) "" else it.toString()
+                },
+                type = FormType.RecipeCookingTime
+            )
             var photoUrl by remember { mutableStateOf(state.photoUrl) }
 
             val ingredientFormState = rememberRecipeIngredientFormState(state.ingredients)
@@ -67,14 +78,19 @@ fun RecipeEditRoute(
                 recordState = recordState,
                 navigateUp = navigateUp,
                 onCompleteEdit = {
-                    val isValid = true
-                    // TODO:: 세부 로직 구현
+                    name.revealError()
+                    cookingTime.revealError()
 
-                    if(isValid) {
+                    val isValid = name.isValid
+                            && cookingTime.isValid
+                            && ingredientFormState.isValid()
+                            && stepFormState.isValid()
+
+                    if (isValid) {
                         onCompleteEdit(
                             RecipeEditUiModel(
-                                name = name.text.toString(),
-                                cookingTime = cookingTime.text.toString().toInt(),
+                                name = name.text,
+                                cookingTime = cookingTime.text.toIntOrNull() ?: 0,
                                 photoUrl = photoUrl,
                                 ingredients = ingredientFormState.toUiModel(),
                                 steps = stepFormState.toUiModel(),
@@ -90,8 +106,8 @@ fun RecipeEditRoute(
 
 @Composable
 private fun RecipeEditScreen(
-    name: TextFieldState,
-    cookingTime: TextFieldState,
+    name: FormFieldState,
+    cookingTime: FormFieldState,
     photoUrl: String?,
     ingredientFormState: RecipeIngredientFormState,
     stepFormState: RecipeStepFormState,
@@ -136,8 +152,8 @@ private fun RecipeEditScreen(
 
 @Composable
 private fun RecipeDetailHeader(
-    name: TextFieldState,
-    cookingTime: TextFieldState,
+    name: FormFieldState,
+    cookingTime: FormFieldState,
     photoUrl: String?,
     modifier: Modifier = Modifier
 ) {
@@ -162,23 +178,32 @@ private fun RecipeDetailHeader(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             YorinText(
-                text = "레시피 이름",
+                text = stringResource(R.string.recipe_detail_recipe_title),
                 style = YorinTheme.typography.body2
             )
 
-            YorinTextField(
+            BasicFormField(
                 state = name,
-                placeHolder = "예: 김치찌개"
+                placeHolder = stringResource(R.string.recipe_detail_recipe_hint)
             )
 
             YorinText(
-                text = "요리 시간(분)",
+                text = stringResource(R.string.recipe_detail_cooking_time_title),
                 style = YorinTheme.typography.body2
             )
 
-            YorinNumberTextField(
+            BasicFormField(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 state = cookingTime,
-                placeHolder = "30(분)",
+                textStyle = YorinTheme.typography.button1,
+                placeHolderColor = YorinTheme.colors.black3,
+                placeHolder = stringResource(R.string.recipe_detail_cooking_time_hint),
+                keyboardAction = KeyboardOptions(keyboardType = KeyboardType.Number),
+                inputTransformation = InputTransformation.byValue { current, proposed ->
+                    if (proposed.all { it.isDigit() } && proposed.length <= FormValidator.WEIGHT_QUANTITY_MAX.toString().length) proposed
+                    else current
+                },
                 leadingIcon = {
                     Icon(
                         modifier = Modifier.size(16.dp),
@@ -188,5 +213,22 @@ private fun RecipeDetailHeader(
                 }
             )
         }
+    }
+}
+
+@BackgroundPreview
+@Composable
+private fun RecipEditScreenPreview() {
+    YorinTheme {
+        RecipeEditScreen(
+            name = rememberFormFieldState("", FormType.RecipeName),
+            cookingTime = rememberFormFieldState("", FormType.RecipeCookingTime),
+            photoUrl = null,
+            ingredientFormState = RecipeIngredientFormState(listOf()),
+            stepFormState = RecipeStepFormState(listOf()),
+            recordState = RecipeRecordState(listOf()),
+            navigateUp = {},
+            onCompleteEdit = {}
+        )
     }
 }

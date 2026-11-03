@@ -12,10 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -108,22 +106,14 @@ private fun StepIcon(
     }
 }
 
-@Stable
-class RecipeStepEditState(
-    val id: Long,
-    initialOrder: Int,
-    initialDescription: String
-) {
-    val order = TextFieldState(initialOrder.toString())
-    val description = TextFieldState(initialDescription)
-}
-
 @BackgroundPreview
 @Composable
 private fun StepTabContentPreview() {
-    StepTabContent(
-        recipe = RecipeUiModel.fake()
-    )
+    YorinTheme {
+        StepTabContent(
+            recipe = RecipeUiModel.fake()
+        )
+    }
 }
 
 @Preview

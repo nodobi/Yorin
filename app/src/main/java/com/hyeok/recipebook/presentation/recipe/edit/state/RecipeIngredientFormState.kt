@@ -5,7 +5,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -47,6 +46,16 @@ class RecipeIngredientItemFormState(
         this.unit = WeightUnitUiModel.valueOf(unit)
     }
 
+    fun revealError() {
+        name.revealError()
+        quantity.revealError()
+    }
+
+    fun hideError() {
+        name.hideError()
+        quantity.hideError()
+    }
+
     fun isValid() = name.isValid && quantity.isValid
 }
 
@@ -62,12 +71,14 @@ class RecipeIngredientFormState(
                     id = nextId++,
                     ingredientId = uiModel.id,
                     name = uiModel.name,
-                    quantity = uiModel.requireQuantity.toString(),
+                    quantity = uiModel.requireQuantity.takeIf { it != 0 }?.toString() ?: "",
                     unit = WeightUnitUiModel.valueOf(uiModel.unit),
                 )
             )
         }
     }
+
+    val isRemovable: Boolean get() = items.size > 1
 
     fun add() {
         items.add(
@@ -78,17 +89,22 @@ class RecipeIngredientFormState(
     }
 
     fun remove(id: Long) {
+        if (!isRemovable) return
+
         items.removeIf {
             it.id == id
         }
     }
 
-    fun isValid() = items.all { it.isValid() }
+    /**
+     * 재료의 이름, 수량이 입력되지 않은 항목에 대해서는 저장이 되지 않게 할 예정이기 때문에 에러만 보여주고 검증 결과에는 포함하지 않는다.
+     */
+    fun isValid() = items
+        .onEach { it.revealError() }
+        .filter { it.name.text.isNotBlank() || it.quantity.text.isNotBlank() }
+        .all { it.isValid() }
 
     companion object {
-        private val nameSaver: Saver<FormFieldState, Any> = FormFieldState.saver(FormType.IngredientName)
-        private val quantitySaver: Saver<FormFieldState, Any> = FormFieldState.saver(FormType.WeightQuantity)
-
         val saver = listSaver(
             save = { state ->
                 listOf(
@@ -97,8 +113,8 @@ class RecipeIngredientFormState(
                         listOf(
                             it.id,
                             it.ingredientId,
-                            with(nameSaver) { save(it.name) },
-                            with(quantitySaver) { save(it.quantity) },
+                            with(FormFieldState.saver) { save(it.name) },
+                            with(FormFieldState.saver) { save(it.quantity) },
                             it.unit.name
                         )
                     }
@@ -116,8 +132,8 @@ class RecipeIngredientFormState(
                         items += RecipeIngredientItemFormState(
                             id = row[0] as Long,
                             ingredientId = row[1] as Long,
-                            name = nameSaver.restore(row[2])!!,
-                            quantity = quantitySaver.restore(row[3])!!,
+                            name = FormFieldState.saver.restore(row[2])!!,
+                            quantity = FormFieldState.saver.restore(row[3])!!,
                             initialUnit = WeightUnitUiModel.valueOf(row[4] as String)
                         )
                     }
@@ -128,19 +144,21 @@ class RecipeIngredientFormState(
 }
 
 fun RecipeIngredientFormState.toUiModel(): List<RecipeIngredientEditUiModel> =
-    items.map { item ->
-        RecipeIngredientEditUiModel(
-            id = item.ingredientId,
-            name = item.name.text,
-            unit = item.unit.name,
-            requireQuantity = item.quantity.text.toIntOrNull() ?: throw IllegalStateException("requireQuantity must be an int, ${item.quantity.text}")
-        )
-    }
-
+    items.filter { it.name.text.isNotBlank() || it.quantity.text.isNotBlank() }
+        .map { item ->
+            RecipeIngredientEditUiModel(
+                id = item.ingredientId,
+                name = item.name.text,
+                unit = item.unit.name,
+                requireQuantity = item.quantity.text.toIntOrNull() ?: throw IllegalStateException("requireQuantity must be an int, ${item.quantity.text}")
+            )
+        }
 
 @Composable
 fun rememberRecipeIngredientFormState(
     initial: List<RecipeIngredientEditUiModel>
 ): RecipeIngredientFormState = rememberSaveable(saver = RecipeIngredientFormState.saver) {
-    RecipeIngredientFormState(initial = initial)
+    RecipeIngredientFormState(
+        initial = initial
+    ).apply { if (initial.isEmpty()) add() }
 }

@@ -46,7 +46,7 @@ class RecipeDaoTest {
                 addUnit(WeightUnitEntity(name = "L"))
             }
 
-            recipeDao.upsertRecipe(
+            recipeDao.insertRecipe(
                 RecipeEntity(
                     id = 1,
                     name = "레시피1",

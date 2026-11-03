@@ -1,9 +1,17 @@
 package com.hyeok.recipebook.data.validation
 
-sealed interface FormType {
-    // 재료의 이름
-    object IngredientName : FormType
+enum class FormType {
 
-    // 중량
-    object WeightQuantity : FormType
+    /* 재료 */
+    IngredientName,
+
+    /* 레시피 */
+    RecipeName,
+    RecipeCookingTime,
+    RecipeStepDescription,
+    RecipeRecordTitle,
+    RecipeRecordDescription,
+
+    /* 단위 */
+    WeightQuantity
 }

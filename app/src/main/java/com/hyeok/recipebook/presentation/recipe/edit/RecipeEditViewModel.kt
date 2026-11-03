@@ -9,10 +9,8 @@ import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.toEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
-import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -33,31 +31,44 @@ class RecipeEditViewModel @Inject constructor(
     private val _recipeId = MutableStateFlow(savedStateHandle.toRoute<Route.Recipe.Edit>().recipeId)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val recipe: Flow<RecipeUiModel?> = _recipeId.flatMapLatest { recipeId ->
-        recipeId?.let {
-            recipeRepository.getRecipeDetailsById(it)
-                .map { result ->
-                    result.onFailure { reason ->
+    private val _recipe = _recipeId.flatMapLatest { recipeId ->
+        if (recipeId == null) {
+            return@flatMapLatest flowOf(RecipeEditUiModel.empty())
+        }
+        recipeRepository.getRecipeDetailsById(recipeId)
+            .map { result ->
+                result.fold(
+                    onSuccess = { recipeUiModel ->
+                        RecipeEditUiModel(
+                            name = recipeUiModel.name,
+                            cookingTime = recipeUiModel.cookingTime,
+                            photoUrl = recipeUiModel.photoUrl,
+                            ingredients = recipeUiModel.ingredients.map { it.toEditUiModel() },
+                            steps = recipeUiModel.steps,
+                            cookingRecords = recipeUiModel.cookingRecords,
+                        )
+                    },
+                    onFailure = { reason ->
                         Timber.d("Fail to load recipe, id: $recipeId, reason: $reason")
-                    }.getOrNull()
-                }
-        } ?: flowOf(null)
+                        RecipeEditUiModel.empty()
+                    }
+                )
+            }
     }
 
-    private val isFinishEdit = savedStateHandle.getStateFlow(
+    private val _isFinishEdit = savedStateHandle.getStateFlow(
         key = KEY_FINISH_EDIT,
         initialValue = false
     )
 
-    val uiState = combine(isFinishEdit, recipe) { isFinishEdit, recipeUiModel ->
-        if (recipeUiModel == null) RecipeEditUiState.Loading
-        else RecipeEditUiState.Success(
-            name = recipeUiModel.name,
-            cookingTime = recipeUiModel.cookingTime.let { if (it == 0) null else it },
-            photoUrl = recipeUiModel.photoUrl,
-            ingredients = recipeUiModel.ingredients.map { it.toEditUiModel() },
-            steps = recipeUiModel.steps,
-            cookingRecords = recipeUiModel.cookingRecords,
+    val uiState = combine(_isFinishEdit, _recipe) { isFinishEdit, recipeEditUiModel ->
+        RecipeEditUiState.Success(
+            name = recipeEditUiModel.name,
+            cookingTime = recipeEditUiModel.cookingTime.let { if (it == 0) null else it },
+            photoUrl = recipeEditUiModel.photoUrl,
+            ingredients = recipeEditUiModel.ingredients,
+            steps = recipeEditUiModel.steps,
+            cookingRecords = recipeEditUiModel.cookingRecords,
             isFinishEdit = isFinishEdit
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeEditUiState.Loading)
@@ -65,6 +76,7 @@ class RecipeEditViewModel @Inject constructor(
     fun completeEdit(editUiModel: RecipeEditUiModel) {
         viewModelScope.launch {
             val recipeId = _recipeId.value
+
             if (recipeId == null) {
                 // RecipeId 가 없는 경우는 신규 등록
                 recipeRepository.addRecipe(editUiModel)

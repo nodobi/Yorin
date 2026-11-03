@@ -1,13 +1,12 @@
 package com.hyeok.recipebook.presentation.recipe.edit.state
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.TextFieldState.Saver.restore
-import androidx.compose.foundation.text.input.TextFieldState.Saver.save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.hyeok.recipebook.data.validation.FormType
+import com.hyeok.recipebook.presentation.recipe.component.formfield.FormFieldState
 import com.hyeok.recipebook.presentation.recipe.detail.step.RecipeStepUiModel
 
 @Stable
@@ -15,7 +14,7 @@ class RecipeStepItemFormState(
     val id: Long,
     val stepId: Long = 0L,
     val order: Int,
-    val description: TextFieldState
+    val description: FormFieldState
 ) {
     constructor(
         id: Long,
@@ -26,10 +25,18 @@ class RecipeStepItemFormState(
         id = id,
         stepId = stepId,
         order = order,
-        description = TextFieldState(initialText = description)
+        description = FormFieldState(initialText = description, FormType.RecipeStepDescription)
     )
 
-    fun isValid() = description.text.isNotBlank()
+    fun isValid() = description.isValid
+
+    fun revealError() {
+        description.revealError()
+    }
+
+    fun hideError() {
+        description.hideError()
+    }
 }
 
 @Stable
@@ -50,6 +57,8 @@ class RecipeStepFormState(
         }
     }
 
+    val isRemovable: Boolean get() = items.size > 1
+
     fun add() {
         items.add(
             RecipeStepItemFormState(
@@ -60,10 +69,17 @@ class RecipeStepFormState(
     }
 
     fun remove(id: Long) {
+        if (!isRemovable) return
         items.removeIf { it.id == id }
     }
 
-    fun isValid() = items.all { it.isValid() }
+    /**
+     * RecipeIngredientFormState 와 마찬가지로 내용이 공백인 항목은 저장하지 않기 때문에 에러만 보여주고 검증 결과에는 포함하지 않는다.
+     */
+    fun isValid() = items
+        .onEach { it.revealError() }
+        .filter { it.description.text.isNotBlank() }
+        .all { it.isValid() }
 
     companion object {
         val saver = listSaver(
@@ -75,14 +91,15 @@ class RecipeStepFormState(
                             state.id,
                             state.stepId,
                             index + 1,
-                            save(state.description)
+                            with(FormFieldState.saver) { save(state.description) }
                         )
                     }
                 )
             },
             restore = {
                 RecipeStepFormState(
-                    initial = emptyList()
+                    initial = emptyList(),
+                    nextId = it[0] as Long
                 ).apply {
                     @Suppress("UNCHECKED_CAST")
                     val rows = it[1] as List<List<Any>>
@@ -92,7 +109,7 @@ class RecipeStepFormState(
                             id = row[0] as Long,
                             stepId = row[1] as Long,
                             order = row[2] as Int,
-                            description = restore(row[3])!!
+                            description = FormFieldState.saver.restore(row[3])!!
                         )
                     }
                 }
@@ -102,17 +119,20 @@ class RecipeStepFormState(
 }
 
 fun RecipeStepFormState.toUiModel(): List<RecipeStepUiModel> =
-    items.mapIndexed { index, state ->
-        RecipeStepUiModel(
-            id = state.stepId,
-            order = index + 1,
-            description = state.description.text.toString()
-        )
-    }
+    items.filter { it.description.text.isNotBlank() }
+        .mapIndexed { index, state ->
+            RecipeStepUiModel(
+                id = state.stepId,
+                order = index + 1,
+                description = state.description.text
+            )
+        }
 
 @Composable
 fun rememberRecipeStepFormState(
     initial: List<RecipeStepUiModel>
 ) = rememberSaveable(saver = RecipeStepFormState.saver) {
-    RecipeStepFormState(initial = initial)
+    RecipeStepFormState(
+        initial = initial
+    ).apply { if (initial.isEmpty()) add() }
 }

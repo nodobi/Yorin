@@ -5,13 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -49,25 +44,13 @@ fun IngredientTabContent(
     }
 }
 
-// 수정중인 레시피 데이터를 담는 stateholder
-@Stable
-class RecipeIngredientEditState(
-    val id: Long,
-    initialName: String = "",
-    initialQuantity: Int = 0,
-    initialUnit: String = "g"
-) {
-    val name = TextFieldState(initialText = initialName)
-    val quantity = TextFieldState(initialText = if (initialQuantity == 0) "" else initialQuantity.toString())
-    var unit by mutableStateOf(initialUnit)
-}
-
-
 @BackgroundPreview
 @Composable
 private fun IngredientTabContentPreview() {
-    IngredientTabContent(
-        recipe = RecipeUiModel.fake(),
-        modifier = Modifier.fillMaxWidth()
-    )
+    YorinTheme {
+        IngredientTabContent(
+            recipe = RecipeUiModel.fake(),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
