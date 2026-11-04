@@ -1,7 +1,9 @@
 package com.hyeok.recipebook.presentation.recipe.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,7 +61,16 @@ private fun RecipeDetailScreen(
 ) {
     RecipeDetailLayout(
         modifier = modifier,
-        actionText = stringResource(R.string.btn_edit),
+        action = {
+            YorinText(
+                modifier = Modifier
+                    .clickable {
+                        onEditStart()
+                    },
+                text = stringResource(R.string.btn_edit),
+                style = YorinTheme.typography.title1
+            )
+        },
         header = {
             RecipeDetailHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -92,7 +103,6 @@ private fun RecipeDetailScreen(
             }
         },
         navigateUp = navigateUp,
-        onClickAppbarAction = onEditStart
     )
 }
 

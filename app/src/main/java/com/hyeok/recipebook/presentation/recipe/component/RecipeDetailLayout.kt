@@ -1,6 +1,5 @@
 package com.hyeok.recipebook.presentation.recipe.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,11 +32,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RecipeDetailLayout(
-    actionText: String,
+    action: @Composable () -> Unit,
     header: @Composable () -> Unit,
     pages: @Composable (RecipeDetailTab) -> Unit,
     navigateUp: () -> Unit,
-    onClickAppbarAction: () -> Unit,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
@@ -60,16 +58,7 @@ fun RecipeDetailLayout(
             navigateUp = {
                 navigateUp()
             },
-            action = {
-                YorinText(
-                    modifier = Modifier
-                        .clickable {
-                            onClickAppbarAction()
-                        },
-                    text = actionText,
-                    style = YorinTheme.typography.title1
-                )
-            }
+            action = action
         )
 
         LazyColumn(
