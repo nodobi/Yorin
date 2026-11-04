@@ -47,6 +47,8 @@ fun RecipeDetailRoute(
 ) {
     when (state) {
         RecipeDetailUiState.Loading -> Unit
+        RecipeDetailUiState.RecipeNotFound -> Unit
+        RecipeDetailUiState.FailToLoad -> Unit
 
         is RecipeDetailUiState.Success -> {
             var showRemovalDialog by remember { mutableStateOf(false) }

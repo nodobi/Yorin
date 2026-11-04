@@ -39,6 +39,7 @@ class RecipeEditViewModel @Inject constructor(
             .map { result ->
                 result.fold(
                     onSuccess = { recipeUiModel ->
+                        if(recipeUiModel == null) return@fold null
                         RecipeEditUiModel(
                             name = recipeUiModel.name,
                             cookingTime = recipeUiModel.cookingTime,
@@ -62,15 +63,21 @@ class RecipeEditViewModel @Inject constructor(
     )
 
     val uiState = combine(_isFinishEdit, _recipe) { isFinishEdit, recipeEditUiModel ->
-        RecipeEditUiState.Success(
-            name = recipeEditUiModel.name,
-            cookingTime = recipeEditUiModel.cookingTime.let { if (it == 0) null else it },
-            photoUrl = recipeEditUiModel.photoUrl,
-            ingredients = recipeEditUiModel.ingredients,
-            steps = recipeEditUiModel.steps,
-            cookingRecords = recipeEditUiModel.cookingRecords,
-            isFinishEdit = isFinishEdit
-        )
+        if(recipeEditUiModel == null) {
+            // TODO:: UiState 모델링
+            RecipeEditUiState.Loading
+        }
+        else {
+            RecipeEditUiState.Success(
+                name = recipeEditUiModel.name,
+                cookingTime = recipeEditUiModel.cookingTime.let { if (it == 0) null else it },
+                photoUrl = recipeEditUiModel.photoUrl,
+                ingredients = recipeEditUiModel.ingredients,
+                steps = recipeEditUiModel.steps,
+                cookingRecords = recipeEditUiModel.cookingRecords,
+                isFinishEdit = isFinishEdit
+            )
+        }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeEditUiState.Loading)
 
     fun completeEdit(editUiModel: RecipeEditUiModel) {

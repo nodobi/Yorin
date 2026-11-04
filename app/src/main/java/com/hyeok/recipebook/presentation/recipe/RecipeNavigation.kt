@@ -1,7 +1,10 @@
 package com.hyeok.recipebook.presentation.recipe
 
+import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -10,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.hyeok.recipebook.R
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
@@ -70,12 +74,15 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
             val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
+            val context = LocalContext.current
 
             RecipeDetailRoute(
                 state = state,
                 navigateUp = {
                     when (state) {
                         RecipeDetailUiState.Loading -> Unit
+                        RecipeDetailUiState.RecipeNotFound -> Unit
+                        RecipeDetailUiState.FailToLoad -> Unit
 
                         is RecipeDetailUiState.Success -> navController.navigateUp()
                     }
@@ -90,6 +97,11 @@ fun NavGraphBuilder.recipeScreen(
                     viewModel.addRecord(newRecord)
                 }
             )
+
+            LaunchedEffect(state) {
+                if(state is RecipeDetailUiState.RecipeNotFound) navController.navigateUp()
+                else if(state is RecipeDetailUiState.FailToLoad) navController.navigateUp()
+            }
         }
 
         composable<Route.Recipe.Edit> {

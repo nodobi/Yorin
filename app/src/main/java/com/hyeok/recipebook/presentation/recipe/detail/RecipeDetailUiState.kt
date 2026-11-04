@@ -8,4 +8,7 @@ sealed interface RecipeDetailUiState {
     data class Success(
         val recipe: RecipeUiModel,
     ): RecipeDetailUiState
+
+    data object RecipeNotFound: RecipeDetailUiState
+    data object FailToLoad: RecipeDetailUiState
 }

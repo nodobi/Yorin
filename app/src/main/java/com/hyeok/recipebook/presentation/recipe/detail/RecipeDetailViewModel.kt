@@ -7,10 +7,8 @@ import androidx.navigation.toRoute
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
-import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,40 +29,35 @@ class RecipeDetailViewModel @Inject constructor(
     val recipeId = _recipeId.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val recipeFlow: Flow<RecipeUiModel> = _recipeId.flatMapLatest { recipeId ->
+    val uiState = _recipeId.flatMapLatest { recipeId ->
         recipeRepository.getRecipeDetailsById(recipeId)
-            .map { result ->
-                result.getOrElse {
-                    Timber.d("failed recipeRepository.getRecipeDetailsById| $it")
-                    RecipeUiModel.empty()
-                }
+    }.map { result ->
+        result.fold(
+            onSuccess = {recipe ->
+                if(recipe == null) return@fold RecipeDetailUiState.RecipeNotFound
+                RecipeDetailUiState.Success(recipe = recipe)
+            },
+            onFailure = {
+                Timber.d("Fail to load recipe. exception: $it")
+                RecipeDetailUiState.FailToLoad
             }
-    }
-
-    val uiState = recipeFlow
-        .map { recipe ->
-            RecipeDetailUiState.Success(
-                recipe = recipe
-            )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeDetailUiState.Loading)
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeDetailUiState.Loading)
 
     fun removeRecipe() {
         viewModelScope.launch {
             recipeRepository.removeRecipe(_recipeId.value)
-                .onSuccess { }
-                .onFailure { }
+                .onFailure {
+                    Timber.d("Fail to remove recipe. exception: $it")
+                }
         }
     }
 
     fun addRecord(newRecord: RecipeRecordUiModel) {
         viewModelScope.launch {
             recipeRepository.addRecipeRecord(_recipeId.value, newRecord)
-                .onSuccess {
-                    // Recipe 상세 데이터를 Flow 로 받고 있기 때문에, 알아서 업데이트가 될 것이라 기대
-                }
                 .onFailure {
-                    // TODO:: 실패 대응
-
+                    Timber.d("Fail to save recipe. exception: $it")
                 }
         }
     }
