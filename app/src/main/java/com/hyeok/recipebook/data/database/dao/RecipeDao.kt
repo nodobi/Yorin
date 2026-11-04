@@ -145,7 +145,7 @@ interface RecipeDao {
 
     @Transaction
     @Query("SELECT * FROM recipe WHERE id = :id")
-    fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord>
+    fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord?>
 
     @Transaction
     suspend fun insertRecipeWithDetails(
