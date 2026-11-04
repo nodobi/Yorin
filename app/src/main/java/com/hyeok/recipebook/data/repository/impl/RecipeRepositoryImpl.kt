@@ -79,4 +79,8 @@ class RecipeRepositoryImpl @Inject constructor(
             record = record.toModel()
         )
     }
+
+    override suspend fun removeRecipe(recipeId: Long): Result<Unit> = runCatching {
+        recipeLocalDataSource.removeRecipe(recipeId)
+    }
 }

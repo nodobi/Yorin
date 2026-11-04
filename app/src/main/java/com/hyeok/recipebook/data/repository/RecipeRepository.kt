@@ -19,4 +19,6 @@ interface RecipeRepository {
     suspend fun addRecipe(recipe: RecipeEditUiModel): Result<Long>
 
     suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit>
+
+    suspend fun removeRecipe(recipeId: Long): Result<Unit>
 }

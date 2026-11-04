@@ -96,4 +96,8 @@ class RecipeLocalDataSource @Inject constructor(
             )
         )
     }
+
+    suspend fun removeRecipe(recipeId: Long) {
+        recipeDao.deleteRecipe(recipeId)
+    }
 }

@@ -50,13 +50,15 @@ class RecipeDetailViewModel @Inject constructor(
 
     fun removeRecipe() {
         viewModelScope.launch {
-
+            recipeRepository.removeRecipe(_recipeId.value)
+                .onSuccess { }
+                .onFailure { }
         }
     }
 
     fun addRecord(newRecord: RecipeRecordUiModel) {
         viewModelScope.launch {
-            recipeRepository.addRecipeRecord(recipeId.value, newRecord)
+            recipeRepository.addRecipeRecord(_recipeId.value, newRecord)
                 .onSuccess {
                     // Recipe 상세 데이터를 Flow 로 받고 있기 때문에, 알아서 업데이트가 될 것이라 기대
                 }

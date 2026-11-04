@@ -40,6 +40,9 @@ interface RecipeDao {
         photoUrl: String?
     )
 
+    @Query("DELETE FROM recipe WHERE id = :id")
+    suspend fun deleteRecipe(id: Long)
+
     @Insert
     suspend fun insertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
 
