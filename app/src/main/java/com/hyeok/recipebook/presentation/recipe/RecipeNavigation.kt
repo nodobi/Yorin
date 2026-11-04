@@ -83,6 +83,9 @@ fun NavGraphBuilder.recipeScreen(
                 onEditStart = {
                     navController.navigateToRecipeEdit(recipeId = recipeId)
                 },
+                onRemoveRecipe = {
+                    viewModel.removeRecipe()
+                },
                 onAddRecord = { newRecord ->
                     viewModel.addRecord(newRecord)
                 }

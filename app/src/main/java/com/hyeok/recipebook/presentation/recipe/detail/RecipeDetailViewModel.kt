@@ -48,6 +48,12 @@ class RecipeDetailViewModel @Inject constructor(
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeDetailUiState.Loading)
 
+    fun removeRecipe() {
+        viewModelScope.launch {
+
+        }
+    }
+
     fun addRecord(newRecord: RecipeRecordUiModel) {
         viewModelScope.launch {
             recipeRepository.addRecipeRecord(recipeId.value, newRecord)

@@ -2,7 +2,6 @@ package com.hyeok.recipebook.presentation.recipe.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,10 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
+import com.hyeok.recipebook.designsystem.components.YorinDropdown
+import com.hyeok.recipebook.designsystem.components.YorinDropdownItem
 import com.hyeok.recipebook.designsystem.components.YorinRatingBar
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.recipe.component.RecipeDetailLayout
+import com.hyeok.recipebook.presentation.recipe.component.RecipeRemoveDialog
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.IngredientTabContent
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecordTabContent
@@ -36,18 +42,34 @@ fun RecipeDetailRoute(
     state: RecipeDetailUiState,
     navigateUp: () -> Unit,
     onEditStart: () -> Unit,
+    onRemoveRecipe: () -> Unit,
     onAddRecord: (RecipeRecordUiModel) -> Unit
 ) {
     when (state) {
         RecipeDetailUiState.Loading -> Unit
 
-        is RecipeDetailUiState.Success -> RecipeDetailScreen(
-            modifier = Modifier,
-            state = state,
-            navigateUp = navigateUp,
-            onEditStart = onEditStart,
-            onAddNewRecord = onAddRecord,
-        )
+        is RecipeDetailUiState.Success -> {
+            var showRemovalDialog by remember { mutableStateOf(false) }
+
+            RecipeDetailScreen(
+                modifier = Modifier,
+                state = state,
+                navigateUp = navigateUp,
+                onEditStart = onEditStart,
+                onRemove = { showRemovalDialog = true },
+                onAddNewRecord = onAddRecord,
+            )
+
+            if (showRemovalDialog) {
+                RecipeRemoveDialog(
+                    onDismiss = { showRemovalDialog = false },
+                    onRemoveRecipe = {
+                        showRemovalDialog = false
+                        onRemoveRecipe()
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -56,20 +78,46 @@ private fun RecipeDetailScreen(
     state: RecipeDetailUiState.Success,
     navigateUp: () -> Unit,
     onEditStart: () -> Unit,
+    onRemove: () -> Unit,
     onAddNewRecord: (RecipeRecordUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var expanded by remember { mutableStateOf(false) }
     RecipeDetailLayout(
         modifier = modifier,
         action = {
-            YorinText(
-                modifier = Modifier
-                    .clickable {
+            YorinDropdown(
+                expanded = expanded,
+                button = {
+                    Icon(
+                        modifier = Modifier
+                            .clickable {
+                                expanded = true
+                            },
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_more_vertical),
+                        contentDescription = null
+                    )
+                },
+                onDismissRequest = { expanded = false }
+            ) {
+                YorinDropdownItem(
+                    text = stringResource(R.string.btn_do_edit),
+                    leadingIconVector = ImageVector.vectorResource(R.drawable.ic_edit),
+                    onClick = {
                         onEditStart()
-                    },
-                text = stringResource(R.string.btn_edit),
-                style = YorinTheme.typography.title1
-            )
+                        expanded = false
+                    }
+                )
+
+                YorinDropdownItem(
+                    text = stringResource(R.string.btn_do_delete),
+                    leadingIconVector = ImageVector.vectorResource(R.drawable.ic_trash),
+                    onClick = {
+                        onRemove()
+                        expanded = false
+                    }
+                )
+            }
         },
         header = {
             RecipeDetailHeader(
@@ -128,7 +176,7 @@ private fun RecipeDetailHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = spacedBy(12.dp)
         ) {
             YorinText(
                 modifier = Modifier.fillMaxWidth(),
