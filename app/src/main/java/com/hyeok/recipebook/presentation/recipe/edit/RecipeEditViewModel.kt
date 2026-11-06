@@ -39,7 +39,7 @@ class RecipeEditViewModel @Inject constructor(
             .map { result ->
                 result.fold(
                     onSuccess = { recipeUiModel ->
-                        if(recipeUiModel == null) return@fold null
+                        if (recipeUiModel == null) return@fold null
                         RecipeEditUiModel(
                             name = recipeUiModel.name,
                             cookingTime = recipeUiModel.cookingTime,
@@ -51,23 +51,18 @@ class RecipeEditViewModel @Inject constructor(
                     },
                     onFailure = { reason ->
                         Timber.d("Fail to load recipe, id: $recipeId, reason: $reason")
-                        RecipeEditUiModel.empty()
+                        null
                     }
                 )
             }
     }
 
-    private val _isFinishEdit = savedStateHandle.getStateFlow(
-        key = KEY_FINISH_EDIT,
-        initialValue = false
-    )
+    private val _isFinishEdit: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val uiState = combine(_isFinishEdit, _recipe) { isFinishEdit, recipeEditUiModel ->
-        if(recipeEditUiModel == null) {
-            // TODO:: UiState 모델링
-            RecipeEditUiState.Loading
-        }
-        else {
+        if (recipeEditUiModel == null) {
+            RecipeEditUiState.FailToLoad
+        } else {
             RecipeEditUiState.Success(
                 name = recipeEditUiModel.name,
                 cookingTime = recipeEditUiModel.cookingTime.let { if (it == 0) null else it },
@@ -95,12 +90,8 @@ class RecipeEditViewModel @Inject constructor(
             }.onFailure { reason ->
                 Timber.d("Fail to edit recipe, id: $recipeId, reason: $reason")
             }.onSuccess {
-                savedStateHandle[KEY_FINISH_EDIT] = true
+                _isFinishEdit.value = true
             }
         }
-    }
-
-    companion object {
-        private const val KEY_FINISH_EDIT = "key_finish_edit"
     }
 }

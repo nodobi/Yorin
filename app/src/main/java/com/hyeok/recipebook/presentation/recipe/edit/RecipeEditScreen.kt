@@ -53,7 +53,8 @@ fun RecipeEditRoute(
     onCompleteEdit: (RecipeEditUiModel) -> Unit
 ) {
     when (state) {
-        RecipeEditUiState.Loading -> Unit
+        RecipeEditUiState.Loading, RecipeEditUiState.FailToLoad -> Unit
+
         is RecipeEditUiState.Success -> {
             val name = rememberFormFieldState(state.name, FormType.RecipeName)
             val cookingTime = rememberFormFieldState(

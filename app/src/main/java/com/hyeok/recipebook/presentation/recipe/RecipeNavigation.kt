@@ -1,10 +1,8 @@
 package com.hyeok.recipebook.presentation.recipe
 
-import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -13,7 +11,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.hyeok.recipebook.R
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
@@ -99,8 +96,8 @@ fun NavGraphBuilder.recipeScreen(
             )
 
             LaunchedEffect(state) {
-                if(state is RecipeDetailUiState.RecipeNotFound) navController.navigateUp()
-                else if(state is RecipeDetailUiState.FailToLoad) navController.navigateUp()
+                if (state is RecipeDetailUiState.RecipeNotFound) navController.navigateUp()
+                else if (state is RecipeDetailUiState.FailToLoad) navController.navigateUp()
             }
         }
 
@@ -120,7 +117,9 @@ fun NavGraphBuilder.recipeScreen(
 
             LaunchedEffect(uiState) {
                 if ((uiState as? RecipeEditUiState.Success)?.isFinishEdit == true) {
-                    navController.popBackStack()
+                    navController.navigateUp()
+                } else if (uiState is RecipeEditUiState.FailToLoad) {
+                    navController.navigateUp()
                 }
             }
         }
