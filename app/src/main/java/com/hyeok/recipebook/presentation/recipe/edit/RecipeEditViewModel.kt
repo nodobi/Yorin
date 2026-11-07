@@ -29,6 +29,8 @@ class RecipeEditViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _recipeId = MutableStateFlow(savedStateHandle.toRoute<Route.Recipe.Edit>().recipeId)
+    private val _isSaving = MutableStateFlow(false)
+    private val _isFinishEdit = MutableStateFlow(false)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _recipe = _recipeId.flatMapLatest { recipeId ->
@@ -39,6 +41,7 @@ class RecipeEditViewModel @Inject constructor(
             .map { result ->
                 result.fold(
                     onSuccess = { recipeUiModel ->
+                        if (recipeUiModel == null) return@fold null
                         RecipeEditUiModel(
                             name = recipeUiModel.name,
                             cookingTime = recipeUiModel.cookingTime,
@@ -50,35 +53,36 @@ class RecipeEditViewModel @Inject constructor(
                     },
                     onFailure = { reason ->
                         Timber.d("Fail to load recipe, id: $recipeId, reason: $reason")
-                        RecipeEditUiModel.empty()
+                        null
                     }
                 )
             }
     }
 
-    private val _isFinishEdit = savedStateHandle.getStateFlow(
-        key = KEY_FINISH_EDIT,
-        initialValue = false
-    )
-
     val uiState = combine(_isFinishEdit, _recipe) { isFinishEdit, recipeEditUiModel ->
-        RecipeEditUiState.Success(
-            name = recipeEditUiModel.name,
-            cookingTime = recipeEditUiModel.cookingTime.let { if (it == 0) null else it },
-            photoUrl = recipeEditUiModel.photoUrl,
-            ingredients = recipeEditUiModel.ingredients,
-            steps = recipeEditUiModel.steps,
-            cookingRecords = recipeEditUiModel.cookingRecords,
-            isFinishEdit = isFinishEdit
-        )
+        if (recipeEditUiModel == null) {
+            RecipeEditUiState.FailToLoad
+        } else {
+            RecipeEditUiState.Success(
+                name = recipeEditUiModel.name,
+                cookingTime = recipeEditUiModel.cookingTime.let { if (it == 0) null else it },
+                photoUrl = recipeEditUiModel.photoUrl,
+                ingredients = recipeEditUiModel.ingredients,
+                steps = recipeEditUiModel.steps,
+                cookingRecords = recipeEditUiModel.cookingRecords,
+                isFinishEdit = isFinishEdit
+            )
+        }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeEditUiState.Loading)
 
     fun completeEdit(editUiModel: RecipeEditUiModel) {
+        if(_isSaving.value || _isFinishEdit.value) return
+        _isSaving.value = true
+
         viewModelScope.launch {
             val recipeId = _recipeId.value
 
             if (recipeId == null) {
-                // RecipeId 가 없는 경우는 신규 등록
                 recipeRepository.addRecipe(editUiModel)
             } else {
                 recipeRepository.updateRecipe(
@@ -86,14 +90,12 @@ class RecipeEditViewModel @Inject constructor(
                     recipe = editUiModel
                 )
             }.onFailure { reason ->
+                _isSaving.value = false
                 Timber.d("Fail to edit recipe, id: $recipeId, reason: $reason")
             }.onSuccess {
-                savedStateHandle[KEY_FINISH_EDIT] = true
+                _isSaving.value = false
+                _isFinishEdit.value = true
             }
         }
-    }
-
-    companion object {
-        private const val KEY_FINISH_EDIT = "key_finish_edit"
     }
 }

@@ -2,6 +2,7 @@ package com.hyeok.recipebook.presentation.recipe
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -70,12 +71,15 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
             val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
+            val context = LocalContext.current
 
             RecipeDetailRoute(
                 state = state,
                 navigateUp = {
                     when (state) {
                         RecipeDetailUiState.Loading -> Unit
+                        RecipeDetailUiState.RecipeNotFound -> Unit
+                        RecipeDetailUiState.FailToLoad -> Unit
 
                         is RecipeDetailUiState.Success -> navController.navigateUp()
                     }
@@ -83,10 +87,18 @@ fun NavGraphBuilder.recipeScreen(
                 onEditStart = {
                     navController.navigateToRecipeEdit(recipeId = recipeId)
                 },
+                onRemoveRecipe = {
+                    viewModel.removeRecipe()
+                },
                 onAddRecord = { newRecord ->
                     viewModel.addRecord(newRecord)
                 }
             )
+
+            LaunchedEffect(state) {
+                if (state is RecipeDetailUiState.RecipeNotFound) navController.navigateUp()
+                else if (state is RecipeDetailUiState.FailToLoad) navController.navigateUp()
+            }
         }
 
         composable<Route.Recipe.Edit> {
@@ -105,7 +117,9 @@ fun NavGraphBuilder.recipeScreen(
 
             LaunchedEffect(uiState) {
                 if ((uiState as? RecipeEditUiState.Success)?.isFinishEdit == true) {
-                    navController.popBackStack()
+                    navController.navigateUp()
+                } else if (uiState is RecipeEditUiState.FailToLoad) {
+                    navController.navigateUp()
                 }
             }
         }

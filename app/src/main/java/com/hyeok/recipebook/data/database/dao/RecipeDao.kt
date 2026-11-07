@@ -40,6 +40,9 @@ interface RecipeDao {
         photoUrl: String?
     )
 
+    @Query("DELETE FROM recipe WHERE id = :id")
+    suspend fun deleteRecipe(id: Long)
+
     @Insert
     suspend fun insertRecipeIngredients(ingredients: List<RecipeIngredientEntity>)
 
@@ -142,7 +145,7 @@ interface RecipeDao {
 
     @Transaction
     @Query("SELECT * FROM recipe WHERE id = :id")
-    fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord>
+    fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord?>
 
     @Transaction
     suspend fun insertRecipeWithDetails(

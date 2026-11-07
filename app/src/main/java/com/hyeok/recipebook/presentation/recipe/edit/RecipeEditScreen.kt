@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.presentation.recipe.edit
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +53,8 @@ fun RecipeEditRoute(
     onCompleteEdit: (RecipeEditUiModel) -> Unit
 ) {
     when (state) {
-        RecipeEditUiState.Loading -> Unit
+        RecipeEditUiState.Loading, RecipeEditUiState.FailToLoad -> Unit
+
         is RecipeEditUiState.Success -> {
             val name = rememberFormFieldState(state.name, FormType.RecipeName)
             val cookingTime = rememberFormFieldState(
@@ -118,7 +120,16 @@ private fun RecipeEditScreen(
 ) {
     RecipeDetailLayout(
         modifier = modifier,
-        actionText = stringResource(R.string.btn_complete),
+        action = {
+            YorinText(
+                modifier = Modifier
+                    .clickable {
+                        onCompleteEdit()
+                    },
+                text = stringResource(R.string.btn_complete),
+                style = YorinTheme.typography.title1
+            )
+        },
         header = {
             RecipeDetailHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -146,7 +157,6 @@ private fun RecipeEditScreen(
             }
         },
         navigateUp = navigateUp,
-        onClickAppbarAction = onCompleteEdit,
     )
 }
 

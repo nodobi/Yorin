@@ -5,10 +5,10 @@ import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
-import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
+import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -37,9 +37,11 @@ class RecipeRepositoryImpl @Inject constructor(
         }
 
 
-    override fun getRecipeDetailsById(recipeId: Long): Flow<Result<RecipeUiModel>> = recipeLocalDataSource
+    override fun getRecipeDetailsById(recipeId: Long): Flow<Result<RecipeUiModel?>> = recipeLocalDataSource
         .getRecipesWithDetailsById(recipeId)
         .map { recipeDetailModel ->
+            if (recipeDetailModel == null) return@map Result.success(null)
+
             // 가지고 있는 재료 양 구하기, 이름이 정확하게 일치하는 경우만 구해짐
             val stockMap = recipeDetailModel.ingredients.associate {
                 it.name to ingredientLocalDataSource.getIngredients(it.name).sumOf { it.weight }
@@ -78,5 +80,9 @@ class RecipeRepositoryImpl @Inject constructor(
             recipeId = recipeId,
             record = record.toModel()
         )
+    }
+
+    override suspend fun removeRecipe(recipeId: Long): Result<Unit> = runCatching {
+        recipeLocalDataSource.removeRecipe(recipeId)
     }
 }
