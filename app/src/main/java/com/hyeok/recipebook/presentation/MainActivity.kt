@@ -10,12 +10,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.hyeok.recipebook.designsystem.components.YorinSnackbar
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.home.homeScreen
 import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
@@ -40,30 +46,38 @@ class MainActivity : ComponentActivity() {
 fun MainView() {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
+    val snackbarState = remember { SnackbarHostState() }
 
     ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = { BottomNavigationBar(navController) },
+            snackbarHost = { SnackbarHost(hostState = snackbarState, snackbar = { YorinSnackbar(it) }) },
             contentWindowInsets = WindowInsets(0.dp)
         ) { innerPadding ->
-            NavHost(
-                modifier = Modifier.padding(innerPadding),
-                navController = navController,
-                startDestination = Route.Recipe
-            ) {
-                homeScreen(
-                    modifier = Modifier
-                )
-                recipeScreen(
-                    navController = navController
-                )
-                ingredientScreen(
-                    navController = navController
-                )
+            CompositionLocalProvider(LocalSnackbarHostState provides snackbarState) {
+                NavHost(
+                    modifier = Modifier.padding(innerPadding),
+                    navController = navController,
+                    startDestination = Route.Recipe
+                ) {
+                    homeScreen(
+                        modifier = Modifier
+                    )
+                    recipeScreen(
+                        navController = navController
+                    )
+                    ingredientScreen(
+                        navController = navController
+                    )
+                }
             }
         }
     }
+}
+
+val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
+    error("SnackbarHostState state should be initialized at runtime")
 }
 
 @Preview(showBackground = true)
