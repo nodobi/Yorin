@@ -77,6 +77,9 @@ fun NavGraphBuilder.recipeScreen(
             val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+            val snackbarHostState = LocalSnackbarHostState.current
+            val context = LocalContext.current
+
             RecipeDetailRoute(
                 state = state,
                 navigateUp = {
@@ -100,8 +103,18 @@ fun NavGraphBuilder.recipeScreen(
             )
 
             LaunchedEffect(state) {
-                if (state is RecipeDetailUiState.RecipeNotFound) navController.navigateUp()
-                else if (state is RecipeDetailUiState.FailToLoad) navController.navigateUp()
+                if (state is RecipeDetailUiState.RecipeNotFound) {
+                    navController.navigateUp()
+                    appScope.launch {
+                        snackbarHostState.showSnackbar(context.getString(R.string.error_recipe_not_found))
+                    }
+                }
+                else if (state is RecipeDetailUiState.FailToLoad) {
+                    navController.navigateUp()
+                    appScope.launch {
+                        snackbarHostState.showSnackbar(context.getString(R.string.error_fail_to_load_recipe))
+                    }
+                }
             }
         }
 
