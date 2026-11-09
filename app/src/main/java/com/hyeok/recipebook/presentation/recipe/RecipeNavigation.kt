@@ -11,6 +11,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.hyeok.recipebook.R
+import com.hyeok.recipebook.presentation.LocalSnackbarHostState
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
@@ -20,6 +22,8 @@ import com.hyeok.recipebook.presentation.recipe.edit.RecipeEditViewModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
     navigate(Route.Recipe.Recipes, navOptions)
@@ -42,7 +46,8 @@ fun NavController.navigateToRecipeEdit(navOptions: NavOptions? = null, recipeId:
 }
 
 fun NavGraphBuilder.recipeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    appScope: CoroutineScope,
 ) {
     navigation<Route.Recipe>(
         startDestination = Route.Recipe.Recipes,
@@ -71,7 +76,6 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
             val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
-            val context = LocalContext.current
 
             RecipeDetailRoute(
                 state = state,
@@ -105,6 +109,9 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipeEditViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+            val snackbarHostState = LocalSnackbarHostState.current
+            val context = LocalContext.current
+
             RecipeEditRoute(
                 state = uiState,
                 navigateUp = {
@@ -120,6 +127,9 @@ fun NavGraphBuilder.recipeScreen(
                     navController.navigateUp()
                 } else if (uiState is RecipeEditUiState.FailToLoad) {
                     navController.navigateUp()
+                    appScope.launch {
+                        snackbarHostState.showSnackbar(context.getString(R.string.error_fail_to_load_recipe))
+                    }
                 }
             }
         }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ fun MainView() {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
     val snackbarState = remember { SnackbarHostState() }
+    val appScope = rememberCoroutineScope()
 
     ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
         Scaffold(
@@ -65,7 +67,8 @@ fun MainView() {
                         modifier = Modifier
                     )
                     recipeScreen(
-                        navController = navController
+                        navController = navController,
+                        appScope = appScope
                     )
                     ingredientScreen(
                         navController = navController

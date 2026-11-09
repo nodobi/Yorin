@@ -100,6 +100,9 @@
     <string name="error_record_title_out_of_range">한줄 평은 30자 이내로 입력해야 합니다</string>
     <string name="error_record_description_out_of_range">코멘트는 1000자 이내로 입력해야 합니다</string>
 
+    <!-- 스낵바 에러 메세지 -->
+    <string name="error_fail_to_load_recipe">레시피 정보를 불러오는 데 실패했습니다.</string>
+
     <string name="format_score">%.1f</string>
     <string name="format_cooking_time_min">%1$d분</string>
 </resources>
