@@ -47,7 +47,6 @@ fun NavController.navigateToRecipeEdit(navOptions: NavOptions? = null, recipeId:
 
 fun NavGraphBuilder.recipeScreen(
     navController: NavHostController,
-    appScope: CoroutineScope,
 ) {
     navigation<Route.Recipe>(
         startDestination = Route.Recipe.Recipes,
@@ -78,7 +77,6 @@ fun NavGraphBuilder.recipeScreen(
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             val snackbarHostState = LocalSnackbarHostState.current
-            val context = LocalContext.current
 
             RecipeDetailRoute(
                 state = state,
@@ -105,15 +103,11 @@ fun NavGraphBuilder.recipeScreen(
             LaunchedEffect(state) {
                 if (state is RecipeDetailUiState.RecipeNotFound) {
                     navController.navigateUp()
-                    appScope.launch {
-                        snackbarHostState.showSnackbar(context.getString(R.string.error_recipe_not_found))
-                    }
+                    snackbarHostState.showMessage(R.string.error_recipe_not_found)
                 }
                 else if (state is RecipeDetailUiState.FailToLoad) {
                     navController.navigateUp()
-                    appScope.launch {
-                        snackbarHostState.showSnackbar(context.getString(R.string.error_fail_to_load_recipe))
-                    }
+                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
                 }
             }
         }
@@ -123,7 +117,6 @@ fun NavGraphBuilder.recipeScreen(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             val snackbarHostState = LocalSnackbarHostState.current
-            val context = LocalContext.current
 
             RecipeEditRoute(
                 state = uiState,
@@ -140,9 +133,7 @@ fun NavGraphBuilder.recipeScreen(
                     navController.navigateUp()
                 } else if (uiState is RecipeEditUiState.FailToLoad) {
                     navController.navigateUp()
-                    appScope.launch {
-                        snackbarHostState.showSnackbar(context.getString(R.string.error_fail_to_load_recipe))
-                    }
+                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
                 }
             }
         }

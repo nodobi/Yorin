@@ -18,10 +18,12 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.hyeok.recipebook.designsystem.components.YorinSnackBarHostState
 import com.hyeok.recipebook.designsystem.components.YorinSnackbar
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.home.homeScreen
@@ -47,8 +49,18 @@ class MainActivity : ComponentActivity() {
 fun MainView() {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
+
     val snackbarState = remember { SnackbarHostState() }
     val appScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val yorinSnackbarHostState = remember {
+        YorinSnackBarHostState(
+            snackbarState,
+            appScope,
+            context
+        )
+    }
 
     ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
         Scaffold(
@@ -57,7 +69,7 @@ fun MainView() {
             snackbarHost = { SnackbarHost(hostState = snackbarState, snackbar = { YorinSnackbar(it) }) },
             contentWindowInsets = WindowInsets(0.dp)
         ) { innerPadding ->
-            CompositionLocalProvider(LocalSnackbarHostState provides snackbarState) {
+            CompositionLocalProvider(LocalSnackbarHostState provides yorinSnackbarHostState) {
                 NavHost(
                     modifier = Modifier.padding(innerPadding),
                     navController = navController,
@@ -68,7 +80,6 @@ fun MainView() {
                     )
                     recipeScreen(
                         navController = navController,
-                        appScope = appScope
                     )
                     ingredientScreen(
                         navController = navController
@@ -79,7 +90,7 @@ fun MainView() {
     }
 }
 
-val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
+val LocalSnackbarHostState = compositionLocalOf<YorinSnackBarHostState> {
     error("SnackbarHostState state should be initialized at runtime")
 }
 

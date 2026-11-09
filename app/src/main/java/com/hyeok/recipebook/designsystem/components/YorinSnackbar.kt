@@ -1,5 +1,7 @@
 package com.hyeok.recipebook.designsystem.components
 
+import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -10,6 +12,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -17,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -62,6 +67,37 @@ fun YorinSnackbar(
             text = snackbarData.visuals.message,
             style = YorinTheme.typography.button2
         )
+    }
+}
+
+@Stable
+class YorinSnackBarHostState(
+    val hostState: SnackbarHostState,
+    private val appScope: CoroutineScope,
+    private val context: Context
+) {
+    fun showMessage(
+        message: String,
+        withDismissAction: Boolean = false
+    ) {
+        appScope.launch {
+            hostState.showSnackbar(
+                message = message,
+                withDismissAction = withDismissAction
+            )
+        }
+    }
+
+    fun showMessage(
+        @StringRes resId: Int,
+        withDismissAction: Boolean = false
+    ) {
+        appScope.launch {
+            hostState.showSnackbar(
+                message = context.getString(resId),
+                withDismissAction = withDismissAction
+            )
+        }
     }
 }
 
