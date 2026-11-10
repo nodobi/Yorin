@@ -2,7 +2,6 @@ package com.hyeok.recipebook.presentation.recipe
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -22,8 +21,6 @@ import com.hyeok.recipebook.presentation.recipe.edit.RecipeEditViewModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
     navigate(Route.Recipe.Recipes, navOptions)
@@ -55,6 +52,8 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipesViewModel>()
             val recipesUiState by viewModel.state.collectAsStateWithLifecycle()
 
+            val snackbarHostState = LocalSnackbarHostState.current
+
             RecipeRoute(
                 recipesUiState = recipesUiState,
                 searchQueryState = viewModel.searchQueryState,
@@ -68,6 +67,13 @@ fun NavGraphBuilder.recipeScreen(
                     viewModel.updateFilter(newFilter)
                 }
             )
+
+            LaunchedEffect(recipesUiState) {
+                if (recipesUiState.isFailToLoad) {
+                    // TODO:: 오류 상황일 때 레시피 목록을 재시도 버튼이 있는 실패 화면으로 변경하기
+                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
+                }
+            }
         }
 
         composable<Route.Recipe.Detail> { backStackEntry ->
@@ -103,8 +109,7 @@ fun NavGraphBuilder.recipeScreen(
                 if (state is RecipeDetailUiState.RecipeNotFound) {
                     navController.navigateUp()
                     snackbarHostState.showMessage(R.string.error_recipe_not_found)
-                }
-                else if (state is RecipeDetailUiState.FailToLoad) {
+                } else if (state is RecipeDetailUiState.FailToLoad) {
                     navController.navigateUp()
                     snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
                 }

@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class RecipesViewModel @Inject constructor(
@@ -29,12 +30,14 @@ class RecipesViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     private val searchQueryFlow = snapshotFlow { searchQueryState.text }
-        .debounce(200L)
+        .debounce(200L.milliseconds)
 
     private val recipesFlow = recipeRepository.getRecipesSummaries()
         .map {
             it.getOrElse {
-                emptyList()
+                Timber.d("Fail to load recipeSummaries. exception: $it")
+
+                null
             }
         }
 
@@ -45,7 +48,7 @@ class RecipesViewModel @Inject constructor(
         searchQueryFlow,
         _recipeFilter,
     ) { recipes, query, recipeFilter ->
-        val queriedRecipes = recipes.filter { recipe ->
+        val queriedRecipes = recipes?.filter { recipe ->
             when (recipeFilter) {
                 RecipeSearchFilter.BY_INGREDIENT -> {
                     recipe.ingredients.find { it.contains(query) } != null
@@ -55,10 +58,12 @@ class RecipesViewModel @Inject constructor(
                     recipe.name.contains(query)
                 }
             }
-        }
+        } ?: emptyList()
+
         RecipesUiState(
             selectedSearchFilter = recipeFilter,
-            recipes = queriedRecipes
+            recipes = queriedRecipes,
+            isFailToLoad = recipes == null
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, RecipesUiState(selectedSearchFilter = _recipeFilter.value))
 
