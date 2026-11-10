@@ -2,7 +2,6 @@ package com.hyeok.recipebook.presentation.recipe
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -11,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.hyeok.recipebook.R
+import com.hyeok.recipebook.presentation.LocalSnackbarHostState
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
@@ -42,7 +43,7 @@ fun NavController.navigateToRecipeEdit(navOptions: NavOptions? = null, recipeId:
 }
 
 fun NavGraphBuilder.recipeScreen(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     navigation<Route.Recipe>(
         startDestination = Route.Recipe.Recipes,
@@ -51,7 +52,8 @@ fun NavGraphBuilder.recipeScreen(
             val viewModel = hiltViewModel<RecipesViewModel>()
             val recipesUiState by viewModel.state.collectAsStateWithLifecycle()
 
-            // TODO:: 레시피 삭제 모달 작성 #49
+            val snackbarHostState = LocalSnackbarHostState.current
+
             RecipeRoute(
                 recipesUiState = recipesUiState,
                 searchQueryState = viewModel.searchQueryState,
@@ -65,13 +67,21 @@ fun NavGraphBuilder.recipeScreen(
                     viewModel.updateFilter(newFilter)
                 }
             )
+
+            LaunchedEffect(recipesUiState) {
+                if (recipesUiState.isFailToLoad) {
+                    // TODO:: 오류 상황일 때 레시피 목록을 재시도 버튼이 있는 실패 화면으로 변경하기
+                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
+                }
+            }
         }
 
         composable<Route.Recipe.Detail> { backStackEntry ->
             val viewModel = hiltViewModel<RecipeDetailViewModel>()
             val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
-            val context = LocalContext.current
+
+            val snackbarHostState = LocalSnackbarHostState.current
 
             RecipeDetailRoute(
                 state = state,
@@ -96,14 +106,21 @@ fun NavGraphBuilder.recipeScreen(
             )
 
             LaunchedEffect(state) {
-                if (state is RecipeDetailUiState.RecipeNotFound) navController.navigateUp()
-                else if (state is RecipeDetailUiState.FailToLoad) navController.navigateUp()
+                if (state is RecipeDetailUiState.RecipeNotFound) {
+                    navController.navigateUp()
+                    snackbarHostState.showMessage(R.string.error_recipe_not_found)
+                } else if (state is RecipeDetailUiState.FailToLoad) {
+                    navController.navigateUp()
+                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
+                }
             }
         }
 
         composable<Route.Recipe.Edit> {
             val viewModel = hiltViewModel<RecipeEditViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            val snackbarHostState = LocalSnackbarHostState.current
 
             RecipeEditRoute(
                 state = uiState,
@@ -120,6 +137,7 @@ fun NavGraphBuilder.recipeScreen(
                     navController.navigateUp()
                 } else if (uiState is RecipeEditUiState.FailToLoad) {
                     navController.navigateUp()
+                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
                 }
             }
         }
