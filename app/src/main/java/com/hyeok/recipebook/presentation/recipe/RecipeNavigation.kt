@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.presentation.LocalSnackbarHostState
@@ -133,11 +134,24 @@ fun NavGraphBuilder.recipeScreen(
             )
 
             LaunchedEffect(uiState) {
-                if ((uiState as? RecipeEditUiState.Success)?.isFinishEdit == true) {
-                    navController.navigateUp()
-                } else if (uiState is RecipeEditUiState.FailToLoad) {
-                    navController.navigateUp()
-                    snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
+                when(uiState) {
+                    RecipeEditUiState.Loading -> Unit
+                    RecipeEditUiState.FailToLoad -> {
+                        navController.navigateUp()
+                        snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
+                    }
+                    is RecipeEditUiState.Success -> {
+                        val uiState = uiState as RecipeEditUiState.Success
+
+                        if(uiState.isFinishEdit && uiState.updatedRecipeId != null) {
+                            navController.navigateToRecipeDetail(
+                                recipeId = uiState.updatedRecipeId,
+                                navOptions = navOptions {
+                                    popUpTo<Route.Recipe.Recipes>()
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
