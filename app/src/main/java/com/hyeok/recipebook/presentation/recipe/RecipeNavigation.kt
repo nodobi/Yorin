@@ -26,7 +26,7 @@ fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
     navigate(Route.Recipe.Recipes, navOptions)
 }
 
-fun NavController.navigateToRecipeDetail(navOptions: NavOptions? = null, recipeId: Long) {
+fun NavController.navigateToRecipeDetail(recipeId: Long, navOptions: NavOptions? = null) {
     navigate(
         Route.Recipe.Detail(
             recipeId
@@ -34,7 +34,7 @@ fun NavController.navigateToRecipeDetail(navOptions: NavOptions? = null, recipeI
     )
 }
 
-fun NavController.navigateToRecipeEdit(navOptions: NavOptions? = null, recipeId: Long?) {
+fun NavController.navigateToRecipeEdit(recipeId: Long?, navOptions: NavOptions? = null) {
     navigate(
         Route.Recipe.Edit(
             recipeId
