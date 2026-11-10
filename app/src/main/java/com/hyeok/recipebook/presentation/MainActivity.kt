@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.hyeok.recipebook.designsystem.components.YorinSnackBarHostState
+import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
 import com.hyeok.recipebook.designsystem.components.YorinSnackbar
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.home.homeScreen
@@ -55,7 +55,7 @@ fun MainView() {
     val context = LocalContext.current
 
     val yorinSnackbarHostState = remember {
-        YorinSnackBarHostState(
+        YorinSnackbarHostState(
             snackbarState,
             appScope,
             context
@@ -90,7 +90,7 @@ fun MainView() {
     }
 }
 
-val LocalSnackbarHostState = compositionLocalOf<YorinSnackBarHostState> {
+val LocalSnackbarHostState = compositionLocalOf<YorinSnackbarHostState> {
     error("SnackbarHostState state should be initialized at runtime")
 }
 

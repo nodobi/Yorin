@@ -71,7 +71,7 @@ fun YorinSnackbar(
 }
 
 @Stable
-class YorinSnackBarHostState(
+class YorinSnackbarHostState(
     val hostState: SnackbarHostState,
     private val appScope: CoroutineScope,
     private val context: Context
