@@ -56,18 +56,16 @@ interface RecipeDao {
     suspend fun getRecipeIngredientsByRecipeId(recipeId: Long): List<RecipeIngredientEntity>
 
     @Transaction
-    suspend fun replaceRecipeIngredients(recipeId: Long, newIngredients: List<RecipeIngredientEntity>) {
+    suspend fun replaceRecipeIngredients(recipeId: Long, ingredients: List<RecipeIngredientEntity>) {
         val oldIngredients = getRecipeIngredientsByRecipeId(recipeId)
 
         // 새로운 재료에 없는 기존 재료는 삭제되어야 한다
         val ingredientsToDelete = oldIngredients.filter { oldIngredient ->
-            newIngredients.none { it.id == oldIngredient.id }
+            ingredients.none { it.id == oldIngredient.id }
         }
 
-
         deleteRecipeIngredients(ingredientsToDelete)
-
-        upsertRecipeIngredients(newIngredients)
+        upsertRecipeIngredients(ingredients)
     }
 
     @Insert
@@ -83,16 +81,15 @@ interface RecipeDao {
     suspend fun deleteRecipeSteps(steps: List<RecipeStepEntity>)
 
     @Transaction
-    suspend fun replaceRecipeSteps(recipeId: Long, newSteps: List<RecipeStepEntity>) {
+    suspend fun replaceRecipeSteps(recipeId: Long, steps: List<RecipeStepEntity>) {
         val savedSteps = getRecipeStepsByRecipeId(recipeId)
 
         val stepsToDelete = savedSteps.filter { oldStep ->
-            newSteps.none { it.id == oldStep.id }
+            steps.none { it.id == oldStep.id }
         }
 
         deleteRecipeSteps(stepsToDelete)
-
-        upsertRecipeSteps(newSteps)
+        upsertRecipeSteps(steps)
     }
 
     @Insert
@@ -111,15 +108,15 @@ interface RecipeDao {
     suspend fun deleteRecipeRecords(records: List<RecipeRecordEntity>)
 
     @Transaction
-    suspend fun replaceRecipeRecords(recipeId: Long, newRecords: List<RecipeRecordEntity>) {
+    suspend fun replaceRecipeRecords(recipeId: Long, records: List<RecipeRecordEntity>) {
         val savedRecords = getRecipeRecordsByRecipeId(recipeId)
 
         val recordsToDelete = savedRecords.filter { oldRecord ->
-            newRecords.none { it.id == oldRecord.id }
+            records.none { it.id == oldRecord.id }
         }
 
         deleteRecipeRecords(recordsToDelete)
-        upsertRecipeRecords(newRecords)
+        upsertRecipeRecords(records)
     }
 
     @Query(
@@ -184,15 +181,15 @@ interface RecipeDao {
 
         replaceRecipeIngredients(
             recipeId = recipe.id,
-            newIngredients = recipe.ingredients.toEntities(recipe.id, weightUnitMap)
+            ingredients = recipe.ingredients.toEntities(recipe.id, weightUnitMap)
         )
         replaceRecipeSteps(
             recipeId = recipe.id,
-            newSteps = recipe.steps.toEntities(recipe.id)
+            steps = recipe.steps.toEntities(recipe.id)
         )
         replaceRecipeRecords(
             recipeId = recipe.id,
-            newRecords = recipe.records.toEntities(recipe.id)
+            records = recipe.records.toEntities(recipe.id)
         )
     }
 }
