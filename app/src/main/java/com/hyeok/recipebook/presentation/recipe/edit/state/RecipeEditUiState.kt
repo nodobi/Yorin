@@ -18,6 +18,7 @@ sealed interface RecipeEditUiState {
         val steps: List<RecipeStepUiModel>,
         val cookingRecords: List<RecipeRecordUiModel>,
         val isFinishEdit: Boolean = false,
+        val updatedRecipeId: Long? = null,
     ) : RecipeEditUiState
 
     data object FailToLoad : RecipeEditUiState

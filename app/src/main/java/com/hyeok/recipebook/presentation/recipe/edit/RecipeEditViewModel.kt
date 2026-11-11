@@ -59,7 +59,7 @@ class RecipeEditViewModel @Inject constructor(
             }
     }
 
-    val uiState = combine(_isFinishEdit, _recipe) { isFinishEdit, recipeEditUiModel ->
+    val uiState = combine(_isFinishEdit, _recipe, _recipeId) { isFinishEdit, recipeEditUiModel, recipeId ->
         if (recipeEditUiModel == null) {
             RecipeEditUiState.FailToLoad
         } else {
@@ -70,13 +70,14 @@ class RecipeEditViewModel @Inject constructor(
                 ingredients = recipeEditUiModel.ingredients,
                 steps = recipeEditUiModel.steps,
                 cookingRecords = recipeEditUiModel.cookingRecords,
-                isFinishEdit = isFinishEdit
+                isFinishEdit = isFinishEdit,
+                updatedRecipeId = recipeId
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), RecipeEditUiState.Loading)
 
     fun completeEdit(editUiModel: RecipeEditUiModel) {
-        if(_isSaving.value || _isFinishEdit.value) return
+        if (_isSaving.value || _isFinishEdit.value) return
         _isSaving.value = true
 
         viewModelScope.launch {
@@ -84,6 +85,9 @@ class RecipeEditViewModel @Inject constructor(
 
             if (recipeId == null) {
                 recipeRepository.addRecipe(editUiModel)
+                    .onSuccess {
+                        _recipeId.value = it
+                    }
             } else {
                 recipeRepository.updateRecipe(
                     recipeId = recipeId,
