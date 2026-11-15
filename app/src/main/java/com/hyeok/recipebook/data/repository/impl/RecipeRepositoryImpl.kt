@@ -98,26 +98,37 @@ class RecipeRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalTime::class)
     override fun getRecipeRecommendationsStream(): Flow<RecipeRecommendationModel> = flow {
         val recipes = recipeLocalDataSource.getRecipesWithDetails()
-        val stockMap = ingredientLocalDataSource.getIngredients().first().associateBy { it.name }
+
+        // 이름이 같은 재료가 있을 수 있다
+        val stockMap = ingredientLocalDataSource.getIngredients().first().groupBy { it.name }
 
         val recommends = recipes.map { recipeDetail ->
             val reason = mutableSetOf<RecommendationReason>()
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault()).toEpochDays()
 
-            val missingIngredient = recipeDetail.ingredients.filter {
-                it.requireQuantity > (stockMap[it.name]?.weight ?: 0)
+            val missingIngredient = recipeDetail.ingredients.filter { requiredIngredient ->
+                val ownedQuantity = stockMap[requiredIngredient.name].orEmpty().sumOf {
+                    when (it.weightUnit) {
+                        "kg", "L" -> it.weight * 1000L
+                        else -> it.weight.toLong()
+                    }
+                }
+                val requireQuantity = when (requiredIngredient.weightUnit) {
+                    "kg", "L" -> requiredIngredient.requireQuantity * 1000L
+                    else -> requiredIngredient.requireQuantity.toLong()
+                }
+                requireQuantity > ownedQuantity
             }
 
-            val expiringIngredients = recipeDetail.ingredients.map { recipeIngredient ->
-                val ownedIngredient = stockMap[recipeIngredient.name] ?: return@map null
-                val expirationDay = ownedIngredient.expirationDate ?: return@map null
-                val daysToExpiration = today - expirationDay
+            // 같은 이름을 가진 재료들이 모두 소비기한에 가깝다면 모두 포함한다
+            val expiringIngredients = recipeDetail.ingredients
+                .flatMap { stockMap[it.name].orEmpty() }
+                .filter { ownedIngredient ->
+                    val expirationDay = ownedIngredient.expirationDate ?: return@filter false
+                    val daysToExpiration = today - expirationDay
 
-                if (daysToExpiration in 0..2)
-                    ownedIngredient
-                else
-                    null
-            }.filterNotNull()
+                    daysToExpiration in 0..2
+                }
 
             if (missingIngredient.isEmpty()) {
                 reason.add(RecommendationReason.ReadyToCook)
