@@ -140,6 +140,9 @@ interface RecipeDao {
     )
     fun getRecipesSummaries(): Flow<List<RecipeSummaryModel>>
 
+    @Query("SELECT * From recipe")
+    suspend fun getRecipeWithDetails(): List<RecipeWithDetailsRecord>
+
     @Transaction
     @Query("SELECT * FROM recipe WHERE id = :id")
     fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord?>

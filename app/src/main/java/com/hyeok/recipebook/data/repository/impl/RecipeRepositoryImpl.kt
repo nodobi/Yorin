@@ -1,10 +1,12 @@
 package com.hyeok.recipebook.data.repository.impl
 
+import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
 import com.hyeok.recipebook.data.database.model.toModel
 import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
+import com.hyeok.recipebook.presentation.home.model.RecommendationReason
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
@@ -12,8 +14,14 @@ import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class RecipeRepositoryImpl @Inject constructor(
     private val recipeLocalDataSource: RecipeLocalDataSource,
@@ -84,5 +92,51 @@ class RecipeRepositoryImpl @Inject constructor(
 
     override suspend fun removeRecipe(recipeId: Long): Result<Unit> = runCatching {
         recipeLocalDataSource.removeRecipe(recipeId)
+    }
+
+    @OptIn(ExperimentalTime::class)
+    override fun getRecipeRecommendationsStream(): Flow<RecipeRecommendationModel> = flow {
+        val recipes = recipeLocalDataSource.getRecipesWithDetails()
+        val stockMap = ingredientLocalDataSource.getIngredients().first().associateBy { it.name }
+
+        val recommends = recipes.map { recipeDetail ->
+            val reason = mutableSetOf<RecommendationReason>()
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault()).toEpochDays()
+
+            val missingIngredient = recipeDetail.ingredients.filter {
+                it.requireQuantity > (stockMap[it.name]?.weight ?: 0)
+            }
+
+            val expiringIngredients = recipeDetail.ingredients.map { recipeIngredient ->
+                val ownedIngredient = stockMap[recipeIngredient.name] ?: return@map null
+                val expirationDay = ownedIngredient.expirationDate ?: return@map null
+                val daysToExpiration = today - expirationDay
+
+                if (daysToExpiration in 0..2)
+                    ownedIngredient
+                else
+                    null
+            }.filterNotNull()
+
+            if (missingIngredient.isEmpty()) {
+                reason.add(RecommendationReason.ReadyToCook)
+            } else if (missingIngredient.size < 2) {
+                reason.add(RecommendationReason.MissingIngredients(missingIngredient))
+            }
+
+            if (expiringIngredients.isNotEmpty()) {
+                reason.add(RecommendationReason.UseExpiringIngredients(expiringIngredients))
+            }
+
+            if (reason.isEmpty()) null
+            else RecipeRecommendationModel(
+                recipe = recipeDetail,
+                reason = reason
+            )
+        }.filterNotNull()
+
+        recommends.forEach {
+            emit(it)
+        }
     }
 }
