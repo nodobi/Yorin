@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.data.repository.impl
 
+import com.hyeok.recipebook.data.database.model.RecipeDetailsModel
 import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
 import com.hyeok.recipebook.data.database.model.toModel
 import com.hyeok.recipebook.data.database.model.toUiModel
@@ -138,5 +139,37 @@ class RecipeRepositoryImpl @Inject constructor(
         recommends.forEach {
             emit(it)
         }
+    }
+
+    override suspend fun getReadyToCookRecipes(limit: Int): Result<List<RecipeDetailsModel>> = runCatching {
+        val recipes = recipeLocalDataSource.getRecipesWithDetails()
+        val ingredients = ingredientLocalDataSource.getIngredients().first()
+
+        // 같은 이름인 재료는 수를 더한다
+        val stockMap = ingredients
+            .groupBy { it.name }
+            .mapValues { (_, ownedIngredient) ->
+                ownedIngredient.sumOf {
+                    when (it.weightUnit) {
+                        "kg", "L" -> it.weight * 1000L
+                        else -> it.weight.toLong()
+                    }
+                }
+            }
+
+        recipes.filter {
+            it.ingredients.all { requiredIngredient ->
+                val ownedQuantity = stockMap[requiredIngredient.name] ?: 0L
+                val requireQuantity = when (requiredIngredient.weightUnit) {
+                    "kg", "L" -> requiredIngredient.requireQuantity * 1000L
+                    else -> requiredIngredient.requireQuantity.toLong()
+                }
+                ownedQuantity >= requireQuantity
+            }
+        }.take(limit)
+    }
+
+    override suspend fun getRecentlyCookedRecipes(limit: Int): Result<List<RecipeDetailsModel>> = runCatching {
+        recipeLocalDataSource.getRecentlyCookedRecipes(limit)
     }
 }

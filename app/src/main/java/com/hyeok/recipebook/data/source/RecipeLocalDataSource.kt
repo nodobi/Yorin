@@ -91,6 +91,41 @@ class RecipeLocalDataSource @Inject constructor(
             }
         }
 
+    suspend fun getRecentlyCookedRecipes(limit: Int): List<RecipeDetailsModel> = recipeDao.getRecentlyCookedRecipes(limit)
+        .map { (recipe, ingredients, steps, records) ->
+            RecipeDetailsModel(
+                id = recipe.id,
+                name = recipe.name,
+                registerDate = recipe.registerDate,
+                cookingTime = recipe.cookingTime,
+                photoUrl = recipe.photoUrl,
+                ingredients = ingredients.map { ingredient ->
+                    RecipeIngredientModel(
+                        id = ingredient.id,
+                        name = ingredient.name,
+                        weightUnit = weightUnitDao.getNameById(ingredient.weightUnitId),
+                        requireQuantity = ingredient.requireQuantity,
+                    )
+                },
+                steps = steps.map { step ->
+                    RecipeStepModel(
+                        id = step.id,
+                        order = step.order,
+                        description = step.description
+                    )
+                },
+                records = records.map { record ->
+                    RecipeRecordModel(
+                        id = record.id,
+                        cookedAt = record.cookedAt,
+                        title = record.title,
+                        description = record.description,
+                        score = record.score,
+                    )
+                }
+            )
+        }
+
     suspend fun addRecipe(
         recipeEditModel: RecipeEditModel,
         registerDate: Long,

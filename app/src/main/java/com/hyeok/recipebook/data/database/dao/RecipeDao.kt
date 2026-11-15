@@ -148,6 +148,22 @@ interface RecipeDao {
     fun getRecipeWithDetailsByRecipeId(id: Long): Flow<RecipeWithDetailsRecord?>
 
     @Transaction
+    @Query(
+        """
+        SELECT r.*
+        FROM recipe r
+        INNER JOIN (
+            SELECT recipeId, MAX(cookedAt) AS lastCookedAt
+            FROM recipe_record
+            GROUP BY recipeId
+        ) latest ON latest.recipeId = r.id
+        ORDER BY latest.lastCookedAt DESC, r.id DESC
+        LIMIT :limit
+    """
+    )
+    suspend fun getRecentlyCookedRecipes(limit: Int): List<RecipeWithDetailsRecord>
+
+    @Transaction
     suspend fun insertRecipeWithDetails(
         recipe: RecipeEditModel,
         registerDate: Long,
