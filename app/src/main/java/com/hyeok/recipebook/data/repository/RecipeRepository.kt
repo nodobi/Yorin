@@ -1,5 +1,6 @@
 package com.hyeok.recipebook.data.repository
 
+import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
@@ -21,4 +22,6 @@ interface RecipeRepository {
     suspend fun addRecipeRecord(recipeId: Long, record: RecipeRecordUiModel): Result<Unit>
 
     suspend fun removeRecipe(recipeId: Long): Result<Unit>
+
+    fun getRecipeRecommendationsStream(): Flow<RecipeRecommendationModel>
 }
