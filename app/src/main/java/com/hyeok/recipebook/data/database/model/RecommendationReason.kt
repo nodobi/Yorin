@@ -1,7 +1,4 @@
-package com.hyeok.recipebook.presentation.home.model
-
-import com.hyeok.recipebook.data.database.model.IngredientModel
-import com.hyeok.recipebook.data.database.model.RecipeIngredientModel
+package com.hyeok.recipebook.data.database.model
 
 /**
  * 레시피 추천 사유

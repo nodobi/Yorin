@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.presentation.home.model
 
 import androidx.compose.runtime.Stable
+import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 
 /**

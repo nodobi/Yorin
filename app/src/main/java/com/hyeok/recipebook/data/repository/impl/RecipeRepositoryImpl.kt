@@ -7,7 +7,7 @@ import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
-import com.hyeok.recipebook.presentation.home.model.RecommendationReason
+import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
