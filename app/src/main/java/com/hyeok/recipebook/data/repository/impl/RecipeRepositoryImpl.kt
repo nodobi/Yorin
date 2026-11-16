@@ -132,7 +132,7 @@ class RecipeRepositoryImpl @Inject constructor(
 
             if (missingIngredient.isEmpty()) {
                 reason.add(RecommendationReason.ReadyToCook)
-            } else if (missingIngredient.size < 2) {
+            } else if (missingIngredient.size <= 2) {
                 reason.add(RecommendationReason.MissingIngredients(missingIngredient))
             }
 
