@@ -125,7 +125,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 .flatMap { stockMap[it.name].orEmpty() }
                 .filter { ownedIngredient ->
                     val expirationDay = ownedIngredient.expirationDate ?: return@filter false
-                    val daysToExpiration = today - expirationDay
+                    val daysToExpiration = expirationDay - today
 
                     daysToExpiration in 0..2
                 }
