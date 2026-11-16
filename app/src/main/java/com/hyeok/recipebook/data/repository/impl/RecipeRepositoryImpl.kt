@@ -1,10 +1,13 @@
 package com.hyeok.recipebook.data.repository.impl
 
+import com.hyeok.recipebook.data.database.model.RecipeDetailsModel
+import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
 import com.hyeok.recipebook.data.database.model.toModel
 import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
+import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
@@ -12,8 +15,14 @@ import com.hyeok.recipebook.presentation.recipe.model.RecipeUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class RecipeRepositoryImpl @Inject constructor(
     private val recipeLocalDataSource: RecipeLocalDataSource,
@@ -85,4 +94,87 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun removeRecipe(recipeId: Long): Result<Unit> = runCatching {
         recipeLocalDataSource.removeRecipe(recipeId)
     }
+
+    @OptIn(ExperimentalTime::class)
+    override fun getRecipeRecommendationsStream(): Flow<RecipeRecommendationModel> = flow {
+        val recipes = recipeLocalDataSource.getRecipesWithDetails()
+
+        // 이름이 같은 재료가 있을 수 있다
+        val stockMap = ingredientLocalDataSource.getIngredients().first().groupBy { it.name }
+
+        val recommends = recipes.map { recipeDetail ->
+            val reason = mutableSetOf<RecommendationReason>()
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault()).toEpochDays()
+
+            val missingIngredient = recipeDetail.ingredients.filter { requiredIngredient ->
+                val ownedQuantity = stockMap[requiredIngredient.name].orEmpty().sumOf {
+                    toBaseUnitQuantity(it.weight, it.weightUnit)
+                }
+                val requireQuantity = toBaseUnitQuantity(requiredIngredient.requireQuantity, requiredIngredient.weightUnit)
+                requireQuantity > ownedQuantity
+            }
+
+            // 같은 이름을 가진 재료들이 모두 소비기한에 가깝다면 모두 포함한다
+            val expiringIngredients = recipeDetail.ingredients
+                .flatMap { stockMap[it.name].orEmpty() }
+                .filter { ownedIngredient ->
+                    val expirationDay = ownedIngredient.expirationDate ?: return@filter false
+                    val daysToExpiration = expirationDay - today
+
+                    daysToExpiration in 0..2
+                }
+
+            if (missingIngredient.isEmpty()) {
+                reason.add(RecommendationReason.ReadyToCook)
+            } else if (missingIngredient.size <= 2) {
+                reason.add(RecommendationReason.MissingIngredients(missingIngredient))
+            }
+
+            if (expiringIngredients.isNotEmpty()) {
+                reason.add(RecommendationReason.UseExpiringIngredients(expiringIngredients))
+            }
+
+            if (reason.isEmpty()) null
+            else RecipeRecommendationModel(
+                recipe = recipeDetail,
+                reason = reason
+            )
+        }.filterNotNull()
+
+        recommends.forEach {
+            emit(it)
+        }
+    }
+
+    override suspend fun getReadyToCookRecipes(limit: Int): Result<List<RecipeDetailsModel>> = runCatching {
+        val recipes = recipeLocalDataSource.getRecipesWithDetails()
+        val ingredients = ingredientLocalDataSource.getIngredients().first()
+
+        // 같은 이름인 재료는 수를 더한다
+        val stockMap = ingredients
+            .groupBy { it.name }
+            .mapValues { (_, ownedIngredient) ->
+                ownedIngredient.sumOf {
+                    toBaseUnitQuantity(it.weight, it.weightUnit)
+                }
+            }
+
+        recipes.filter {
+            it.ingredients.all { requiredIngredient ->
+                val ownedQuantity = stockMap[requiredIngredient.name] ?: 0L
+                val requireQuantity = toBaseUnitQuantity(requiredIngredient.requireQuantity, requiredIngredient.weightUnit)
+                ownedQuantity >= requireQuantity
+            }
+        }.take(limit)
+    }
+
+    override suspend fun getRecentlyCookedRecipes(limit: Int): Result<List<RecipeDetailsModel>> = runCatching {
+        recipeLocalDataSource.getRecentlyCookedRecipes(limit)
+    }
+}
+
+// 사용자 정의 단위 리팩토링 할 떄 같이 제거
+private fun toBaseUnitQuantity(quantity: Int, unit: String): Long = when(unit) {
+    "kg", "L" -> quantity * 1000L
+    else -> quantity.toLong()
 }

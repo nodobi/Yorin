@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalDate
 class IngredientModel(
     val id: Long,
     val name: String,
+    // TODO:: Date 인지 Day 인지 명확하게 정의
     val purchaseDate: Long,
     val expirationDate: Long?,
     val weight: Int,
