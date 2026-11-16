@@ -108,15 +108,9 @@ class RecipeRepositoryImpl @Inject constructor(
 
             val missingIngredient = recipeDetail.ingredients.filter { requiredIngredient ->
                 val ownedQuantity = stockMap[requiredIngredient.name].orEmpty().sumOf {
-                    when (it.weightUnit) {
-                        "kg", "L" -> it.weight * 1000L
-                        else -> it.weight.toLong()
-                    }
+                    toBaseUnitQuantity(it.weight, it.weightUnit)
                 }
-                val requireQuantity = when (requiredIngredient.weightUnit) {
-                    "kg", "L" -> requiredIngredient.requireQuantity * 1000L
-                    else -> requiredIngredient.requireQuantity.toLong()
-                }
+                val requireQuantity = toBaseUnitQuantity(requiredIngredient.requireQuantity, requiredIngredient.weightUnit)
                 requireQuantity > ownedQuantity
             }
 
@@ -161,20 +155,14 @@ class RecipeRepositoryImpl @Inject constructor(
             .groupBy { it.name }
             .mapValues { (_, ownedIngredient) ->
                 ownedIngredient.sumOf {
-                    when (it.weightUnit) {
-                        "kg", "L" -> it.weight * 1000L
-                        else -> it.weight.toLong()
-                    }
+                    toBaseUnitQuantity(it.weight, it.weightUnit)
                 }
             }
 
         recipes.filter {
             it.ingredients.all { requiredIngredient ->
                 val ownedQuantity = stockMap[requiredIngredient.name] ?: 0L
-                val requireQuantity = when (requiredIngredient.weightUnit) {
-                    "kg", "L" -> requiredIngredient.requireQuantity * 1000L
-                    else -> requiredIngredient.requireQuantity.toLong()
-                }
+                val requireQuantity = toBaseUnitQuantity(requiredIngredient.requireQuantity, requiredIngredient.weightUnit)
                 ownedQuantity >= requireQuantity
             }
         }.take(limit)
@@ -183,4 +171,10 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun getRecentlyCookedRecipes(limit: Int): Result<List<RecipeDetailsModel>> = runCatching {
         recipeLocalDataSource.getRecentlyCookedRecipes(limit)
     }
+}
+
+// 사용자 정의 단위 리팩토링 할 떄 같이 제거
+private fun toBaseUnitQuantity(quantity: Int, unit: String): Long = when(unit) {
+    "kg", "L" -> quantity * 1000L
+    else -> quantity.toLong()
 }
