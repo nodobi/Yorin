@@ -11,6 +11,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+// REVIEW:: OwnedIngredientUiModel 로 대체하는 것 고려
 data class IngredientUiModel(
     val id: Long,
     val name: String,
@@ -29,7 +30,7 @@ data class IngredientUiModel(
             day()
         }
     ): String? {
-        return purchaseDate?.format(format)
+        return purchaseDate.format(format)
     }
 
     fun formatExpirationDate(
