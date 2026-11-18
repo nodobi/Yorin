@@ -1,16 +1,20 @@
 package com.hyeok.recipebook.presentation.home
 
-import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.hyeok.recipebook.presentation.navigation.Route
 
+fun NavController.navigateToHome(navOptions: NavOptions? = null) {
+    navigate(Route.Home, navOptions)
+}
+
 fun NavGraphBuilder.homeScreen(
-    modifier: Modifier = Modifier
+    navController: NavHostController
 ) {
-    composable<Route.Home> {
-        HomeScreen(
-            modifier = modifier
-        )
-    }
+    HomeScreen(
+        modifier = modifier
+    )
 }
