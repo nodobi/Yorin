@@ -73,7 +73,7 @@ fun MainView() {
                 NavHost(
                     modifier = Modifier.padding(innerPadding),
                     navController = navController,
-                    startDestination = Route.Recipe
+                    startDestination = Route.Home
                 ) {
                     homeScreen(
                         navController = navController

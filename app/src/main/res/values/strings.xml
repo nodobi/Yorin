@@ -13,11 +13,26 @@
     <string name="btn_do_edit">수정하기</string>
     <string name="btn_do_delete">삭제하기</string>
     <string name="btn_do_save">저장하기</string>
-
+    <string name="btn_view_all">전체보기</string>
+    <string name="btn_view_recipe">레시피 보기</string>
+    <string name="btn_do_reroll">다시 고르기</string>
     <!-- 최상단 메뉴 -->
     <string name="menu_home">홈</string>
     <string name="menu_recipe">레시피</string>
     <string name="menu_ingredient">재료</string>
+
+    <!-- 홈 -->
+    <string name="home_expired_ingredient_title">소비기한이 지난 재료가 %1$d개 있어요</string>
+    <string name="home_recipe_recommendation_title">레시피 추천</string>
+    <string name="recipe_recommendation_reason_ready_to_cook">바로 조리 가능</string>
+    <string name="recipe_recommendation_reason_missing_ingredients">재료 %1$d개 부족</string>
+    <string name="recipe_recommendation_reason_use_expiring_ingredients">먼저 써야 할 재료 사용</string>
+    <string name="recipe_recommendation_expiring_ingredients_label">소비기한이 임박한 재료</string>
+    <string name="recipe_recommendation_missing_ingredients_label">부족한 재료</string>
+
+    <string name="home_expiring_ingredient_title">소비기한 임박 재료</string>
+    <string name="home_ready_to_cook_recipes_title">지금 바로 만들 수 있는 요리</string>
+    <string name="home_recently_cooked_recipes_title">지금 바로 만들 수 있는 요리</string>
 
     <!-- 재료 -->
     <string name="ingredient_title">재료</string>
@@ -106,4 +121,5 @@
 
     <string name="format_score">%.1f</string>
     <string name="format_cooking_time_min">%1$d분</string>
+    <string name="format_remain_day">%1$d일 남음</string>
 </resources>

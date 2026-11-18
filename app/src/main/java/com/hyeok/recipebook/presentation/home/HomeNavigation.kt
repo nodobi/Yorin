@@ -14,7 +14,16 @@ fun NavController.navigateToHome(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.homeScreen(
     navController: NavHostController
 ) {
-    HomeScreen(
-        modifier = modifier
-    )
+    composable<Route.Home> {
+        lateinit var uiState: HomeUiState
+
+        HomeRoute(
+            uiState = uiState,
+            onExpirationCardClick = {},
+            onViewRecommendedRecipeClick = {},
+            onRerollRecipeRecommendation = {},
+            onViewExpiringIngredientsClick = {},
+            onRecipeClick = {},
+        )
+    }
 }
