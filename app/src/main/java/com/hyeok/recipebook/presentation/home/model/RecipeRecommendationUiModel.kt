@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.presentation.home.model
 
 import androidx.compose.runtime.Stable
+import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
 import com.hyeok.recipebook.data.database.model.RecommendationReason
 
 /**
@@ -21,4 +22,13 @@ data class RecipeRecommendationUiModel(
     val averageScore: Float,
     val photoUrl: String?,
     val reasons: Set<RecommendationReason>
+)
+
+internal fun RecipeRecommendationModel.toUiModel() = RecipeRecommendationUiModel(
+    id = recipe.id,
+    name = recipe.name,
+    cookingTime = recipe.cookingTime,
+    averageScore = recipe.averageScore,
+    photoUrl = recipe.photoUrl,
+    reasons = reason
 )

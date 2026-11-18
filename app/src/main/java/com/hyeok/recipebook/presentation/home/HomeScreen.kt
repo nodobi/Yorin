@@ -67,6 +67,7 @@ fun HomeRoute(
 ) {
     val scrollState = rememberScrollState()
 
+    // TODO:: 데이터가 충분하지 않을 때 홈 화면 추가 필요, HomeUiState 의 모델링이 끝난 뒤 진행
     HomeScreen(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,7 +90,7 @@ fun HomeRoute(
 private fun HomeScreen(
     expiredIngredients: List<OwnedIngredientUiModel>,
     expiringIngredients: List<OwnedIngredientUiModel>,
-    recipeRecommendation: RecipeRecommendationUiModel,
+    recipeRecommendation: RecipeRecommendationUiModel?,
     readyToCookRecipes: List<RecipeSummaryModel>,
     recentlyCookedRecipes: List<RecipeSummaryModel>,
     onExpirationCardClick: () -> Unit,
@@ -139,126 +140,132 @@ private fun HomeScreen(
             )
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(
+        if(expiringIngredients.isNotEmpty()) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    YorinText(
+                        text = stringResource(R.string.home_expiring_ingredient_title),
+                        style = YorinTheme.typography.body2
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .clickable {
+                                onViewExpiringIngredientsClick()
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        YorinText(
+                            text = stringResource(R.string.btn_view_all),
+                            color = YorinTheme.colors.black3,
+                            style = YorinTheme.typography.body4
+                        )
+
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
+                            contentDescription = null,
+                            tint = YorinTheme.colors.black3
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .clip(YorinTheme.shapes.medium)
+                        .background(YorinTheme.colors.main8),
+                ) {
+                    val filteredExpiringIngredients = remember(expiringIngredients) {
+                        expiringIngredients
+                            .asSequence()
+                            .filter { it.expirationDate != null && it.daysToExpiration != null }
+                            .take(4)
+                            .toList()
+                    }
+
+                    for (expiringIngredient in filteredExpiringIngredients) {
+                        ExpiringIngredientCard(
+                            modifier = Modifier
+                                .padding(16.dp),
+                            ownIngredient = expiringIngredient
+                        )
+                    }
+                }
+            }
+        }
+
+        if(readyToCookRecipes.isNotEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 YorinText(
-                    text = stringResource(R.string.home_expiring_ingredient_title),
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = stringResource(R.string.home_ready_to_cook_recipes_title),
                     style = YorinTheme.typography.body2
                 )
 
                 Row(
                     modifier = Modifier
-                        .clickable {
-                            onViewExpiringIngredientsClick()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    YorinText(
-                        text = stringResource(R.string.btn_view_all),
-                        color = YorinTheme.colors.black3,
-                        style = YorinTheme.typography.body4
-                    )
+                    Spacer(Modifier.width(12.dp))
 
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
-                        contentDescription = null,
-                        tint = YorinTheme.colors.black3
-                    )
+                    for (readyToCook in readyToCookRecipes) {
+                        SimpleRecipeCard(
+                            name = readyToCook.name,
+                            photoUrl = readyToCook.photoUrl,
+                            averageScore = readyToCook.averageScore,
+                            cookingTime = readyToCook.cookingTime,
+                            onClickRecipe = {
+                                onRecipeClick(readyToCook.id)
+                            }
+                        )
+                    }
                 }
             }
+        }
 
+        if(recentlyCookedRecipes.isNotEmpty()) {
             Column(
-                modifier = Modifier
-                    .clip(YorinTheme.shapes.medium)
-                    .background(YorinTheme.colors.main8),
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val filteredExpiringIngredients = remember(expiringIngredients) {
-                    expiringIngredients
-                        .asSequence()
-                        .filter { it.expirationDate != null && it.daysToExpiration != null }
-                        .take(4)
-                        .toList()
-                }
+                YorinText(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = stringResource(R.string.home_recently_cooked_recipes_title),
+                    style = YorinTheme.typography.body2
+                )
 
-                for (expiringIngredient in filteredExpiringIngredients) {
-                    ExpiringIngredientCard(
-                        modifier = Modifier
-                            .padding(16.dp),
-                        ownIngredient = expiringIngredient
-                    )
-                }
-            }
-        }
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Spacer(Modifier.width(12.dp))
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            YorinText(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                text = stringResource(R.string.home_ready_to_cook_recipes_title),
-                style = YorinTheme.typography.body2
-            )
-
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Spacer(Modifier.width(12.dp))
-
-                for (readyToCook in readyToCookRecipes) {
-                    SimpleRecipeCard(
-                        name = readyToCook.name,
-                        photoUrl = readyToCook.photoUrl,
-                        averageScore = readyToCook.averageScore,
-                        cookingTime = readyToCook.cookingTime,
-                        onClickRecipe = {
-                            onRecipeClick(readyToCook.id)
-                        }
-                    )
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            YorinText(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                text = stringResource(R.string.home_recently_cooked_recipes_title),
-                style = YorinTheme.typography.body2
-            )
-
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Spacer(Modifier.width(12.dp))
-
-                for (recentlyCooked in recentlyCookedRecipes) {
-                    SimpleRecipeCard(
-                        name = recentlyCooked.name,
-                        photoUrl = recentlyCooked.photoUrl,
-                        averageScore = recentlyCooked.averageScore,
-                        cookingTime = recentlyCooked.cookingTime,
-                        onClickRecipe = {
-                            onRecipeClick(recentlyCooked.id)
-                        }
-                    )
+                    for (recentlyCooked in recentlyCookedRecipes) {
+                        SimpleRecipeCard(
+                            name = recentlyCooked.name,
+                            photoUrl = recentlyCooked.photoUrl,
+                            averageScore = recentlyCooked.averageScore,
+                            cookingTime = recentlyCooked.cookingTime,
+                            onClickRecipe = {
+                                onRecipeClick(recentlyCooked.id)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -301,122 +308,160 @@ private fun ExpirationCard(
 
 @Composable
 private fun RecipeRecommendationCard(
-    recipe: RecipeRecommendationUiModel,
+    recipe: RecipeRecommendationUiModel?,
     onViewRecipeClick: () -> Unit,
     onRerollRecommendation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val missingIngredients = recipe.reasons.firstNotNullOfOrNull {
-        it as? RecommendationReason.MissingIngredients
-    }?.missingIngredients ?: emptyList()
+    if(recipe == null) {
+        // TODO:: 추천 레시피가 없을 때 화면 구성
+    } else {
+        val missingIngredients = recipe.reasons.firstNotNullOfOrNull {
+            it as? RecommendationReason.MissingIngredients
+        }?.missingIngredients ?: emptyList()
 
-    val expiringIngredients = recipe.reasons.firstNotNullOfOrNull {
-        it as? RecommendationReason.UseExpiringIngredients
-    }?.expiringIngredients ?: emptyList()
-
-    Column(
-        modifier = modifier
-            .clip(YorinTheme.shapes.medium)
-            .border(
-                border = BorderStroke(1.dp, YorinTheme.colors.main6),
-                shape = YorinTheme.shapes.medium
-            )
-    ) {
-
-        // TODO:: 음식 이미지
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .background(YorinTheme.colors.main6)
-        )
+        val expiringIngredients = recipe.reasons.firstNotNullOfOrNull {
+            it as? RecommendationReason.UseExpiringIngredients
+        }?.expiringIngredients ?: emptyList()
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = modifier
+                .clip(YorinTheme.shapes.medium)
+                .border(
+                    border = BorderStroke(1.dp, YorinTheme.colors.main6),
+                    shape = YorinTheme.shapes.medium
+                )
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    recipe.reasons.forEach { reason ->
-                        // 반복문 외부에서 선언한다면 성능차이가 있을까?
-                        val (background, fontColor) = when (reason) {
-                            RecommendationReason.ReadyToCook -> YorinTheme.colors.success3 to YorinTheme.colors.success1
-                            is RecommendationReason.MissingIngredients -> YorinTheme.colors.sub4 to YorinTheme.colors.sub1
-                            is RecommendationReason.UseExpiringIngredients -> YorinTheme.colors.main8 to YorinTheme.colors.main1
-                        }
-                        val text = when (reason) {
-                            RecommendationReason.ReadyToCook -> stringResource(R.string.recipe_recommendation_reason_ready_to_cook)
-                            is RecommendationReason.MissingIngredients -> stringResource(R.string.recipe_recommendation_reason_missing_ingredients, reason.missingIngredients.size)
-                            is RecommendationReason.UseExpiringIngredients -> stringResource(R.string.recipe_recommendation_reason_use_expiring_ingredients)
-                        }
 
-                        Box(
-                            modifier = Modifier
-                                .clip(YorinTheme.shapes.extraSmall)
-                                .background(background)
-                                .padding(4.dp)
+            // TODO:: 음식 이미지
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(YorinTheme.colors.main6)
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        recipe.reasons.forEach { reason ->
+                            // 반복문 외부에서 선언한다면 성능차이가 있을까?
+                            val (background, fontColor) = when (reason) {
+                                RecommendationReason.ReadyToCook -> YorinTheme.colors.success3 to YorinTheme.colors.success1
+                                is RecommendationReason.MissingIngredients -> YorinTheme.colors.sub4 to YorinTheme.colors.sub1
+                                is RecommendationReason.UseExpiringIngredients -> YorinTheme.colors.main8 to YorinTheme.colors.main1
+                            }
+                            val text = when (reason) {
+                                RecommendationReason.ReadyToCook -> stringResource(R.string.recipe_recommendation_reason_ready_to_cook)
+                                is RecommendationReason.MissingIngredients -> stringResource(R.string.recipe_recommendation_reason_missing_ingredients, reason.missingIngredients.size)
+                                is RecommendationReason.UseExpiringIngredients -> stringResource(R.string.recipe_recommendation_reason_use_expiring_ingredients)
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .clip(YorinTheme.shapes.extraSmall)
+                                    .background(background)
+                                    .padding(4.dp)
+                            ) {
+                                YorinText(
+                                    text = text,
+                                    color = fontColor,
+                                    style = YorinTheme.typography.caption2
+                                )
+                            }
+                        }
+                    }
+
+                    YorinText(
+                        text = recipe.name,
+                        style = YorinTheme.typography.body3
+                    )
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            val text = expiringIngredients.joinToString { it.name }
+
+                            YorinText(
+                                text = stringResource(R.string.recipe_recommendation_expiring_ingredients_label),
+                                color = YorinTheme.colors.black3,
+                                style = YorinTheme.typography.caption2
+                            )
+
                             YorinText(
                                 text = text,
-                                color = fontColor,
+                                color = YorinTheme.colors.black2,
+                                style = YorinTheme.typography.caption2
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            val text = missingIngredients.joinToString { it.name }
+
+                            YorinText(
+                                text = stringResource(R.string.recipe_recommendation_missing_ingredients_label),
+                                color = YorinTheme.colors.black3,
+                                style = YorinTheme.typography.caption2
+                            )
+
+                            YorinText(
+                                text = text,
+                                color = YorinTheme.colors.black2,
                                 style = YorinTheme.typography.caption2
                             )
                         }
                     }
-                }
 
-                YorinText(
-                    text = recipe.name,
-                    style = YorinTheme.typography.body3
-                )
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        val text = expiringIngredients.joinToString { it.name }
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_star_filled),
+                            contentDescription = null,
+                            tint = YorinTheme.colors.main2
+                        )
 
                         YorinText(
-                            text = stringResource(R.string.recipe_recommendation_expiring_ingredients_label),
+                            text = stringResource(R.string.format_score, recipe.averageScore),
                             color = YorinTheme.colors.black3,
                             style = YorinTheme.typography.caption2
                         )
 
-                        YorinText(
-                            text = text,
-                            color = YorinTheme.colors.black2,
-                            style = YorinTheme.typography.caption2
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_clock),
+                            contentDescription = null,
+                            tint = YorinTheme.colors.black3
                         )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        val text = missingIngredients.joinToString { it.name }
 
                         YorinText(
-                            text = stringResource(R.string.recipe_recommendation_missing_ingredients_label),
+                            text = if (recipe.cookingTime > 0)
+                                stringResource(R.string.format_cooking_time_min, recipe.cookingTime)
+                            else
+                                stringResource(R.string.recipe_detail_cooking_time_empty),
                             color = YorinTheme.colors.black3,
-                            style = YorinTheme.typography.caption2
-                        )
-
-                        YorinText(
-                            text = text,
-                            color = YorinTheme.colors.black2,
                             style = YorinTheme.typography.caption2
                         )
                     }
@@ -424,57 +469,23 @@ private fun RecipeRecommendationCard(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Icon(
-                        modifier = Modifier.size(12.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_star_filled),
-                        contentDescription = null,
-                        tint = YorinTheme.colors.main2
+                    YorinTextButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.btn_view_recipe),
+                        shape = ButtonShape.Round,
+                        onClick = { onViewRecipeClick() }
                     )
 
-                    YorinText(
-                        text = stringResource(R.string.format_score, recipe.averageScore),
-                        color = YorinTheme.colors.black3,
-                        style = YorinTheme.typography.caption2
-                    )
-
-                    Icon(
-                        modifier = Modifier.size(12.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_clock),
-                        contentDescription = null,
-                        tint = YorinTheme.colors.black3
-                    )
-
-                    YorinText(
-                        text = if (recipe.cookingTime > 0)
-                            stringResource(R.string.format_cooking_time_min, recipe.cookingTime)
-                        else
-                            stringResource(R.string.recipe_detail_cooking_time_empty),
-                        color = YorinTheme.colors.black3,
-                        style = YorinTheme.typography.caption2
+                    YorinTextButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.btn_do_reroll),
+                        shape = ButtonShape.Round,
+                        color = ButtonColor.Secondary,
+                        onClick = { onRerollRecommendation() }
                     )
                 }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                YorinTextButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.btn_view_recipe),
-                    shape = ButtonShape.Round,
-                    onClick = { onViewRecipeClick() }
-                )
-
-                YorinTextButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.btn_do_reroll),
-                    shape = ButtonShape.Round,
-                    color = ButtonColor.Secondary,
-                    onClick = { onRerollRecommendation() }
-                )
             }
         }
     }
@@ -495,9 +506,9 @@ fun ExpiringIngredientCard(
         requireNotNull(ownIngredient.daysToExpiration) // expiredIngredients 는 daysToExpiration 가 null 이 아닌 경우만 포함
 
         // TODO:: 만료 상태 별도 데이터 클래스로 모델링
-        val (badgeContainerColor, badgeTextColor) = if (ownIngredient.daysToExpiration <= 1) {
+        val (badgeContainerColor, badgeTextColor) = if (ownIngredient.daysToExpiration <= EXPIRATION_DAY_URGENT) {
             YorinTheme.colors.sub4 to YorinTheme.colors.sub1
-        } else if (ownIngredient.daysToExpiration <= 5) {
+        } else if (ownIngredient.daysToExpiration <= EXPIRATION_DAY_WARNING) {
             YorinTheme.colors.main6 to YorinTheme.colors.main1
         } else run {
             YorinTheme.colors.success3 to YorinTheme.colors.success1
