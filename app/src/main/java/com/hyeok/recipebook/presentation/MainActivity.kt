@@ -76,7 +76,7 @@ fun MainView() {
                     startDestination = Route.Recipe
                 ) {
                     homeScreen(
-                        modifier = Modifier
+                        navController = navController
                     )
                     recipeScreen(
                         navController = navController,
