@@ -34,6 +34,20 @@
     <string name="home_ready_to_cook_recipes_title">지금 바로 만들 수 있는 요리</string>
     <string name="home_recently_cooked_recipes_title">지금 바로 만들 수 있는 요리</string>
 
+    <string name="home_possible_title">등록하면 홈에서 이런 걸 볼 수 있어요</string>
+    <string name="home_possible_recommend">오늘 만들 요리 추천</string>
+    <string name="home_possible_expiring">소비기한이 얼마 남지 않은 재료</string>
+    <string name="home_possible_ready_to_cook">가진 재료로 바로 만들 수 있는 요리</string>
+
+    <!-- 레시피 추천 카드 -->
+    <string name="recipe_recommend_empty_title">재료와 레시피를 등록하면 메뉴를 추천해드려요</string>
+    <string name="recipe_recommend_empty_description">냉장고의 재료와 자주 해 먹는 요리의 레시피를 등록하면 오늘 만들 요리를 알려드려요</string>
+
+    <string name="recipe_recommend_empty_add_ingredient_title">재료 등록하러 가기</string>
+    <string name="recipe_recommend_empty_add_ingredient_description">가지고 있는 재료와 소비기한을 작성해요</string>
+    <string name="recipe_recommend_empty_add_recipe_title">레시피 등록하러 가기</string>
+    <string name="recipe_recommend_empty_add_recipe_description">자주 해먹는 요리의 재료와 방법등 작성해요</string>
+
     <!-- 재료 -->
     <string name="ingredient_title">재료</string>
     <string name="ingredient_expiration_warning_title">유통기한 임박!</string>
