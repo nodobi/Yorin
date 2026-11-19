@@ -67,23 +67,31 @@ fun HomeRoute(
 ) {
     val scrollState = rememberScrollState()
 
-    // TODO:: 데이터가 충분하지 않을 때 홈 화면 추가 필요, HomeUiState 의 모델링이 끝난 뒤 진행
-    HomeScreen(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(YorinTheme.colors.black7)
-            .verticalScroll(scrollState),
-        expiredIngredients = uiState.expiredIngredients,
-        expiringIngredients = uiState.expiringIngredients,
-        recipeRecommendation = uiState.recipeRecommendation,
-        readyToCookRecipes = uiState.readyToCookRecipes,
-        recentlyCookedRecipes = uiState.recentlyCookedRecipes,
-        onExpirationCardClick = onExpirationCardClick,
-        onViewRecommendedRecipeClick = onViewRecommendedRecipeClick,
-        onRerollRecipeRecommendation = onRerollRecipeRecommendation,
-        onViewExpiringIngredientsClick = onViewExpiringIngredientsClick,
-        onRecipeClick = onRecipeClick
-    )
+    when(uiState) {
+        HomeUiState.Empty -> {
+
+        }
+
+        is HomeUiState.Success -> {
+            HomeScreen(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(YorinTheme.colors.black7)
+                    .verticalScroll(scrollState),
+                expiredIngredients = uiState.expiredIngredients,
+                expiringIngredients = uiState.expiringIngredients,
+                recipeRecommendation = uiState.recipeRecommendation,
+                readyToCookRecipes = uiState.readyToCookRecipes,
+                recentlyCookedRecipes = uiState.recentlyCookedRecipes,
+                onExpirationCardClick = onExpirationCardClick,
+                onViewRecommendedRecipeClick = onViewRecommendedRecipeClick,
+                onRerollRecipeRecommendation = onRerollRecipeRecommendation,
+                onViewExpiringIngredientsClick = onViewExpiringIngredientsClick,
+                onRecipeClick = onRecipeClick
+            )
+        }
+    }
+
 }
 
 @Composable
