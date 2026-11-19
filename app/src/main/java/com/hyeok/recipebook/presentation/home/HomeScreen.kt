@@ -43,8 +43,10 @@ import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.designsystem.components.ButtonColor
 import com.hyeok.recipebook.designsystem.components.ButtonShape
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
+import com.hyeok.recipebook.designsystem.components.YorinCard
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.components.YorinTextButton
+import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.home.model.OwnedIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.RecipeRecommendationUiModel
@@ -67,31 +69,186 @@ fun HomeRoute(
 ) {
     val scrollState = rememberScrollState()
 
-    when(uiState) {
-        HomeUiState.Empty -> {
+    Column(
+        modifier = Modifier
+    ) {
 
-        }
+        YorinAppbar(
+            modifier = Modifier.fillMaxWidth(),
+            title = stringResource(R.string.menu_home),
+            titleAlignment = Alignment.CenterStart
+        )
 
-        is HomeUiState.Success -> {
-            HomeScreen(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(YorinTheme.colors.black7)
-                    .verticalScroll(scrollState),
-                expiredIngredients = uiState.expiredIngredients,
-                expiringIngredients = uiState.expiringIngredients,
-                recipeRecommendation = uiState.recipeRecommendation,
-                readyToCookRecipes = uiState.readyToCookRecipes,
-                recentlyCookedRecipes = uiState.recentlyCookedRecipes,
-                onExpirationCardClick = onExpirationCardClick,
-                onViewRecommendedRecipeClick = onViewRecommendedRecipeClick,
-                onRerollRecipeRecommendation = onRerollRecipeRecommendation,
-                onViewExpiringIngredientsClick = onViewExpiringIngredientsClick,
-                onRecipeClick = onRecipeClick
-            )
+        when (uiState) {
+            HomeUiState.Empty -> {
+                HomePreviewScreen(
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                    onAddIngredientClick = { },
+                    onAddRecipeClick = {}
+                )
+            }
+
+            is HomeUiState.Success -> {
+                HomeScreen(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(YorinTheme.colors.black7)
+                        .padding(vertical = 12.dp)
+                        .verticalScroll(scrollState),
+                    expiredIngredients = uiState.expiredIngredients,
+                    expiringIngredients = uiState.expiringIngredients,
+                    recipeRecommendation = uiState.recipeRecommendation,
+                    readyToCookRecipes = uiState.readyToCookRecipes,
+                    recentlyCookedRecipes = uiState.recentlyCookedRecipes,
+                    onExpirationCardClick = onExpirationCardClick,
+                    onViewRecommendedRecipeClick = onViewRecommendedRecipeClick,
+                    onRerollRecipeRecommendation = onRerollRecipeRecommendation,
+                    onViewExpiringIngredientsClick = onViewExpiringIngredientsClick,
+                    onRecipeClick = onRecipeClick
+                )
+            }
         }
     }
+}
 
+@Composable
+private fun HomePreviewScreen(
+    modifier: Modifier = Modifier,
+    onAddIngredientClick: () -> Unit,
+    onAddRecipeClick: () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        YorinCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            backgroundColor = YorinTheme.colors.main8
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    YorinText(
+                        text = stringResource(R.string.recipe_recommend_empty_title),
+                        style = YorinTheme.typography.body2,
+                    )
+                    YorinText(
+                        text = stringResource(R.string.recipe_recommend_empty_description),
+                        style = YorinTheme.typography.body5,
+                        color = YorinTheme.colors.black2
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .clip(YorinTheme.shapes.medium)
+                        .background(YorinTheme.colors.black7)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .clickable { onAddIngredientClick() },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        YorinText(
+                            text = stringResource(R.string.recipe_recommend_empty_add_ingredient_title),
+                            style = YorinTheme.typography.body5
+                        )
+                        YorinText(
+                            text = stringResource(R.string.recipe_recommend_empty_add_ingredient_description),
+                            style = YorinTheme.typography.caption1,
+                            color = YorinTheme.colors.black2
+                        )
+                    }
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
+                        contentDescription = null
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .clip(YorinTheme.shapes.medium)
+                        .background(YorinTheme.colors.black7)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .clickable { onAddRecipeClick() },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        YorinText(
+                            text = stringResource(R.string.recipe_recommend_empty_add_recipe_title),
+                            style = YorinTheme.typography.body5
+                        )
+                        YorinText(
+                            text = stringResource(R.string.recipe_recommend_empty_add_recipe_description),
+                            style = YorinTheme.typography.caption1,
+                            color = YorinTheme.colors.black2
+                        )
+                    }
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
+                        contentDescription = null
+                    )
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            YorinText(
+                text = stringResource(R.string.home_possible_title),
+                style = YorinTheme.typography.body2
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(YorinTheme.shapes.medium)
+                    .background(YorinTheme.colors.main8)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                val possible = remember {
+                    listOf(
+                        R.string.home_possible_recommend,
+                        R.string.home_possible_expiring,
+                        R.string.home_possible_ready_to_cook
+                    )
+                }
+
+                possible.forEachIndexed { idx, stringResId ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        YorinText(
+                            text = "${idx + 1}",
+                            style = YorinTheme.typography.body2
+                        )
+                        YorinText(
+                            text = stringResource(stringResId),
+                            style = YorinTheme.typography.body5
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -113,12 +270,6 @@ private fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        YorinAppbar(
-            modifier = Modifier.fillMaxWidth(),
-            title = stringResource(R.string.menu_home),
-            titleAlignment = Alignment.CenterStart
-        )
-
         if (expiredIngredients.isNotEmpty()) {
             ExpirationCard(
                 modifier = Modifier
@@ -148,7 +299,7 @@ private fun HomeScreen(
             )
         }
 
-        if(expiringIngredients.isNotEmpty()) {
+        if (expiringIngredients.isNotEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -212,7 +363,7 @@ private fun HomeScreen(
             }
         }
 
-        if(readyToCookRecipes.isNotEmpty()) {
+        if (readyToCookRecipes.isNotEmpty()) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -245,7 +396,7 @@ private fun HomeScreen(
             }
         }
 
-        if(recentlyCookedRecipes.isNotEmpty()) {
+        if (recentlyCookedRecipes.isNotEmpty()) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -321,7 +472,7 @@ private fun RecipeRecommendationCard(
     onRerollRecommendation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if(recipe == null) {
+    if (recipe == null) {
         // TODO:: 추천 레시피가 없을 때 화면 구성
     } else {
         val missingIngredients = recipe.reasons.firstNotNullOfOrNull {
@@ -769,6 +920,19 @@ private fun HomeScreenPreview() {
             onRerollRecipeRecommendation = {},
             onViewExpiringIngredientsClick = {},
             onRecipeClick = {},
+        )
+    }
+}
+
+@BackgroundPreview
+@Composable
+private fun HomePreviewScreenPreview() {
+    YorinTheme {
+        HomePreviewScreen(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            onAddIngredientClick = { },
+            onAddRecipeClick = { },
         )
     }
 }
