@@ -114,7 +114,7 @@ class HomeViewModel @Inject constructor(
             it.daysToExpiration in EXPIRATION_DAY_URGENT..EXPIRATION_DAY_WARNING
         }
 
-        HomeUiState(
+        HomeUiState.Success(
             recipeRecommendation = recommendationRecipe,
             expiredIngredients = expiredIngredients,
             expiringIngredients = expiringIngredients,
