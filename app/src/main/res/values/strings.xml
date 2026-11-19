@@ -42,6 +42,12 @@
     <!-- 레시피 추천 카드 -->
     <string name="recipe_recommend_empty_title">재료와 레시피를 등록하면 메뉴를 추천해드려요</string>
     <string name="recipe_recommend_empty_description">냉장고의 재료와 자주 해 먹는 요리의 레시피를 등록하면 오늘 만들 요리를 알려드려요</string>
+    <string name="recipe_recommend_empty_ingredient_title">레시피를 등록하면 메뉴를 추천해드려요</string>
+    <string name="recipe_recommend_empty_ingredient_description">자주 해 먹는 요리의 레시피를 등록해 두면, 가진 재료로 만들 수 있는 요리를 추천해드려요</string>
+    <string name="recipe_recommend_empty_recipe_title">재료를 등록하면 메뉴를 추천해드려요</string>
+    <string name="recipe_recommend_empty_recipe_description">냉장고에 있는 재료를 넣어 두면, 등록한 레시피 중에서 오늘 만들 요리를 골라 드려요</string>
+    <string name="recipe_recommend_unable_title">가진 재료로 추천할 요리가 없어요</string>
+    <string name="recipe_recommend_unable_description">재료를 더 등록하거나, 지금 재료로 만들 수 있는 레시피를 추가해 보세요</string>
 
     <string name="recipe_recommend_empty_add_ingredient_title">재료 등록하러 가기</string>
     <string name="recipe_recommend_empty_add_ingredient_description">가지고 있는 재료와 소비기한을 작성해요</string>
