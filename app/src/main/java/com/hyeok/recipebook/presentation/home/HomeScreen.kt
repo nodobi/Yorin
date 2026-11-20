@@ -38,10 +38,11 @@ import com.hyeok.recipebook.data.database.model.RecipeIngredientModel
 import com.hyeok.recipebook.data.database.model.RecipeSummaryModel
 import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.designsystem.components.YorinAppbar
-import com.hyeok.recipebook.designsystem.components.YorinCard
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.home.component.RecipeRecommendationCard
+import com.hyeok.recipebook.presentation.home.component.RecipeRecommendationState
 import com.hyeok.recipebook.presentation.home.model.OwnedIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.RecipeRecommendationUiModel
 import kotlinx.datetime.DateTimeUnit
@@ -58,6 +59,8 @@ fun HomeRoute(
     onExpirationCardClick: () -> Unit,
     onViewRecommendedRecipeClick: () -> Unit,
     onRerollRecipeRecommendation: () -> Unit,
+    onAddIngredientClick: () -> Unit,
+    onAddRecipeClick: () -> Unit,
     onViewExpiringIngredientsClick: () -> Unit,
     onRecipeClick: (Long) -> Unit
 ) {
@@ -91,12 +94,14 @@ fun HomeRoute(
                         .verticalScroll(scrollState),
                     expiredIngredients = uiState.expiredIngredients,
                     expiringIngredients = uiState.expiringIngredients,
-                    recipeRecommendation = uiState.recipeRecommendation,
+                    recommendationState = uiState.recommendationState,
                     readyToCookRecipes = uiState.readyToCookRecipes,
                     recentlyCookedRecipes = uiState.recentlyCookedRecipes,
                     onExpirationCardClick = onExpirationCardClick,
                     onViewRecommendedRecipeClick = onViewRecommendedRecipeClick,
                     onRerollRecipeRecommendation = onRerollRecipeRecommendation,
+                    onAddIngredientClick = onAddIngredientClick,
+                    onAddRecipeClick = onAddRecipeClick,
                     onViewExpiringIngredientsClick = onViewExpiringIngredientsClick,
                     onRecipeClick = onRecipeClick
                 )
@@ -115,90 +120,14 @@ private fun HomePreviewScreen(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        YorinCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            backgroundColor = YorinTheme.colors.main8
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    YorinText(
-                        text = stringResource(R.string.recipe_recommend_empty_title),
-                        style = YorinTheme.typography.body2,
-                    )
-                    YorinText(
-                        text = stringResource(R.string.recipe_recommend_empty_description),
-                        style = YorinTheme.typography.body5,
-                        color = YorinTheme.colors.black2
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .clip(YorinTheme.shapes.medium)
-                        .background(YorinTheme.colors.black7)
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .clickable { onAddIngredientClick() },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        YorinText(
-                            text = stringResource(R.string.recipe_recommend_empty_add_ingredient_title),
-                            style = YorinTheme.typography.body5
-                        )
-                        YorinText(
-                            text = stringResource(R.string.recipe_recommend_empty_add_ingredient_description),
-                            style = YorinTheme.typography.caption1,
-                            color = YorinTheme.colors.black2
-                        )
-                    }
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
-                        contentDescription = null
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .clip(YorinTheme.shapes.medium)
-                        .background(YorinTheme.colors.black7)
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .clickable { onAddRecipeClick() },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        YorinText(
-                            text = stringResource(R.string.recipe_recommend_empty_add_recipe_title),
-                            style = YorinTheme.typography.body5
-                        )
-                        YorinText(
-                            text = stringResource(R.string.recipe_recommend_empty_add_recipe_description),
-                            style = YorinTheme.typography.caption1,
-                            color = YorinTheme.colors.black2
-                        )
-                    }
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_front_small),
-                        contentDescription = null
-                    )
-                }
-            }
-        }
+        RecipeRecommendationCard(
+            modifier = Modifier.fillMaxWidth(),
+            state = RecipeRecommendationState.Empty,
+            onViewRecipeClick = {},
+            onRerollRecommendation = {},
+            onAddIngredientClick = onAddIngredientClick,
+            onAddRecipeClick = onAddRecipeClick
+        )
 
         Column(
             modifier = Modifier,
@@ -249,12 +178,14 @@ private fun HomePreviewScreen(
 private fun HomeScreen(
     expiredIngredients: List<OwnedIngredientUiModel>,
     expiringIngredients: List<OwnedIngredientUiModel>,
-    recipeRecommendation: RecipeRecommendationUiModel?,
+    recommendationState: RecipeRecommendationState,
     readyToCookRecipes: List<RecipeSummaryModel>,
     recentlyCookedRecipes: List<RecipeSummaryModel>,
     onExpirationCardClick: () -> Unit,
     onViewRecommendedRecipeClick: () -> Unit,
     onRerollRecipeRecommendation: () -> Unit,
+    onAddIngredientClick: () -> Unit,
+    onAddRecipeClick: () -> Unit,
     onViewExpiringIngredientsClick: () -> Unit,
     onRecipeClick: (Long) -> Unit,
     modifier: Modifier = Modifier
@@ -285,13 +216,14 @@ private fun HomeScreen(
                 style = YorinTheme.typography.body2
             )
 
-            // TODO:: 새로운 레시피 추천 카드로 변경
-//            RecipeRecommendationCard(
-//                modifier = Modifier.fillMaxWidth(),
-//                recipe = recipeRecommendation,
-//                onViewRecipeClick = onViewRecommendedRecipeClick,
-//                onRerollRecommendation = onRerollRecipeRecommendation,
-//            )
+            RecipeRecommendationCard(
+                modifier = Modifier.fillMaxWidth(),
+                state = recommendationState,
+                onViewRecipeClick = onViewRecommendedRecipeClick,
+                onRerollRecommendation = onRerollRecipeRecommendation,
+                onAddIngredientClick = onAddIngredientClick,
+                onAddRecipeClick = onAddRecipeClick,
+            )
         }
 
         if (expiringIngredients.isNotEmpty()) {
@@ -722,12 +654,14 @@ private fun HomeScreenPreview() {
                 .background(YorinTheme.colors.black7),
             expiredIngredients = ownIngredients.takeLast(2),
             expiringIngredients = ownIngredients.takeLast(2),
-            recipeRecommendation = recipeRecommendation,
+            recommendationState = RecipeRecommendationState.Recommendation(recipeRecommendation),
             readyToCookRecipes = recipeSummaries,
             recentlyCookedRecipes = recipeSummaries,
             onExpirationCardClick = {},
             onViewRecommendedRecipeClick = {},
             onRerollRecipeRecommendation = {},
+            onAddIngredientClick = {},
+            onAddRecipeClick = {},
             onViewExpiringIngredientsClick = {},
             onRecipeClick = {},
         )
