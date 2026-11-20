@@ -11,6 +11,7 @@ import com.hyeok.recipebook.presentation.home.component.RecipeRecommendationStat
 import com.hyeok.recipebook.presentation.home.model.OwnedIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.RecipeRecommendationUiModel
 import com.hyeok.recipebook.presentation.home.model.toUiModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +19,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.zip
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -75,11 +80,20 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-    // TOOD:: 사용자의 이벤트를 받아 추가로 emit 하는 방식으로 구현해야 함, Channel 고려할것
+    // 추천 이벤트 트리거로 사용할 채널
+    private val _rerollEvent = Channel<Unit>(Channel.CONFLATED)
+
     private val _recommendationRecipe: Flow<RecipeRecommendationUiModel?> = flow {
-        emit(null)
+        val rerollEventFlow = _rerollEvent
+            .receiveAsFlow()
+            .onStart { emit(Unit) }
+
         val recipeRecommendation = recipeRepository.getRecipeRecommendationsStream()
             .map { it.toUiModel() }
+            .onCompletion<RecipeRecommendationUiModel?> { cause ->
+                if (cause == null) emit(null)
+            }
+            .zip(rerollEventFlow) { recommendation, _ -> recommendation }
 
         emitAll(recipeRecommendation)
     }
@@ -139,13 +153,16 @@ class HomeViewModel @Inject constructor(
 
         HomeUiState.Success(
             recommendationState = recommendationState,
-            recipeRecommendation = recommendationRecipe,
             expiredIngredients = expiredIngredients,
             expiringIngredients = expiringIngredients,
             readyToCookRecipes = readyToCookRecipes,
             recentlyCookedRecipes = recentlyCookedRecipes
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState.empty())
+
+    fun onRerollRecommendation() {
+        _rerollEvent.trySend(Unit)
+    }
 }
 
 private fun RecipeDetailsModel.toSummaryModel(): RecipeSummaryModel = RecipeSummaryModel(
