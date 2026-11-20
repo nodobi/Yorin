@@ -17,6 +17,8 @@ class RecipeLocalDataSource @Inject constructor(
     private val recipeDao: RecipeDao,
     private val weightUnitDao: WeightUnitDao,
 ) {
+    suspend fun getRecipeCount(): Int = recipeDao.getRecipeCount()
+
     fun getRecipesSummaries(): Flow<List<RecipeSummaryModel>> = recipeDao.getRecipesSummaries()
 
     suspend fun getRecipesWithDetails(): List<RecipeDetailsModel> = recipeDao.getRecipeWithDetails()

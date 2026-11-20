@@ -20,6 +20,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
+    @Query("SELECT COUNT(*) FROM recipe")
+    suspend fun getRecipeCount(): Int
+
     @Insert
     suspend fun insertRecipe(recipe: RecipeEntity): Long
 

@@ -7,6 +7,7 @@ import com.hyeok.recipebook.data.database.model.RecipeDetailsModel
 import com.hyeok.recipebook.data.database.model.RecipeSummaryModel
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.repository.RecipeRepository
+import com.hyeok.recipebook.presentation.home.component.RecipeRecommendationState
 import com.hyeok.recipebook.presentation.home.model.OwnedIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.RecipeRecommendationUiModel
 import com.hyeok.recipebook.presentation.home.model.toUiModel
@@ -83,6 +84,14 @@ class HomeViewModel @Inject constructor(
         emitAll(recipeRecommendation)
     }
 
+    private val _recipeCount: Flow<Int> = flow {
+        emit(
+            recipeRepository
+                .getRecipeCount()
+                .getOrElse { 0 }
+        )
+    }
+
     private val _readyToCookRecipes = flow {
         emit(
             recipeRepository.getReadyToCookRecipes(4)
@@ -102,10 +111,10 @@ class HomeViewModel @Inject constructor(
     val uiState = combine(
         _ownedIngredients,
         _recommendationRecipe,
+        _recipeCount,
         _readyToCookRecipes,
-        _recentlyCookedRecipes,
-        _today
-    ) { ownedIngredients, recommendationRecipe, readyToCookRecipes, recentlyCookedRecipes, _ ->
+        _recentlyCookedRecipes
+    ) { ownedIngredients, recommendationRecipe, recipeCount, readyToCookRecipes, recentlyCookedRecipes ->
         val expiredIngredients = ownedIngredients.filter {
             it.daysToExpiration == 0
         }
@@ -114,7 +123,22 @@ class HomeViewModel @Inject constructor(
             it.daysToExpiration in EXPIRATION_DAY_URGENT..EXPIRATION_DAY_WARNING
         }
 
+        val recommendationState = if (recommendationRecipe == null) {
+            if (ownedIngredients.isEmpty() && recipeCount == 0) {
+                RecipeRecommendationState.Empty
+            } else if (ownedIngredients.isEmpty()) {
+                RecipeRecommendationState.EmptyIngredient
+            } else if (recipeCount == 0) {
+                RecipeRecommendationState.EmptyRecipe
+            } else {
+                RecipeRecommendationState.NoRecommendation
+            }
+        } else {
+            RecipeRecommendationState.Recommendation(recommendationRecipe)
+        }
+
         HomeUiState.Success(
+            recommendationState = recommendationState,
             recipeRecommendation = recommendationRecipe,
             expiredIngredients = expiredIngredients,
             expiringIngredients = expiringIngredients,
