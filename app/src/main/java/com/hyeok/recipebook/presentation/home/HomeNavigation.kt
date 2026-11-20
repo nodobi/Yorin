@@ -26,6 +26,8 @@ fun NavGraphBuilder.homeScreen(
             onExpirationCardClick = {},
             onViewRecommendedRecipeClick = {},
             onRerollRecipeRecommendation = {},
+            onAddIngredientClick = {},
+            onAddRecipeClick = {},
             onViewExpiringIngredientsClick = {},
             onRecipeClick = {},
         )
