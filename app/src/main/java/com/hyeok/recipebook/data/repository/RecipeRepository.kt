@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface RecipeRepository {
 
+    suspend fun getRecipeCount(): Result<Int>
+
     suspend fun getRecipesByIngredient(ingredientId: Long): Result<List<RecipeItemUiModel>>
 
     fun getRecipesSummaries(): Flow<Result<List<RecipeItemUiModel>>>
