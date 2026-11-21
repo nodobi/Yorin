@@ -123,7 +123,7 @@ class RecipeDaoTest {
 
     @Test
     fun 레시피_세부사항_로드_테스트() = runTest {
-        val recipeWithDetails = recipeDao.getRecipeWithDetailsByRecipeId(1L).first()
+        val recipeWithDetails = recipeDao.getRecipeWithDetailsByRecipeId(1L).first()!!
         println(recipeWithDetails)
 
         Assert.assertTrue(recipeWithDetails.records.isNotEmpty())
@@ -142,7 +142,7 @@ class RecipeDaoTest {
 
         recipeDao.insertRecipeRecord(new)
 
-        val recipeWithDetails = recipeDao.getRecipeWithDetailsByRecipeId(1L).first()
+        val recipeWithDetails = recipeDao.getRecipeWithDetailsByRecipeId(1L).first()!!
 
         println(recipeWithDetails.records)
         Assert.assertTrue(recipeWithDetails.records.size == 2)
@@ -160,7 +160,7 @@ class RecipeDaoTest {
             )
         )
 
-        recipeDao.replaceRecipeIngredients(new)
+        recipeDao.replaceRecipeIngredients(1L, new)
 
         val result = recipeDao.getRecipeIngredientsByRecipeId(1)
 
@@ -182,7 +182,7 @@ class RecipeDaoTest {
             )
         )
 
-        recipeDao.replaceRecipeIngredients(new)
+        recipeDao.replaceRecipeIngredients(1L, new)
 
         assertEquals(
             recipeDao.getRecipeIngredientsByRecipeId(1).find { it.id == 1L },
@@ -201,7 +201,7 @@ class RecipeDaoTest {
                     recipeId = 1
                 )
 
-        recipeDao.replaceRecipeIngredients(new)
+        recipeDao.replaceRecipeIngredients(1L, new)
 
         val result = recipeDao.getRecipeIngredientsByRecipeId(1)
 
@@ -225,7 +225,7 @@ class RecipeDaoTest {
             )
         )
 
-        recipeDao.replaceRecipeSteps(new)
+        recipeDao.replaceRecipeSteps(1L, new)
 
         val result = recipeDao.getRecipeStepsByRecipeId(1)
 
@@ -246,7 +246,7 @@ class RecipeDaoTest {
             )
         )
 
-        recipeDao.replaceRecipeSteps(new)
+        recipeDao.replaceRecipeSteps(1L, new)
 
         val result = recipeDao.getRecipeStepsByRecipeId(1)
 
@@ -266,7 +266,7 @@ class RecipeDaoTest {
                     recipeId = 1,
                 )
 
-        recipeDao.replaceRecipeSteps(new)
+        recipeDao.replaceRecipeSteps(1L, new)
 
         val result = recipeDao.getRecipeStepsByRecipeId(1)
 
