@@ -47,7 +47,7 @@ sealed interface RecipeRecommendationState {
 @Composable
 fun RecipeRecommendationCard(
     state: RecipeRecommendationState,
-    onViewRecipeClick: () -> Unit,
+    onViewRecipeClick: (Long) -> Unit,
     onRerollRecommendation: () -> Unit,
     onAddIngredientClick: () -> Unit,
     onAddRecipeClick: () -> Unit,
@@ -88,7 +88,7 @@ fun RecipeRecommendationCard(
 @Composable
 private fun RecommendationCard(
     recipe: RecipeRecommendationUiModel,
-    onViewRecipeClick: () -> Unit,
+    onViewRecipeClick: (Long) -> Unit,
     onRerollRecommendation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -252,7 +252,7 @@ private fun RecommendationCard(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.btn_view_recipe),
                     shape = ButtonShape.Round,
-                    onClick = { onViewRecipeClick() }
+                    onClick = { onViewRecipeClick(recipe.id) }
                 )
 
                 YorinTextButton(

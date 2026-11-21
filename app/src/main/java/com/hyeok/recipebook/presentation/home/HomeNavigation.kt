@@ -8,7 +8,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.hyeok.recipebook.presentation.ingredient.navigateToIngredient
 import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.recipe.navigateToRecipe
+import com.hyeok.recipebook.presentation.recipe.navigateToRecipeDetail
 
 fun NavController.navigateToHome(navOptions: NavOptions? = null) {
     navigate(Route.Home, navOptions)
@@ -23,13 +26,27 @@ fun NavGraphBuilder.homeScreen(
 
         HomeRoute(
             uiState = uiState,
-            onExpirationCardClick = {},
-            onViewRecommendedRecipeClick = {},
-            onRerollRecipeRecommendation = {},
-            onAddIngredientClick = {},
-            onAddRecipeClick = {},
-            onViewExpiringIngredientsClick = {},
-            onRecipeClick = {},
+            onExpirationCardClick = {
+                navController.navigateToIngredient()
+            },
+            onViewRecommendedRecipeClick = {
+                navController.navigateToRecipeDetail(it)
+            },
+            onRerollRecipeRecommendation = {
+                viewModel.onRerollRecommendation()
+            },
+            onAddIngredientClick = {
+                navController.navigateToIngredient()
+            },
+            onAddRecipeClick = {
+                navController.navigateToRecipe()
+            },
+            onViewExpiringIngredientsClick = {
+                navController.navigateToIngredient()
+            },
+            onRecipeClick = {
+                navController.navigateToRecipeDetail(it)
+            },
         )
     }
 }

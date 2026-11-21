@@ -11,6 +11,7 @@ import com.hyeok.recipebook.presentation.home.component.RecipeRecommendationStat
 import com.hyeok.recipebook.presentation.home.model.OwnedIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.RecipeRecommendationUiModel
 import com.hyeok.recipebook.presentation.home.model.toUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +36,7 @@ import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+@HiltViewModel
 class HomeViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository,
     private val recipeRepository: RecipeRepository,
@@ -130,11 +132,11 @@ class HomeViewModel @Inject constructor(
         _recentlyCookedRecipes
     ) { ownedIngredients, recommendationRecipe, recipeCount, readyToCookRecipes, recentlyCookedRecipes ->
         val expiredIngredients = ownedIngredients.filter {
-            it.daysToExpiration == 0
+            it.daysToExpiration != null && it.daysToExpiration < 0
         }
 
         val expiringIngredients = ownedIngredients.filter {
-            it.daysToExpiration in EXPIRATION_DAY_URGENT..EXPIRATION_DAY_WARNING
+            it.daysToExpiration in 0..EXPIRATION_DAY_WARNING
         }
 
         val recommendationState = if (recommendationRecipe == null) {

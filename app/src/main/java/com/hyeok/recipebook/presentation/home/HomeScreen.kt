@@ -57,7 +57,7 @@ import kotlin.time.ExperimentalTime
 fun HomeRoute(
     uiState: HomeUiState,
     onExpirationCardClick: () -> Unit,
-    onViewRecommendedRecipeClick: () -> Unit,
+    onViewRecommendedRecipeClick: (Long) -> Unit,
     onRerollRecipeRecommendation: () -> Unit,
     onAddIngredientClick: () -> Unit,
     onAddRecipeClick: () -> Unit,
@@ -182,7 +182,7 @@ private fun HomeScreen(
     readyToCookRecipes: List<RecipeSummaryModel>,
     recentlyCookedRecipes: List<RecipeSummaryModel>,
     onExpirationCardClick: () -> Unit,
-    onViewRecommendedRecipeClick: () -> Unit,
+    onViewRecommendedRecipeClick: (Long) -> Unit,
     onRerollRecipeRecommendation: () -> Unit,
     onAddIngredientClick: () -> Unit,
     onAddRecipeClick: () -> Unit,
