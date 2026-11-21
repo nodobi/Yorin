@@ -402,8 +402,8 @@ private fun RecommendationButton(
         modifier = modifier
             .clip(YorinTheme.shapes.medium)
             .background(YorinTheme.colors.black7)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
