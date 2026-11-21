@@ -246,9 +246,11 @@ private fun HomeScreen(
 
                     Row(
                         modifier = Modifier
+                            .clip(YorinTheme.shapes.small)
                             .clickable {
                                 onViewExpiringIngredientsClick()
-                            },
+                            }
+                            .padding(start = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         YorinText(
@@ -304,7 +306,6 @@ private fun HomeScreen(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Spacer(Modifier.width(12.dp))
 
@@ -319,6 +320,8 @@ private fun HomeScreen(
                             }
                         )
                     }
+
+                    Spacer(Modifier.width(12.dp))
                 }
             }
         }
@@ -337,7 +340,6 @@ private fun HomeScreen(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Spacer(Modifier.width(12.dp))
 
@@ -352,6 +354,8 @@ private fun HomeScreen(
                             }
                         )
                     }
+
+                    Spacer(Modifier.width(12.dp))
                 }
             }
         }
@@ -366,18 +370,18 @@ private fun ExpirationCard(
 ) {
     Row(
         modifier = modifier
-            .background(YorinTheme.colors.sub4)
             .clip(YorinTheme.shapes.medium)
+            .background(YorinTheme.colors.sub4)
+            .clickable {
+                onClick()
+            }
             .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         YorinText(
             modifier = Modifier
-                .weight(1f)
-                .clickable {
-                    onClick()
-                },
+                .weight(1f),
             text = stringResource(R.string.home_expired_ingredient_title, expirationCount),
             color = YorinTheme.colors.sub1,
             style = YorinTheme.typography.body5
@@ -468,7 +472,8 @@ private fun SimpleRecipeCard(
             .clip(YorinTheme.shapes.small)
             .clickable {
                 onClickRecipe()
-            },
+            }
+            .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         // TODO:: 음식 이미지

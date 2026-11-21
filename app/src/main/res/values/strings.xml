@@ -32,7 +32,7 @@
 
     <string name="home_expiring_ingredient_title">소비기한 임박 재료</string>
     <string name="home_ready_to_cook_recipes_title">지금 바로 만들 수 있는 요리</string>
-    <string name="home_recently_cooked_recipes_title">지금 바로 만들 수 있는 요리</string>
+    <string name="home_recently_cooked_recipes_title">최근에 만든 요리</string>
 
     <string name="home_possible_title">등록하면 홈에서 이런 걸 볼 수 있어요</string>
     <string name="home_possible_recommend">오늘 만들 요리 추천</string>
