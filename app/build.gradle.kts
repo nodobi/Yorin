@@ -88,8 +88,11 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.viewmodel.savedstate)
+    implementation(libs.lifecycle.viewmodel.navigation3)
     implementation(libs.timber)
 
     // network
