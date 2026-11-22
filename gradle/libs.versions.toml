@@ -21,7 +21,6 @@ fragmentKtx = "1.8.6"
 navigationKtx = "2.8.9"
 navigation3 = "1.2.1"
 lifecycle = "2.8.7"
-lifecycleRuntimeKtx = "2.6.1" # 왜 분리되어 있지?
 activityCompose = "1.11.0"
 composeBom = "2025.04.01"
 retrofit = "3.0.0"
@@ -64,7 +63,7 @@ coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-t
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx"}
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle"}
 lifecycle-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "lifecycle"}
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-navigation3 = { group = "androidx.lifecyle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycle"}
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 
