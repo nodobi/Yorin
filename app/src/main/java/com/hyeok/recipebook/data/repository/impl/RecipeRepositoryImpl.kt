@@ -2,12 +2,12 @@ package com.hyeok.recipebook.data.repository.impl
 
 import com.hyeok.recipebook.data.database.model.RecipeDetailsModel
 import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
+import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.data.database.model.toModel
 import com.hyeok.recipebook.data.database.model.toUiModel
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.data.source.RecipeLocalDataSource
-import com.hyeok.recipebook.data.database.model.RecommendationReason
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.list.RecipeItemUiModel
@@ -28,6 +28,10 @@ class RecipeRepositoryImpl @Inject constructor(
     private val recipeLocalDataSource: RecipeLocalDataSource,
     private val ingredientLocalDataSource: IngredientLocalDataSource
 ) : RecipeRepository {
+    override suspend fun getRecipeCount(): Result<Int> = runCatching {
+        recipeLocalDataSource.getRecipeCount()
+    }
+
     override suspend fun getRecipesByIngredient(ingredientId: Long): Result<List<RecipeItemUiModel>> {
         TODO("Not yet implemented")
     }
@@ -174,7 +178,7 @@ class RecipeRepositoryImpl @Inject constructor(
 }
 
 // 사용자 정의 단위 리팩토링 할 떄 같이 제거
-private fun toBaseUnitQuantity(quantity: Int, unit: String): Long = when(unit) {
+private fun toBaseUnitQuantity(quantity: Int, unit: String): Long = when (unit) {
     "kg", "L" -> quantity * 1000L
     else -> quantity.toLong()
 }

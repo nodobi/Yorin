@@ -1,8 +1,8 @@
 package com.hyeok.recipebook.presentation.home.model
 
 import androidx.compose.runtime.Stable
+import com.hyeok.recipebook.data.database.model.RecipeRecommendationModel
 import com.hyeok.recipebook.data.database.model.RecommendationReason
-import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredientUiModel
 
 /**
  * 레시피 추천에 사용되는 UiModel
@@ -12,7 +12,7 @@ import com.hyeok.recipebook.presentation.recipe.detail.ingredients.RecipeIngredi
  * @property cookingTime 레시피 조리시간
  * @property averageScore 레시피 평균 점수
  * @property photoUrl 레시피 사진
- * @property ingredients 레시피 재료
+ * @property reasons 추천 사유
  */
 @Stable
 data class RecipeRecommendationUiModel(
@@ -21,6 +21,14 @@ data class RecipeRecommendationUiModel(
     val cookingTime: Int,
     val averageScore: Float,
     val photoUrl: String?,
-    val ingredients: List<RecipeIngredientUiModel>,
-    val reason: Set<RecommendationReason>
+    val reasons: Set<RecommendationReason>
+)
+
+internal fun RecipeRecommendationModel.toUiModel() = RecipeRecommendationUiModel(
+    id = recipe.id,
+    name = recipe.name,
+    cookingTime = recipe.cookingTime,
+    averageScore = recipe.averageScore,
+    photoUrl = recipe.photoUrl,
+    reasons = reason
 )
