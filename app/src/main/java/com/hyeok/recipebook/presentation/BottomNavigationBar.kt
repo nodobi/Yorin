@@ -20,7 +20,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,23 +27,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hyeok.recipebook.designsystem.components.YorinText
+import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.navigation.Navigator
 import com.hyeok.recipebook.presentation.navigation.Route
 
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController,
+    navigator: Navigator
 ) {
-    Box() {
+    Box {
         Spacer(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -53,23 +48,13 @@ fun BottomNavigationBar(
                 .background(YorinTheme.colors.black5)
         )
         YorinBottomBar {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-
-            Route.topLevelRoutes.forEachIndexed { idx, route ->
+            Route.topLevelRoutes.forEachIndexed { _, route ->
                 YorinBottomBarItem(
                     label = stringResource(route.name),
                     imageVector = ImageVector.vectorResource(route.icon),
-                    selected = currentDestination?.hierarchy?.any { it.hasRoute(route.route::class) } == true,
+                    selected = route.navKey == navigator.state.topLevelRoute,
                     onClick = {
-                        navController.navigate(route.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        navigator.navigate(route.navKey)
                     }
                 )
             }
@@ -149,17 +134,19 @@ private fun RowScope.YorinBottomBarItem(
 
 private val BottomBarHeight = 72.dp
 
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
+@BackgroundPreview
 @Composable
 private fun BottomNavigationPreview() {
-    YorinBottomBar {
-        Route.topLevelRoutes.forEachIndexed { idx, route ->
-            YorinBottomBarItem(
-                label = stringResource(route.name),
-                imageVector = ImageVector.vectorResource(route.icon),
-                selected = false,
-                onClick = { }
-            )
+    YorinTheme {
+        YorinBottomBar {
+            Route.topLevelRoutes.forEachIndexed { _, route ->
+                YorinBottomBarItem(
+                    label = stringResource(route.name),
+                    imageVector = ImageVector.vectorResource(route.icon),
+                    selected = false,
+                    onClick = { }
+                )
+            }
         }
     }
 }

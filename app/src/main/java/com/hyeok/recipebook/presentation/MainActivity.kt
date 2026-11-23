@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
 import com.hyeok.recipebook.designsystem.components.YorinSnackbar
+import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.home.homeScreen
 import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
@@ -77,7 +77,7 @@ fun MainView() {
     ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = { BottomNavigationBar(navController) },
+            bottomBar = { BottomNavigationBar(navigator) },
             snackbarHost = { SnackbarHost(hostState = snackbarState, snackbar = { YorinSnackbar(it) }) },
             contentWindowInsets = WindowInsets(0.dp)
         ) { innerPadding ->

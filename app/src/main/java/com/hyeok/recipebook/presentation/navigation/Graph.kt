@@ -9,46 +9,46 @@ import kotlinx.serialization.Serializable
 object Route {
 
     @Serializable
-    object Home: NavKey
+    object Home : NavKey
 
     @Serializable
     object Recipe {
         @Serializable
-        object Recipes: NavKey
+        object Recipes : NavKey
 
         @Serializable
-        data class Detail(val recipeId: Long): NavKey
+        data class Detail(val recipeId: Long) : NavKey
 
         @Serializable
-        data class Edit(val recipeId: Long?): NavKey
+        data class Edit(val recipeId: Long?) : NavKey
     }
 
     @Serializable
     object Ingredient {
         @Serializable
-        object Ingredients: NavKey
+        object Ingredients : NavKey
 
         @Serializable
-        data class Detail(val ingredientId: Long): NavKey
+        data class Detail(val ingredientId: Long) : NavKey
 
         @Serializable
-        data class Edit(val ingredientId: Long?): NavKey
+        data class Edit(val ingredientId: Long?) : NavKey
     }
 
-    val topLevelRoutes = listOf(
-        TopLevelRoute<Home>(
+    val topLevelRoutes = setOf(
+        TopLevelRoute(
             name = R.string.menu_home,
-            route = Home,
+            navKey = Home,
             icon = R.drawable.ic_home
         ),
-        TopLevelRoute<Recipe>(
+        TopLevelRoute(
             name = R.string.menu_recipe,
-            route = Recipe,
+            navKey = Recipe.Recipes,
             icon = R.drawable.ic_chefhat
         ),
-        TopLevelRoute<Ingredient>(
+        TopLevelRoute(
             name = R.string.menu_ingredient,
-            route = Ingredient,
+            navKey = Ingredient.Ingredients,
             icon = R.drawable.ic_refrigerator
         )
     )
@@ -57,7 +57,7 @@ object Route {
 data class TopLevelRoute<T : Any>(
     @StringRes
     val name: Int,
-    val route: T,
+    val navKey: T,
     @DrawableRes
     val icon: Int
 )
