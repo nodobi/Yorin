@@ -4,15 +4,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.presentation.LocalSnackbarHostState
+import com.hyeok.recipebook.presentation.navigation.Navigator
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
@@ -23,28 +20,28 @@ import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
 
-fun NavController.navigateToRecipe(navOptions: NavOptions? = null) {
-    navigate(Route.Recipe.Recipes, navOptions)
+fun Navigator.navigateToRecipe() {
+    navigate(Route.Recipe.Recipes)
 }
 
-fun NavController.navigateToRecipeDetail(recipeId: Long, navOptions: NavOptions? = null) {
+fun Navigator.navigateToRecipeDetail(recipeId: Long) {
     navigate(
         Route.Recipe.Detail(
             recipeId
-        ), navOptions
+        )
     )
 }
 
-fun NavController.navigateToRecipeEdit(recipeId: Long?, navOptions: NavOptions? = null) {
+fun Navigator.navigateToRecipeEdit(recipeId: Long?) {
     navigate(
         Route.Recipe.Edit(
             recipeId
-        ), navOptions
+        )
     )
 }
 
 fun NavGraphBuilder.recipeScreen(
-    navController: NavHostController,
+    navigator: Navigator,
 ) {
     navigation<Route.Recipe>(
         startDestination = Route.Recipe.Recipes,
@@ -59,10 +56,10 @@ fun NavGraphBuilder.recipeScreen(
                 recipesUiState = recipesUiState,
                 searchQueryState = viewModel.searchQueryState,
                 onAddRecipe = {
-                    navController.navigateToRecipeEdit(recipeId = null)
+                    navigator.navigateToRecipeEdit(recipeId = null)
                 },
                 onClickRecipe = { recipeId ->
-                    navController.navigateToRecipeDetail(recipeId = recipeId)
+                    navigator.navigateToRecipeDetail(recipeId = recipeId)
                 },
                 onSelectFilter = { newFilter ->
                     viewModel.updateFilter(newFilter)
@@ -92,11 +89,11 @@ fun NavGraphBuilder.recipeScreen(
                         RecipeDetailUiState.RecipeNotFound -> Unit
                         RecipeDetailUiState.FailToLoad -> Unit
 
-                        is RecipeDetailUiState.Success -> navController.navigateUp()
+                        is RecipeDetailUiState.Success -> navigator.goBack()
                     }
                 },
                 onEditStart = {
-                    navController.navigateToRecipeEdit(recipeId = recipeId)
+                    navigator.navigateToRecipeEdit(recipeId = recipeId)
                 },
                 onRemoveRecipe = {
                     viewModel.removeRecipe()
@@ -108,10 +105,10 @@ fun NavGraphBuilder.recipeScreen(
 
             LaunchedEffect(state) {
                 if (state is RecipeDetailUiState.RecipeNotFound) {
-                    navController.navigateUp()
+                    navigator.goBack()
                     snackbarHostState.showMessage(R.string.error_recipe_not_found)
                 } else if (state is RecipeDetailUiState.FailToLoad) {
-                    navController.navigateUp()
+                    navigator.goBack()
                     snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
                 }
             }
@@ -126,7 +123,7 @@ fun NavGraphBuilder.recipeScreen(
             RecipeEditRoute(
                 state = uiState,
                 navigateUp = {
-                    navController.navigateUp()
+                    navigator.goBack()
                 },
                 onCompleteEdit = { editUiModel ->
                     viewModel.completeEdit(editUiModel)
@@ -134,22 +131,18 @@ fun NavGraphBuilder.recipeScreen(
             )
 
             LaunchedEffect(uiState) {
-                when(uiState) {
+                when (uiState) {
                     RecipeEditUiState.Loading -> Unit
                     RecipeEditUiState.FailToLoad -> {
-                        navController.navigateUp()
+                        navigator.goBack()
                         snackbarHostState.showMessage(R.string.error_fail_to_load_recipe)
                     }
+
                     is RecipeEditUiState.Success -> {
                         val uiState = uiState as RecipeEditUiState.Success
 
-                        if(uiState.isFinishEdit && uiState.updatedRecipeId != null) {
-                            navController.navigateToRecipeDetail(
-                                recipeId = uiState.updatedRecipeId,
-                                navOptions = navOptions {
-                                    popUpTo<Route.Recipe.Recipes>()
-                                }
-                            )
+                        if (uiState.isFinishEdit && uiState.updatedRecipeId != null) {
+                            navigator.navigateToRecipeDetail(uiState.updatedRecipeId)
                         }
                     }
                 }

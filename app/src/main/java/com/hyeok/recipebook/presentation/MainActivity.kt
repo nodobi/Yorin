@@ -88,13 +88,13 @@ fun MainView() {
                     startDestination = Route.Home
                 ) {
                     homeScreen(
-                        navController = navController
+                        navigator = navigator
                     )
                     recipeScreen(
-                        navController = navController,
+                        navigator = navigator
                     )
                     ingredientScreen(
-                        navController = navController
+                        navigator = navigator
                     )
                 }
             }
