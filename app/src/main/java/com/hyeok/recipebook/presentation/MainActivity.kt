@@ -28,7 +28,9 @@ import com.hyeok.recipebook.designsystem.components.YorinSnackbar
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
 import com.hyeok.recipebook.presentation.home.homeScreen
 import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
+import com.hyeok.recipebook.presentation.navigation.Navigator
 import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.navigation.rememberNavigationState
 import com.hyeok.recipebook.presentation.recipe.recipeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,6 +51,16 @@ class MainActivity : ComponentActivity() {
 fun MainView() {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
+    val navigationState = rememberNavigationState(
+        startRoute = Route.Home,
+        topLevelRoutes = setOf(
+            Route.Home,
+            Route.Ingredient.Ingredients,
+            Route.Recipe.Recipes
+        )
+    )
+
+    val navigator = remember { Navigator(navigationState) }
 
     val snackbarState = remember { SnackbarHostState() }
     val appScope = rememberCoroutineScope()
