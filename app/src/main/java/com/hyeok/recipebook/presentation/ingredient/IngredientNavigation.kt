@@ -1,15 +1,11 @@
 package com.hyeok.recipebook.presentation.ingredient
 
-import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.hyeok.recipebook.presentation.ingredient.detail.IngredientDetailSheet
@@ -41,72 +37,6 @@ fun Navigator.navigateToIngredientEdit(ingredientId: Long?) {
             ingredientId = ingredientId
         )
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.ingredientScreen(
-    navigator: Navigator
-) {
-    navigation<Route.Ingredient>(
-        startDestination = Route.Ingredient.Ingredients
-    ) {
-        composable<Route.Ingredient.Ingredients> {
-            val viewModel = hiltViewModel<IngredientsViewModel>()
-            val ingredientUiState by viewModel.ingredientsUiState.collectAsStateWithLifecycle()
-
-            IngredientRoute(
-                ingredientsUiState = ingredientUiState,
-                searchQueryState = viewModel.searchQueryState,
-                onClickAddIngredient = {
-                    navigator.navigateToIngredientEdit(ingredientId = null)
-                },
-                onClickIngredient = { model ->
-                    navigator.navigateToIngredientDetail(ingredientId = model.id)
-                }
-            )
-        }
-
-        bottomSheet<Route.Ingredient.Detail> { backStackEntry ->
-            val viewModel = hiltViewModel<IngredientDetailViewModel>()
-            val ingredientDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-            IngredientDetailSheet(
-                modifier = Modifier
-                    .hideKeyboardOnTapOutside(),
-                ingredientDetailUiState = ingredientDetailUiState,
-                onDismiss = {
-                    navigator.goBack()
-                },
-                onClickRecipe = {},
-                onEditIngredient = {
-                    navigator.goBack()
-                },
-                onDeleteIngredient = {
-                    viewModel.removeIngredient(ingredientDetailUiState.ingredient.id)
-                }
-            )
-        }
-
-        bottomSheet<Route.Ingredient.Edit> { backStackEntry ->
-            val viewModel = hiltViewModel<IngredientEditViewModel>()
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-            IngredientEditSheet(
-                modifier = Modifier
-                    .hideKeyboardOnTapOutside(),
-                ingredientEditUiState = uiState,
-                sheetState = sheetState,
-                onDismiss = {
-                    navigator.goBack()
-                },
-                onComplete = { ingredientUiModel ->
-                    navigator.goBack()
-                    viewModel.addIngredient(ingredientUiModel)
-                }
-            )
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
