@@ -23,15 +23,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.entryProvider
 import com.hyeok.recipebook.designsystem.components.YorinSnackbar
 import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.home.homeEntry
 import com.hyeok.recipebook.presentation.home.homeScreen
 import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
+import com.hyeok.recipebook.presentation.ingredient.ingredientSection
 import com.hyeok.recipebook.presentation.navigation.Navigator
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.navigation.rememberNavigationState
 import com.hyeok.recipebook.presentation.recipe.recipeScreen
+import com.hyeok.recipebook.presentation.recipe.recipeSection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -72,6 +76,12 @@ fun MainView() {
             appScope,
             context
         )
+    }
+
+    val entryProvider = entryProvider {
+        homeEntry(navigator)
+        recipeSection(navigator)
+        ingredientSection(navigator)
     }
 
     ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
