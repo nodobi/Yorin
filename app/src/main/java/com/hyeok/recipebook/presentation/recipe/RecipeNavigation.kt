@@ -70,8 +70,10 @@ fun EntryProviderScope<NavKey>.recipeSection(
         }
     }
 
-    entry<Route.Recipe.Detail> {
-        val viewModel = hiltViewModel<RecipeDetailViewModel>()
+    entry<Route.Recipe.Detail> { key ->
+        val viewModel = hiltViewModel<RecipeDetailViewModel, RecipeDetailViewModel.Factory>(
+            creationCallback = { factory -> factory.create(key) }
+        )
         val recipeId by viewModel.recipeId.collectAsStateWithLifecycle()
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -110,8 +112,10 @@ fun EntryProviderScope<NavKey>.recipeSection(
         }
     }
 
-    entry<Route.Recipe.Edit> {
-        val viewModel = hiltViewModel<RecipeEditViewModel>()
+    entry<Route.Recipe.Edit> { key ->
+        val viewModel = hiltViewModel<RecipeEditViewModel, RecipeEditViewModel.Factory>(
+            creationCallback = { factory -> factory.create(key) }
+        )
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         val snackbarHostState = LocalSnackbarHostState.current

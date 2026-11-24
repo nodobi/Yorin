@@ -1,13 +1,14 @@
 package com.hyeok.recipebook.presentation.ingredient.detail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -17,16 +18,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.until
-import javax.inject.Inject
 
-@HiltViewModel
-class IngredientDetailViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = IngredientDetailViewModel.Factory::class)
+class IngredientDetailViewModel @AssistedInject constructor(
     private val ingredientRepository: IngredientRepository,
     private val recipeRepository: RecipeRepository,
-    private val savedStateHandle: SavedStateHandle
+    @Assisted navKey: Route.Ingredient.Detail
 ) : ViewModel() {
 
-    private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Detail>().ingredientId
+    private val ingredientId = navKey.ingredientId
 
     private val ingredient = ingredientRepository.getIngredient(ingredientId)
         .mapNotNull {
@@ -54,17 +54,17 @@ class IngredientDetailViewModel @Inject constructor(
         val remainExpirationDays = ingredient.expirationDate?.let {
             val day = today.until(it, DateTimeUnit.DAY).toInt()
 
-            if(day < 0) day * -1 else day
+            if (day < 0) day * -1 else day
         }
 
         val expirationProgress = ingredient.expirationDate?.let {
             val totalDay = it.until(ingredient.purchaseDate, DateTimeUnit.DAY).toInt().let { num ->
-                if(num < 0) num * -1 else num
+                if (num < 0) num * -1 else num
             }
 
-            if(totalDay == remainExpirationDays) {
+            if (totalDay == remainExpirationDays) {
                 1f
-            } else if(remainExpirationDays == null) {
+            } else if (remainExpirationDays == null) {
                 0.5f
             } else {
                 1f - remainExpirationDays.toFloat() / totalDay.toFloat()
@@ -85,7 +85,12 @@ class IngredientDetailViewModel @Inject constructor(
                 .onSuccess {
                     // TODO:: 화면 전환
                 }
-                .onFailure {  }
+                .onFailure { }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Route.Ingredient.Detail): IngredientDetailViewModel
     }
 }

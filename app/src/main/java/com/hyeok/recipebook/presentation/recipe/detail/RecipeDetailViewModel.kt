@@ -1,12 +1,13 @@
 package com.hyeok.recipebook.presentation.recipe.detail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.records.RecipeRecordUiModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,15 +18,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class RecipeDetailViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = RecipeDetailViewModel.Factory::class)
+class RecipeDetailViewModel @AssistedInject constructor(
     private val recipeRepository: RecipeRepository,
-    savedStateHandle: SavedStateHandle
+    @Assisted navKey: Route.Recipe.Detail
 ) : ViewModel() {
 
-    private val _recipeId = MutableStateFlow(savedStateHandle.toRoute<Route.Recipe.Detail>().recipeId)
+    private val _recipeId = MutableStateFlow(navKey.recipeId)
     val recipeId = _recipeId.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -33,8 +33,8 @@ class RecipeDetailViewModel @Inject constructor(
         recipeRepository.getRecipeDetailsById(recipeId)
     }.map { result ->
         result.fold(
-            onSuccess = {recipe ->
-                if(recipe == null) return@fold RecipeDetailUiState.RecipeNotFound
+            onSuccess = { recipe ->
+                if (recipe == null) return@fold RecipeDetailUiState.RecipeNotFound
                 RecipeDetailUiState.Success(recipe = recipe)
             },
             onFailure = {
@@ -60,5 +60,10 @@ class RecipeDetailViewModel @Inject constructor(
                     Timber.d("Fail to save recipe. exception: $it")
                 }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Route.Recipe.Detail): RecipeDetailViewModel
     }
 }

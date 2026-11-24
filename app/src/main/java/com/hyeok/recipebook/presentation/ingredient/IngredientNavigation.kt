@@ -61,8 +61,10 @@ fun EntryProviderScope<NavKey>.ingredientSection(
 
     entry<Route.Ingredient.Detail>(
         metadata = BottomSheetSceneStrategy.bottomSheet()
-    ) {
-        val viewModel = hiltViewModel<IngredientDetailViewModel>()
+    ) { key ->
+        val viewModel = hiltViewModel<IngredientDetailViewModel, IngredientDetailViewModel.Factory>(
+            creationCallback = { factory -> factory.create(key) }
+        )
         val ingredientDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         IngredientDetailSheet(
@@ -84,8 +86,10 @@ fun EntryProviderScope<NavKey>.ingredientSection(
 
     entry<Route.Ingredient.Edit>(
         metadata = BottomSheetSceneStrategy.bottomSheet()
-    ) {
-        val viewModel = hiltViewModel<IngredientEditViewModel>()
+    ) { key ->
+        val viewModel = hiltViewModel<IngredientEditViewModel, IngredientEditViewModel.Factory>(
+            creationCallback = { factory -> factory.create(key) }
+        )
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
