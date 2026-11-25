@@ -138,12 +138,13 @@ private fun RowScope.YorinBottomBarItem(
     }
 }
 
-
 private data class BottomNavItem(
-    @StringRes
+    @param:StringRes
+    @get:StringRes
     val name: Int,
     val navKey: NavKey,
-    @DrawableRes
+    @param:DrawableRes
+    @get:DrawableRes
     val icon: Int
 )
 
