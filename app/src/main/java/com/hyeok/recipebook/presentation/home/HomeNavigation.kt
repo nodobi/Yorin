@@ -7,18 +7,22 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.hyeok.recipebook.presentation.ingredient.navigateToIngredient
 import com.hyeok.recipebook.presentation.navigation.Navigator
-import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.navigateToRecipe
 import com.hyeok.recipebook.presentation.recipe.navigateToRecipeDetail
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+data object HomeNavKey : NavKey
 
 fun Navigator.navigateToHome() {
-    navigate(Route.Home)
+    navigate(HomeNavKey)
 }
 
 fun EntryProviderScope<NavKey>.homeEntry(
     navigator: Navigator
 ) {
-    entry<Route.Home> {
+    entry<HomeNavKey> {
         val viewModel = hiltViewModel<HomeViewModel>()
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

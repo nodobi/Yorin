@@ -2,53 +2,27 @@ package com.hyeok.recipebook.presentation.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.navigation3.runtime.NavKey
 import com.hyeok.recipebook.R
+import com.hyeok.recipebook.presentation.home.HomeNavKey
+import com.hyeok.recipebook.presentation.ingredient.IngredientListNavKey
+import com.hyeok.recipebook.presentation.recipe.RecipeListNavKey
 import kotlinx.serialization.Serializable
 
 object Route {
-
-    @Serializable
-    object Home : NavKey
-
-    @Serializable
-    object Recipe {
-        @Serializable
-        object Recipes : NavKey
-
-        @Serializable
-        data class Detail(val recipeId: Long) : NavKey
-
-        @Serializable
-        data class Edit(val recipeId: Long?) : NavKey
-    }
-
-    @Serializable
-    object Ingredient {
-        @Serializable
-        object Ingredients : NavKey
-
-        @Serializable
-        data class Detail(val ingredientId: Long) : NavKey
-
-        @Serializable
-        data class Edit(val ingredientId: Long?) : NavKey
-    }
-
     val topLevelRoutes = setOf(
         TopLevelRoute(
             name = R.string.menu_home,
-            navKey = Home,
+            navKey = HomeNavKey,
             icon = R.drawable.ic_home
         ),
         TopLevelRoute(
             name = R.string.menu_recipe,
-            navKey = Recipe.Recipes,
+            navKey = RecipeListNavKey,
             icon = R.drawable.ic_chefhat
         ),
         TopLevelRoute(
             name = R.string.menu_ingredient,
-            navKey = Ingredient.Ingredients,
+            navKey = IngredientListNavKey,
             icon = R.drawable.ic_refrigerator
         )
     )

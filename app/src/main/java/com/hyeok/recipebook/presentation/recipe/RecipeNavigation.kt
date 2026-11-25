@@ -9,7 +9,6 @@ import androidx.navigation3.runtime.NavKey
 import com.hyeok.recipebook.R
 import com.hyeok.recipebook.presentation.LocalSnackbarHostState
 import com.hyeok.recipebook.presentation.navigation.Navigator
-import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailRoute
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailUiState
 import com.hyeok.recipebook.presentation.recipe.detail.RecipeDetailViewModel
@@ -18,14 +17,24 @@ import com.hyeok.recipebook.presentation.recipe.edit.RecipeEditViewModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
 import com.hyeok.recipebook.presentation.recipe.list.RecipeRoute
 import com.hyeok.recipebook.presentation.recipe.list.RecipesViewModel
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object RecipeListNavKey : NavKey
+
+@Serializable
+data class RecipeDetailNavKey(val recipeId: Long) : NavKey
+
+@Serializable
+data class RecipeEditNavKey(val recipeId: Long?) : NavKey
 
 fun Navigator.navigateToRecipe() {
-    navigate(Route.Recipe.Recipes)
+    navigate(RecipeListNavKey)
 }
 
 fun Navigator.navigateToRecipeDetail(recipeId: Long) {
     navigate(
-        Route.Recipe.Detail(
+        RecipeDetailNavKey(
             recipeId
         )
     )
@@ -33,7 +42,7 @@ fun Navigator.navigateToRecipeDetail(recipeId: Long) {
 
 fun Navigator.navigateToRecipeEdit(recipeId: Long?) {
     navigate(
-        Route.Recipe.Edit(
+        RecipeEditNavKey(
             recipeId
         )
     )
@@ -42,7 +51,7 @@ fun Navigator.navigateToRecipeEdit(recipeId: Long?) {
 fun EntryProviderScope<NavKey>.recipeSection(
     navigator: Navigator
 ) {
-    entry<Route.Recipe.Recipes> {
+    entry<RecipeListNavKey> {
         val viewModel = hiltViewModel<RecipesViewModel>()
         val recipesUiState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -70,7 +79,7 @@ fun EntryProviderScope<NavKey>.recipeSection(
         }
     }
 
-    entry<Route.Recipe.Detail> { key ->
+    entry<RecipeDetailNavKey> { key ->
         val viewModel = hiltViewModel<RecipeDetailViewModel, RecipeDetailViewModel.Factory>(
             creationCallback = { factory -> factory.create(key) }
         )
@@ -112,7 +121,7 @@ fun EntryProviderScope<NavKey>.recipeSection(
         }
     }
 
-    entry<Route.Recipe.Edit> { key ->
+    entry<RecipeEditNavKey> { key ->
         val viewModel = hiltViewModel<RecipeEditViewModel, RecipeEditViewModel.Factory>(
             creationCallback = { factory -> factory.create(key) }
         )

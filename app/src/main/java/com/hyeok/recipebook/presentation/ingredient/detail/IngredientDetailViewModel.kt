@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.repository.RecipeRepository
-import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.ingredient.IngredientDetailNavKey
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -23,7 +23,7 @@ import kotlinx.datetime.until
 class IngredientDetailViewModel @AssistedInject constructor(
     private val ingredientRepository: IngredientRepository,
     private val recipeRepository: RecipeRepository,
-    @Assisted navKey: Route.Ingredient.Detail
+    @Assisted navKey: IngredientDetailNavKey
 ) : ViewModel() {
 
     private val ingredientId = navKey.ingredientId
@@ -91,6 +91,6 @@ class IngredientDetailViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(navKey: Route.Ingredient.Detail): IngredientDetailViewModel
+        fun create(navKey: IngredientDetailNavKey): IngredientDetailViewModel
     }
 }

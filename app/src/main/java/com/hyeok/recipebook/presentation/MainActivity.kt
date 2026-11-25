@@ -24,13 +24,15 @@ import androidx.navigation3.ui.NavDisplay
 import com.hyeok.recipebook.designsystem.components.YorinSnackbar
 import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.home.HomeNavKey
 import com.hyeok.recipebook.presentation.home.homeEntry
+import com.hyeok.recipebook.presentation.ingredient.IngredientListNavKey
 import com.hyeok.recipebook.presentation.ingredient.ingredientSection
 import com.hyeok.recipebook.presentation.navigation.BottomSheetSceneStrategy
 import com.hyeok.recipebook.presentation.navigation.Navigator
-import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.navigation.rememberNavigationState
 import com.hyeok.recipebook.presentation.navigation.toEntries
+import com.hyeok.recipebook.presentation.recipe.RecipeListNavKey
 import com.hyeok.recipebook.presentation.recipe.recipeSection
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,11 +64,11 @@ fun MainView() {
     }
 
     val navigationState = rememberNavigationState(
-        startRoute = Route.Home,
+        startRoute = HomeNavKey,
         topLevelRoutes = setOf(
-            Route.Home,
-            Route.Ingredient.Ingredients,
-            Route.Recipe.Recipes
+            HomeNavKey,
+            IngredientListNavKey,
+            RecipeListNavKey
         )
     )
     val navigator = remember { Navigator(navigationState) }

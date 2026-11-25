@@ -3,7 +3,7 @@ package com.hyeok.recipebook.presentation.recipe.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.data.repository.RecipeRepository
-import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.recipe.RecipeEditNavKey
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.toEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
@@ -25,7 +25,7 @@ import timber.log.Timber
 @HiltViewModel(assistedFactory = RecipeEditViewModel.Factory::class)
 class RecipeEditViewModel @AssistedInject constructor(
     private val recipeRepository: RecipeRepository,
-    @Assisted navKey: Route.Recipe.Edit
+    @Assisted navKey: RecipeEditNavKey
 ) : ViewModel() {
 
     private val _recipeId = MutableStateFlow(navKey.recipeId)
@@ -105,6 +105,6 @@ class RecipeEditViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(navKey: Route.Recipe.Edit): RecipeEditViewModel
+        fun create(navKey: RecipeEditNavKey): RecipeEditViewModel
     }
 }

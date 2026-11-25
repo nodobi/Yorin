@@ -3,8 +3,8 @@ package com.hyeok.recipebook.presentation.ingredient.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.data.repository.IngredientRepository
+import com.hyeok.recipebook.presentation.ingredient.IngredientEditNavKey
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.navigation.Route
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = IngredientEditViewModel.Factory::class)
 class IngredientEditViewModel @AssistedInject constructor(
     private val ingredientRepository: IngredientRepository,
-    @Assisted navKey: Route.Ingredient.Edit
+    @Assisted navKey: IngredientEditNavKey
 ) : ViewModel() {
     private val ingredientId = navKey.ingredientId
 
@@ -47,6 +47,6 @@ class IngredientEditViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(navKey: Route.Ingredient.Edit): IngredientEditViewModel
+        fun create(navKey: IngredientEditNavKey): IngredientEditViewModel
     }
 }

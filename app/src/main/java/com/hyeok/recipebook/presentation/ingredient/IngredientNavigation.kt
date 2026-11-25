@@ -16,16 +16,25 @@ import com.hyeok.recipebook.presentation.ingredient.list.IngredientRoute
 import com.hyeok.recipebook.presentation.ingredient.list.IngredientsViewModel
 import com.hyeok.recipebook.presentation.navigation.BottomSheetSceneStrategy
 import com.hyeok.recipebook.presentation.navigation.Navigator
-import com.hyeok.recipebook.presentation.navigation.Route
 import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object IngredientListNavKey : NavKey
+
+@Serializable
+data class IngredientDetailNavKey(val ingredientId: Long) : NavKey
+
+@Serializable
+data class IngredientEditNavKey(val ingredientId: Long?) : NavKey
 
 fun Navigator.navigateToIngredient() {
-    navigate(Route.Ingredient.Ingredients)
+    navigate(IngredientListNavKey)
 }
 
 fun Navigator.navigateToIngredientDetail(ingredientId: Long) {
     navigate(
-        Route.Ingredient.Detail(
+        IngredientDetailNavKey(
             ingredientId = ingredientId
         )
     )
@@ -33,7 +42,7 @@ fun Navigator.navigateToIngredientDetail(ingredientId: Long) {
 
 fun Navigator.navigateToIngredientEdit(ingredientId: Long?) {
     navigate(
-        Route.Ingredient.Edit(
+        IngredientEditNavKey(
             ingredientId = ingredientId
         )
     )
@@ -43,7 +52,7 @@ fun Navigator.navigateToIngredientEdit(ingredientId: Long?) {
 fun EntryProviderScope<NavKey>.ingredientSection(
     navigator: Navigator
 ) {
-    entry<Route.Ingredient.Ingredients> {
+    entry<IngredientListNavKey> {
         val viewModel = hiltViewModel<IngredientsViewModel>()
         val ingredientUiState by viewModel.ingredientsUiState.collectAsStateWithLifecycle()
 
@@ -59,7 +68,7 @@ fun EntryProviderScope<NavKey>.ingredientSection(
         )
     }
 
-    entry<Route.Ingredient.Detail>(
+    entry<IngredientDetailNavKey>(
         metadata = BottomSheetSceneStrategy.bottomSheet()
     ) { key ->
         val viewModel = hiltViewModel<IngredientDetailViewModel, IngredientDetailViewModel.Factory>(
@@ -84,7 +93,7 @@ fun EntryProviderScope<NavKey>.ingredientSection(
         )
     }
 
-    entry<Route.Ingredient.Edit>(
+    entry<IngredientEditNavKey>(
         metadata = BottomSheetSceneStrategy.bottomSheet()
     ) { key ->
         val viewModel = hiltViewModel<IngredientEditViewModel, IngredientEditViewModel.Factory>(
