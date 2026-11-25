@@ -1,120 +1,119 @@
 package com.hyeok.recipebook.presentation.ingredient
 
-import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import androidx.navigation.navOptions
-import androidx.navigation.navigation
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.hyeok.recipebook.presentation.ingredient.detail.IngredientDetailSheet
 import com.hyeok.recipebook.presentation.ingredient.detail.IngredientDetailViewModel
 import com.hyeok.recipebook.presentation.ingredient.edit.IngredientEditSheet
 import com.hyeok.recipebook.presentation.ingredient.edit.IngredientEditViewModel
 import com.hyeok.recipebook.presentation.ingredient.list.IngredientRoute
 import com.hyeok.recipebook.presentation.ingredient.list.IngredientsViewModel
-import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.navigation.BottomSheetSceneStrategy
+import com.hyeok.recipebook.presentation.navigation.Navigator
 import com.hyeok.recipebook.presentation.util.ext.hideKeyboardOnTapOutside
+import kotlinx.serialization.Serializable
 
+@Serializable
+data object IngredientListNavKey : NavKey
 
-fun NavController.navigateToIngredient(navOptions: NavOptions? = null) {
-    navigate(Route.Ingredient.Ingredients, navOptions)
+@Serializable
+data class IngredientDetailNavKey(val ingredientId: Long) : NavKey
+
+@Serializable
+data class IngredientEditNavKey(val ingredientId: Long?) : NavKey
+
+fun Navigator.navigateToIngredient() {
+    navigate(IngredientListNavKey)
 }
 
-fun NavController.navigateToIngredientDetail(ingredientId: Long, navOptions: NavOptions? = null) {
+fun Navigator.navigateToIngredientDetail(ingredientId: Long) {
     navigate(
-        Route.Ingredient.Detail(
+        IngredientDetailNavKey(
             ingredientId = ingredientId
-        ), navOptions
+        )
     )
 }
 
-fun NavController.navigateToIngredientEdit(ingredientId: Long?, navOptions: NavOptions? = null) {
+fun Navigator.navigateToIngredientEdit(ingredientId: Long?) {
     navigate(
-        Route.Ingredient.Edit(
+        IngredientEditNavKey(
             ingredientId = ingredientId
-        ), navOptions
+        )
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.ingredientScreen(
-    navController: NavHostController
+fun EntryProviderScope<NavKey>.ingredientSection(
+    navigator: Navigator
 ) {
-    navigation<Route.Ingredient>(
-        startDestination = Route.Ingredient.Ingredients
-    ) {
-        composable<Route.Ingredient.Ingredients> { backStackEntry ->
-            val backstackEntry = remember(backStackEntry) {
-                navController.getBackStackEntry<Route.Ingredient>()
+    entry<IngredientListNavKey> {
+        val viewModel = hiltViewModel<IngredientsViewModel>()
+        val ingredientUiState by viewModel.ingredientsUiState.collectAsStateWithLifecycle()
+
+        IngredientRoute(
+            ingredientsUiState = ingredientUiState,
+            searchQueryState = viewModel.searchQueryState,
+            onClickAddIngredient = {
+                navigator.navigateToIngredientEdit(ingredientId = null)
+            },
+            onClickIngredient = { model ->
+                navigator.navigateToIngredientDetail(ingredientId = model.id)
             }
-            val viewModel = hiltViewModel<IngredientsViewModel>(backstackEntry)
-            val ingredientUiState by viewModel.ingredientsUiState.collectAsStateWithLifecycle()
+        )
+    }
 
-            IngredientRoute(
-                ingredientsUiState = ingredientUiState,
-                searchQueryState = viewModel.searchQueryState,
-                onClickAddIngredient = {
-                    navController.navigateToIngredientEdit(ingredientId = null)
-                },
-                onClickIngredient = { model ->
-                    navController.navigateToIngredientDetail(ingredientId = model.id)
-                }
-            )
-        }
+    entry<IngredientDetailNavKey>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) { key ->
+        val viewModel = hiltViewModel<IngredientDetailViewModel, IngredientDetailViewModel.Factory>(
+            creationCallback = { factory -> factory.create(key) }
+        )
+        val ingredientDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        bottomSheet<Route.Ingredient.Detail> { backStackEntry ->
-            val viewModel = hiltViewModel<IngredientDetailViewModel>()
-            val ingredientDetailUiState by viewModel.uiState.collectAsStateWithLifecycle()
+        IngredientDetailSheet(
+            modifier = Modifier
+                .hideKeyboardOnTapOutside(),
+            ingredientDetailUiState = ingredientDetailUiState,
+            onDismiss = {
+                navigator.goBack()
+            },
+            onClickRecipe = {},
+            onEditIngredient = {
+                navigator.replace(IngredientEditNavKey(ingredientDetailUiState.ingredient.id))
+            },
+            onDeleteIngredient = {
+                viewModel.removeIngredient(ingredientDetailUiState.ingredient.id)
+            }
+        )
+    }
 
-            IngredientDetailSheet(
-                modifier = Modifier
-                    .hideKeyboardOnTapOutside(),
-                ingredientDetailUiState = ingredientDetailUiState,
-                onDismiss = {
-                    navController.popBackStack()
-                },
-                onClickRecipe = {},
-                onEditIngredient = {
-                    navController.navigateToIngredientEdit(
-                        ingredientId = ingredientDetailUiState.ingredient.id,
-                        navOptions = navOptions {
-                            popUpTo(Route.Ingredient.Ingredients) { inclusive = false }
-                        }
-                    )
-                },
-                onDeleteIngredient = {
-                    viewModel.removeIngredient(ingredientDetailUiState.ingredient.id)
-                }
-            )
-        }
+    entry<IngredientEditNavKey>(
+        metadata = BottomSheetSceneStrategy.bottomSheet()
+    ) { key ->
+        val viewModel = hiltViewModel<IngredientEditViewModel, IngredientEditViewModel.Factory>(
+            creationCallback = { factory -> factory.create(key) }
+        )
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-        bottomSheet<Route.Ingredient.Edit> { backStackEntry ->
-            val viewModel = hiltViewModel<IngredientEditViewModel>()
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-            IngredientEditSheet(
-                modifier = Modifier
-                    .hideKeyboardOnTapOutside(),
-                ingredientEditUiState = uiState,
-                sheetState = sheetState,
-                onDismiss = {
-                    navController.popBackStack()
-                },
-                onComplete = { ingredientUiModel ->
-                    navController.popBackStack()
-                    viewModel.addIngredient(ingredientUiModel)
-                }
-            )
-        }
+        IngredientEditSheet(
+            modifier = Modifier
+                .hideKeyboardOnTapOutside(),
+            ingredientEditUiState = uiState,
+            sheetState = sheetState,
+            onDismiss = {
+                navigator.goBack()
+            },
+            onComplete = { ingredientUiModel ->
+                navigator.goBack()
+                viewModel.addIngredient(ingredientUiModel)
+            }
+        )
     }
 }

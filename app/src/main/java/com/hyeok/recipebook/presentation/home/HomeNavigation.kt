@@ -3,49 +3,51 @@ package com.hyeok.recipebook.presentation.home
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.hyeok.recipebook.presentation.ingredient.navigateToIngredient
-import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.navigation.Navigator
 import com.hyeok.recipebook.presentation.recipe.navigateToRecipe
 import com.hyeok.recipebook.presentation.recipe.navigateToRecipeDetail
+import kotlinx.serialization.Serializable
 
-fun NavController.navigateToHome(navOptions: NavOptions? = null) {
-    navigate(Route.Home, navOptions)
+
+@Serializable
+data object HomeNavKey : NavKey
+
+fun Navigator.navigateToHome() {
+    navigate(HomeNavKey)
 }
 
-fun NavGraphBuilder.homeScreen(
-    navController: NavHostController
+fun EntryProviderScope<NavKey>.homeEntry(
+    navigator: Navigator
 ) {
-    composable<Route.Home> {
+    entry<HomeNavKey> {
         val viewModel = hiltViewModel<HomeViewModel>()
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         HomeRoute(
             uiState = uiState,
             onExpirationCardClick = {
-                navController.navigateToIngredient()
+                navigator.navigateToIngredient()
             },
             onViewRecommendedRecipeClick = {
-                navController.navigateToRecipeDetail(it)
+                navigator.navigateToRecipeDetail(it)
             },
             onRerollRecipeRecommendation = {
                 viewModel.onRerollRecommendation()
             },
             onAddIngredientClick = {
-                navController.navigateToIngredient()
+                navigator.navigateToIngredient()
             },
             onAddRecipeClick = {
-                navController.navigateToRecipe()
+                navigator.navigateToRecipe()
             },
             onViewExpiringIngredientsClick = {
-                navController.navigateToIngredient()
+                navigator.navigateToIngredient()
             },
             onRecipeClick = {
-                navController.navigateToRecipeDetail(it)
+                navigator.navigateToRecipeDetail(it)
             },
         )
     }

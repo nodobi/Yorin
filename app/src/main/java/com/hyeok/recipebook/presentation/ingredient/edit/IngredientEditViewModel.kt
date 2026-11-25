@@ -1,33 +1,26 @@
 package com.hyeok.recipebook.presentation.ingredient.edit
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.hyeok.recipebook.data.repository.IngredientRepository
+import com.hyeok.recipebook.presentation.ingredient.IngredientEditNavKey
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import com.hyeok.recipebook.presentation.navigation.Route
-import com.hyeok.recipebook.presentation.util.DateTimeUtil
-import com.hyeok.recipebook.presentation.util.ext.toEpochMilliseconds
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import javax.inject.Inject
 
-@HiltViewModel
-class IngredientEditViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = IngredientEditViewModel.Factory::class)
+class IngredientEditViewModel @AssistedInject constructor(
     private val ingredientRepository: IngredientRepository,
-    private val savedStateHandle: SavedStateHandle
+    @Assisted navKey: IngredientEditNavKey
 ) : ViewModel() {
-    private val ingredientId = savedStateHandle.toRoute<Route.Ingredient.Edit>().ingredientId
+    private val ingredientId = navKey.ingredientId
 
     private val ingredient = ingredientRepository.getIngredient(ingredientId ?: -1)
         .map {
@@ -48,7 +41,12 @@ class IngredientEditViewModel @Inject constructor(
                 .onSuccess {
                     // TODO:: ingredient 갱신
                 }
-                .onFailure {  }
+                .onFailure { }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: IngredientEditNavKey): IngredientEditViewModel
     }
 }

@@ -1,14 +1,15 @@
 package com.hyeok.recipebook.presentation.recipe.edit
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.hyeok.recipebook.data.repository.RecipeRepository
-import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.recipe.RecipeEditNavKey
 import com.hyeok.recipebook.presentation.recipe.edit.model.RecipeEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.model.toEditUiModel
 import com.hyeok.recipebook.presentation.recipe.edit.state.RecipeEditUiState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,15 +21,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class RecipeEditViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = RecipeEditViewModel.Factory::class)
+class RecipeEditViewModel @AssistedInject constructor(
     private val recipeRepository: RecipeRepository,
-    private val savedStateHandle: SavedStateHandle
+    @Assisted navKey: RecipeEditNavKey
 ) : ViewModel() {
 
-    private val _recipeId = MutableStateFlow(savedStateHandle.toRoute<Route.Recipe.Edit>().recipeId)
+    private val _recipeId = MutableStateFlow(navKey.recipeId)
     private val _isSaving = MutableStateFlow(false)
     private val _isFinishEdit = MutableStateFlow(false)
 
@@ -101,5 +101,10 @@ class RecipeEditViewModel @Inject constructor(
                 _isFinishEdit.value = true
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: RecipeEditNavKey): RecipeEditViewModel
     }
 }

@@ -7,8 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.navigation.ModalBottomSheetLayout
-import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -21,15 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import com.hyeok.recipebook.designsystem.components.YorinSnackbar
+import com.hyeok.recipebook.designsystem.components.YorinSnackbarHostState
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
-import com.hyeok.recipebook.presentation.home.homeScreen
-import com.hyeok.recipebook.presentation.ingredient.ingredientScreen
-import com.hyeok.recipebook.presentation.navigation.Route
-import com.hyeok.recipebook.presentation.recipe.recipeScreen
+import com.hyeok.recipebook.presentation.home.HomeNavKey
+import com.hyeok.recipebook.presentation.home.homeEntry
+import com.hyeok.recipebook.presentation.ingredient.ingredientSection
+import com.hyeok.recipebook.presentation.navigation.BottomSheetSceneStrategy
+import com.hyeok.recipebook.presentation.navigation.Navigator
+import com.hyeok.recipebook.presentation.navigation.rememberNavigationState
+import com.hyeok.recipebook.presentation.navigation.toEntries
+import com.hyeok.recipebook.presentation.recipe.recipeSection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,9 +49,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainView() {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
-
     val snackbarState = remember { SnackbarHostState() }
     val appScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -62,30 +61,33 @@ fun MainView() {
         )
     }
 
-    ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            bottomBar = { BottomNavigationBar(navController) },
-            snackbarHost = { SnackbarHost(hostState = snackbarState, snackbar = { YorinSnackbar(it) }) },
-            contentWindowInsets = WindowInsets(0.dp)
-        ) { innerPadding ->
-            CompositionLocalProvider(LocalSnackbarHostState provides yorinSnackbarHostState) {
-                NavHost(
-                    modifier = Modifier.padding(innerPadding),
-                    navController = navController,
-                    startDestination = Route.Home
-                ) {
-                    homeScreen(
-                        navController = navController
-                    )
-                    recipeScreen(
-                        navController = navController,
-                    )
-                    ingredientScreen(
-                        navController = navController
-                    )
+    val navigationState = rememberNavigationState(
+        startRoute = HomeNavKey,
+        topLevelRoutes = TopLevelRoutes
+    )
+    val navigator = remember { Navigator(navigationState) }
+    val entryProvider = entryProvider {
+        homeEntry(navigator)
+        recipeSection(navigator)
+        ingredientSection(navigator)
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { BottomNavigationBar(navigator) },
+        snackbarHost = { SnackbarHost(hostState = snackbarState, snackbar = { YorinSnackbar(it) }) },
+        contentWindowInsets = WindowInsets(0.dp)
+    ) { innerPadding ->
+        CompositionLocalProvider(LocalSnackbarHostState provides yorinSnackbarHostState) {
+            NavDisplay(
+                modifier = Modifier.padding(innerPadding),
+                entries = navigationState.toEntries(entryProvider),
+                onBack = { navigator.goBack() },
+                sceneStrategies = remember {
+                    // metadata 가 붙은 entry 가 없으면 동작하지 않는다. -> DialogSceneStrategy 를 넣어도 동작에는 문제없다
+                    listOf(BottomSheetSceneStrategy())
                 }
-            }
+            )
         }
     }
 }
