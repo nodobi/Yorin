@@ -1,5 +1,7 @@
 package com.hyeok.recipebook.presentation
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -28,11 +30,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
+import com.hyeok.recipebook.R
 import com.hyeok.recipebook.designsystem.components.YorinText
 import com.hyeok.recipebook.designsystem.theme.BackgroundPreview
 import com.hyeok.recipebook.designsystem.theme.YorinTheme
+import com.hyeok.recipebook.presentation.home.HomeNavKey
+import com.hyeok.recipebook.presentation.ingredient.IngredientListNavKey
 import com.hyeok.recipebook.presentation.navigation.Navigator
-import com.hyeok.recipebook.presentation.navigation.Route
+import com.hyeok.recipebook.presentation.recipe.RecipeListNavKey
 
 
 @Composable
@@ -48,7 +54,7 @@ fun BottomNavigationBar(
                 .background(YorinTheme.colors.black5)
         )
         YorinBottomBar {
-            Route.topLevelRoutes.forEachIndexed { _, route ->
+            BottomNavItems.forEach { route ->
                 YorinBottomBarItem(
                     label = stringResource(route.name),
                     imageVector = ImageVector.vectorResource(route.icon),
@@ -132,14 +138,42 @@ private fun RowScope.YorinBottomBarItem(
     }
 }
 
+
+private data class BottomNavItem(
+    @StringRes
+    val name: Int,
+    val navKey: NavKey,
+    @DrawableRes
+    val icon: Int
+)
+
+private val BottomNavItems = listOf(
+    BottomNavItem(
+        name = R.string.menu_home,
+        navKey = HomeNavKey,
+        icon = R.drawable.ic_home
+    ),
+    BottomNavItem(
+        name = R.string.menu_recipe,
+        navKey = RecipeListNavKey,
+        icon = R.drawable.ic_chefhat
+    ),
+    BottomNavItem(
+        name = R.string.menu_ingredient,
+        navKey = IngredientListNavKey,
+        icon = R.drawable.ic_refrigerator
+    )
+)
+
 private val BottomBarHeight = 72.dp
+val TopLevelRoutes: Set<NavKey> = BottomNavItems.map { it.navKey }.toSet()
 
 @BackgroundPreview
 @Composable
 private fun BottomNavigationPreview() {
     YorinTheme {
         YorinBottomBar {
-            Route.topLevelRoutes.forEachIndexed { _, route ->
+            BottomNavItems.forEach { route ->
                 YorinBottomBarItem(
                     label = stringResource(route.name),
                     imageVector = ImageVector.vectorResource(route.icon),
