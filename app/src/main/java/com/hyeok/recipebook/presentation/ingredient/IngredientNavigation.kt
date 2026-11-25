@@ -85,7 +85,7 @@ fun EntryProviderScope<NavKey>.ingredientSection(
             },
             onClickRecipe = {},
             onEditIngredient = {
-                navigator.goBack()
+                navigator.replace(IngredientEditNavKey(ingredientDetailUiState.ingredient.id))
             },
             onDeleteIngredient = {
                 viewModel.removeIngredient(ingredientDetailUiState.ingredient.id)

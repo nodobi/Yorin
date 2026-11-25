@@ -151,7 +151,11 @@ fun EntryProviderScope<NavKey>.recipeSection(
                     val uiState = uiState as RecipeEditUiState.Success
 
                     if (uiState.isFinishEdit && uiState.updatedRecipeId != null) {
-                        navigator.navigateToRecipeDetail(uiState.updatedRecipeId)
+                        if (key.recipeId == null) {
+                            navigator.replace(RecipeDetailNavKey(uiState.updatedRecipeId))
+                        } else {
+                            navigator.goBack()
+                        }
                     }
                 }
             }
