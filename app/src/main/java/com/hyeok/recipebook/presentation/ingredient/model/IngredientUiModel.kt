@@ -63,7 +63,7 @@ data class IngredientUiModel(
 
         @OptIn(ExperimentalTime::class)
         fun empty(): IngredientUiModel = IngredientUiModel(
-            id = -1,
+            id = 0,
             name = "",
             purchaseDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
             expirationDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,

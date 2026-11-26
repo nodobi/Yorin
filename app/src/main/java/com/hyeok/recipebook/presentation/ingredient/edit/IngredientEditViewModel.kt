@@ -5,12 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.presentation.ingredient.IngredientEditNavKey
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.presentation.ingredient.model.toUiModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,14 +23,24 @@ class IngredientEditViewModel @AssistedInject constructor(
     private val ingredientRepository: IngredientRepository,
     @Assisted navKey: IngredientEditNavKey
 ) : ViewModel() {
+    // 새로운 재료를 추가할 때 null
     private val ingredientId = navKey.ingredientId
 
-    private val ingredient = ingredientRepository.getIngredient(ingredientId ?: -1)
-        .map {
-            it.getOrNull()
-        }
+    // TODO:: #89 레시피 수정 화면을 참고하여 UiState 부터 개선하기
+    private val ingredient = flow {
+        val id = ingredientId
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+        if (id == null) {
+            emit(IngredientUiModel.empty())
+        } else {
+            emitAll(
+                ingredientRepository.getIngredient(id).map {
+                    it?.toUiModel() ?: IngredientUiModel.empty()
+                }
+            )
+        }
+    }
+
     val uiState: StateFlow<IngredientEditUiState> = ingredient
         .map { model ->
             IngredientEditUiState(
@@ -39,7 +52,7 @@ class IngredientEditViewModel @AssistedInject constructor(
         viewModelScope.launch {
             ingredientRepository.addIngredient(ingredient)
                 .onSuccess {
-                    // TODO:: ingredient 갱신
+                    // TODO::#89 화면 전환 이벤트 컴포저블로 전달
                 }
                 .onFailure { }
         }

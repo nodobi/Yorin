@@ -8,7 +8,7 @@ interface IngredientRepository {
 
     fun getIngredients(): Flow<List<IngredientModel>>
 
-    fun getIngredient(ingredientId: Long): Flow<Result<IngredientUiModel?>>
+    fun getIngredient(ingredientId: Long): Flow<IngredientModel?>
 
     suspend fun removeIngredient(ingredientId: Long): Result<Unit>
 

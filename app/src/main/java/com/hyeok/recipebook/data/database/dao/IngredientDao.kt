@@ -31,7 +31,7 @@ interface IngredientDao {
         WHERE ingredient.id = :ingredientId
     """
     )
-    fun getIngredient(ingredientId: Long): Flow<IngredientModel>
+    fun getIngredient(ingredientId: Long): Flow<IngredientModel?>
 
     @Query(
         """

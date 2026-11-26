@@ -15,7 +15,7 @@ class IngredientLocalDataSource @Inject constructor(
         return ingredientDao.getAllIngredients()
     }
 
-    fun getIngredient(ingredientId: Long): Flow<IngredientModel> {
+    fun getIngredient(ingredientId: Long): Flow<IngredientModel?> {
         return ingredientDao.getIngredient(ingredientId)
     }
 

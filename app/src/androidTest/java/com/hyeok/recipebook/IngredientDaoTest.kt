@@ -65,8 +65,8 @@ class IngredientDaoTest {
     @Test
     fun 재료_무게_단위_로드_테스트() = runTest {
         val ingredient = db.ingredientDao().getIngredient(1).first()
-        assert(ingredient.id == 1L)
-        assert(ingredient.weightUnit == "g")
+        assert(ingredient?.id == 1L)
+        assert(ingredient?.weightUnit == "g")
     }
 
     @Test
