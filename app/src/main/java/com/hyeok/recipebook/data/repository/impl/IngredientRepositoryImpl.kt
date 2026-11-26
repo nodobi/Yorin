@@ -1,10 +1,11 @@
 package com.hyeok.recipebook.data.repository.impl
 
-import com.hyeok.recipebook.data.database.model.toModel
-import com.hyeok.recipebook.data.database.model.toUiModel
+import com.hyeok.recipebook.data.database.model.IngredientModel
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.source.IngredientLocalDataSource
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.presentation.ingredient.model.toModel
+import com.hyeok.recipebook.presentation.ingredient.model.toUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -12,11 +13,8 @@ import kotlinx.coroutines.flow.map
 class IngredientRepositoryImpl(
     private val ingredientLocalDataSource: IngredientLocalDataSource,
 ) : IngredientRepository {
-    override fun getIngredients(): Flow<Result<List<IngredientUiModel>>> {
-        return ingredientLocalDataSource
-            .getIngredients()
-            .map { Result.success(it.map { it.toUiModel() }) }
-            .catch { Result.failure<List<IngredientUiModel>>(it) }
+    override fun getIngredients(): Flow<List<IngredientModel>> {
+        return ingredientLocalDataSource.getIngredients()
     }
 
     override fun getIngredient(ingredientId: Long): Flow<Result<IngredientUiModel?>> {

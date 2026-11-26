@@ -1,6 +1,7 @@
 package com.hyeok.recipebook.presentation.home.model
 
 import androidx.compose.runtime.Stable
+import com.hyeok.recipebook.data.database.model.IngredientModel
 import kotlinx.datetime.LocalDate
 
 /**
@@ -17,4 +18,17 @@ data class OwnedIngredientUiModel(
     val weight: Int,
     val weightUnit: String,
     val description: String
+)
+
+fun IngredientModel.toOwnIngredientUiModel(
+    daysToExpiration: Int?
+): OwnedIngredientUiModel = OwnedIngredientUiModel(
+    id = id,
+    name = name,
+    purchaseDate = LocalDate.fromEpochDays(purchaseDay),
+    expirationDate = expirationDay?.let { LocalDate.fromEpochDays(it) },
+    daysToExpiration = daysToExpiration,
+    weight = weight,
+    weightUnit = weightUnit,
+    description = description
 )
