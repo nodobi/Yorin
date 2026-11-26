@@ -3,6 +3,7 @@ package com.hyeok.recipebook.data.database.dao
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
+import androidx.room3.Update
 import com.hyeok.recipebook.data.database.entity.IngredientEntity
 import com.hyeok.recipebook.data.database.model.IngredientModel
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,10 @@ import kotlinx.coroutines.flow.Flow
 interface IngredientDao {
 
     @Insert
-    suspend fun insertIngredient(ingredient: IngredientEntity)
+    suspend fun insertIngredient(ingredient: IngredientEntity): Long
+
+    @Update
+    suspend fun updateIngredient(ingredient: IngredientEntity)
 
     @Query("DELETE from ingredient WHERE id = :id")
     suspend fun deleteIngredient(id: Long)

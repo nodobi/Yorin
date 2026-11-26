@@ -50,11 +50,12 @@ class IngredientEditViewModel @AssistedInject constructor(
 
     fun addIngredient(ingredient: IngredientUiModel) {
         viewModelScope.launch {
-            ingredientRepository.addIngredient(ingredient)
-                .onSuccess {
-                    // TODO::#89 화면 전환 이벤트 컴포저블로 전달
-                }
-                .onFailure { }
+            // TODO::#89 개선된 UiState 로 호출하기
+//            ingredientRepository.addIngredient(ingredient)
+//                .onSuccess {
+//                    // TODO::#89 화면 전환 이벤트 컴포저블로 전달
+//                }
+//                .onFailure { }
         }
     }
 

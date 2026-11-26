@@ -26,8 +26,21 @@ class IngredientLocalDataSource @Inject constructor(
         ingredientDao.deleteIngredient(ingredientId)
     }
 
-    suspend fun addIngredient(ingredientModel: IngredientModel) {
+    suspend fun addIngredient(ingredientModel: IngredientModel): Long =
         ingredientDao.insertIngredient(
+            IngredientEntity(
+                id = ingredientModel.id,
+                name = ingredientModel.name,
+                purchaseDay = ingredientModel.purchaseDay,
+                expirationDay = ingredientModel.expirationDay,
+                weight = ingredientModel.weight,
+                weightUnitId = weightUnitDao.getIdByName(ingredientModel.weightUnit),
+                description = ingredientModel.description,
+            )
+        )
+
+    suspend fun updateIngredient(ingredientModel: IngredientModel) {
+        ingredientDao.updateIngredient(
             IngredientEntity(
                 id = ingredientModel.id,
                 name = ingredientModel.name,
