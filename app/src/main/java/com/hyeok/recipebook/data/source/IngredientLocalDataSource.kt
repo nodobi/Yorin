@@ -31,8 +31,8 @@ class IngredientLocalDataSource @Inject constructor(
             IngredientEntity(
                 id = ingredientModel.id,
                 name = ingredientModel.name,
-                purchaseDate = ingredientModel.purchaseDate,
-                expirationDate = ingredientModel.expirationDate,
+                purchaseDay = ingredientModel.purchaseDay,
+                expirationDay = ingredientModel.expirationDay,
                 weight = ingredientModel.weight,
                 weightUnitId = weightUnitDao.getIdByName(ingredientModel.weightUnit),
                 description = ingredientModel.description,

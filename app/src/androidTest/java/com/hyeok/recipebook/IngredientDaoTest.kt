@@ -40,8 +40,8 @@ class IngredientDaoTest {
                 IngredientEntity(
                     id = 1,
                     name = "김치",
-                    purchaseDate = LocalDate(2026, 9, 4).toEpochDays(),
-                    expirationDate = LocalDate(2026, 9, 6).toEpochDays(),
+                    purchaseDay = LocalDate(2026, 9, 4).toEpochDays(),
+                    expirationDay = LocalDate(2026, 9, 6).toEpochDays(),
                     weight = 100,
                     weightUnitId = 1,
                     description = ""
@@ -52,8 +52,8 @@ class IngredientDaoTest {
                 IngredientEntity(
                     id = 2,
                     name = "두부",
-                    purchaseDate = LocalDate(2026, 9, 4).toEpochDays(),
-                    expirationDate = LocalDate(2026, 9, 6).toEpochDays(),
+                    purchaseDay = LocalDate(2026, 9, 4).toEpochDays(),
+                    expirationDay = LocalDate(2026, 9, 6).toEpochDays(),
                     weight = 200,
                     weightUnitId = 1,
                     description = ""

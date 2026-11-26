@@ -6,9 +6,8 @@ import kotlinx.datetime.LocalDate
 class IngredientModel(
     val id: Long,
     val name: String,
-    // TODO:: Date 인지 Day 인지 명확하게 정의
-    val purchaseDate: Long,
-    val expirationDate: Long?,
+    val purchaseDay: Long,
+    val expirationDay: Long?,
     val weight: Int,
     val weightUnit: String,
     val description: String,
@@ -18,8 +17,8 @@ fun IngredientModel.toUiModel(): IngredientUiModel =
     IngredientUiModel(
         id = id,
         name = name,
-        purchaseDate = LocalDate.fromEpochDays(purchaseDate),
-        expirationDate = expirationDate?.let { LocalDate.fromEpochDays(it) },
+        purchaseDate = LocalDate.fromEpochDays(purchaseDay),
+        expirationDate = expirationDay?.let { LocalDate.fromEpochDays(it) },
         weight = weight,
         weightUnit = weightUnit,
         description = description
@@ -29,8 +28,8 @@ fun IngredientUiModel.toModel() =
     IngredientModel(
         id = id,
         name = name,
-        purchaseDate = purchaseDate.toEpochDays(),
-        expirationDate = expirationDate?.toEpochDays(),
+        purchaseDay = purchaseDate.toEpochDays(),
+        expirationDay = expirationDate?.toEpochDays(),
         weight = weight,
         weightUnit = weightUnit,
         description = description

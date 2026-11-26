@@ -21,8 +21,8 @@ interface IngredientDao {
         SELECT 
             ingredient.id AS id,
             ingredient.name AS name,
-            ingredient.purchaseDate AS purchaseDate,
-            ingredient.expirationDate AS expirationDate,
+            ingredient.purchaseDay AS purchaseDay,
+            ingredient.expirationDay AS expirationDay,
             ingredient.weight AS weight,
             weight_unit.name AS weightUnit,
             ingredient.description AS description
@@ -38,8 +38,8 @@ interface IngredientDao {
         SELECT 
             ingredient.id AS id,
             ingredient.name AS name,
-            ingredient.purchaseDate AS purchaseDate,
-            ingredient.expirationDate AS expirationDate,
+            ingredient.purchaseDay AS purchaseDay,
+            ingredient.expirationDay AS expirationDay,
             ingredient.weight AS weight,
             weight_unit.name AS weightUnit,
             ingredient.description AS description
@@ -55,8 +55,8 @@ interface IngredientDao {
         SELECT
             ingredient.id AS id,
             ingredient.name AS name,
-            ingredient.purchaseDate AS purchaseDate,
-            ingredient.expirationDate AS expirationDate,
+            ingredient.purchaseDay AS purchaseDay,
+            ingredient.expirationDay AS expirationDay,
             ingredient.weight AS weight,
             weight_unit.name AS weightUnit,
             ingredient.description AS description
