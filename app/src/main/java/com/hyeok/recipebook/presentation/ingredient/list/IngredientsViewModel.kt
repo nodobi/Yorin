@@ -6,17 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
+import com.hyeok.recipebook.presentation.ingredient.model.toUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class IngredientsViewModel @Inject constructor(
@@ -26,12 +29,13 @@ class IngredientsViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     private val searchQueryFlow = snapshotFlow { searchQueryState.text }
-        .debounce(200L)
+        .debounce(200L.milliseconds)
 
     private val _ingredients: Flow<List<IngredientUiModel>> = ingredientRepository.getIngredients()
-        .map {
-            it.getOrDefault(emptyList())
+        .map { models ->
+            models.map { it.toUiModel() }
         }
+        .catch { emit(emptyList()) }
 
     val ingredientsUiState: StateFlow<IngredientsUiState> = combine(
         _ingredients, searchQueryFlow
@@ -41,12 +45,12 @@ class IngredientsViewModel @Inject constructor(
         IngredientsUiState(
             ingredients = ingredients.filter { it.name.contains(searchQuery) },
             expiredCount = ingredients.count {
-                if(it.expirationDate == null) return@count false
+                if (it.expirationDate == null) return@count false
 
                 (it.expirationDate.toEpochDays() - currentEpochDays) < 0
             },
             remainExpirationDays = ingredients.map {
-                if(it.expirationDate == null) return@map null
+                if (it.expirationDate == null) return@map null
 
                 (it.expirationDate.toEpochDays() - currentEpochDays).let { remainExpirationDay ->
                     if (remainExpirationDay < 0) -1 else remainExpirationDay.toInt()

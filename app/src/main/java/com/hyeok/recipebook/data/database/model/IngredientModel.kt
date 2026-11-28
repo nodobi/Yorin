@@ -1,37 +1,11 @@
 package com.hyeok.recipebook.data.database.model
 
-import com.hyeok.recipebook.presentation.ingredient.model.IngredientUiModel
-import kotlinx.datetime.LocalDate
-
 class IngredientModel(
     val id: Long,
     val name: String,
-    // TODO:: Date 인지 Day 인지 명확하게 정의
-    val purchaseDate: Long,
-    val expirationDate: Long?,
+    val purchaseDay: Long,
+    val expirationDay: Long?,
     val weight: Int,
     val weightUnit: String,
     val description: String,
 )
-
-fun IngredientModel.toUiModel(): IngredientUiModel =
-    IngredientUiModel(
-        id = id,
-        name = name,
-        purchaseDate = LocalDate.fromEpochDays(purchaseDate),
-        expirationDate = expirationDate?.let { LocalDate.fromEpochDays(it) },
-        weight = weight,
-        weightUnit = weightUnit,
-        description = description
-    )
-
-fun IngredientUiModel.toModel() =
-    IngredientModel(
-        id = id,
-        name = name,
-        purchaseDate = purchaseDate.toEpochDays(),
-        expirationDate = expirationDate?.toEpochDays(),
-        weight = weight,
-        weightUnit = weightUnit,
-        description = description
-    )

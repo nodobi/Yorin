@@ -20,8 +20,8 @@ import androidx.room3.PrimaryKey
 data class IngredientEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val purchaseDate: Long,
-    val expirationDate: Long?,
+    val purchaseDay: Long,
+    val expirationDay: Long?,
     val weight: Int,
     val weightUnitId: Long,
     val description: String,

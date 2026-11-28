@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hyeok.recipebook.data.repository.IngredientRepository
 import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.ingredient.IngredientDetailNavKey
+import com.hyeok.recipebook.presentation.ingredient.model.toUiModel
 import com.hyeok.recipebook.presentation.util.DateTimeUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,15 +31,8 @@ class IngredientDetailViewModel @AssistedInject constructor(
 
     private val ingredient = ingredientRepository.getIngredient(ingredientId)
         .mapNotNull {
-            it.fold(
-                onSuccess = { ingredientUiModel ->
-                    ingredientUiModel ?: return@mapNotNull null
-                },
-                onFailure = {
-                    // 에러 핸들링
-                    return@mapNotNull null
-                }
-            )
+            it!!.toUiModel()
+//            TODO::#89 유효하지 않은 Id 로 조회한 경우 뒤로가기?
         }
 
     private val recipes = flow {
@@ -83,7 +77,7 @@ class IngredientDetailViewModel @AssistedInject constructor(
         viewModelScope.launch {
             ingredientRepository.removeIngredient(ingredientId)
                 .onSuccess {
-                    // TODO:: 화면 전환
+                    // TODO::#89 화면 전환
                 }
                 .onFailure { }
         }

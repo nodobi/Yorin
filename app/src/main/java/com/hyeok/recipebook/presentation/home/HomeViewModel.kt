@@ -10,6 +10,7 @@ import com.hyeok.recipebook.data.repository.RecipeRepository
 import com.hyeok.recipebook.presentation.home.component.RecipeRecommendationState
 import com.hyeok.recipebook.presentation.home.model.OwnedIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.RecipeRecommendationUiModel
+import com.hyeok.recipebook.presentation.home.model.toOwnIngredientUiModel
 import com.hyeok.recipebook.presentation.home.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -31,7 +32,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.until
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -58,26 +58,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private val _ownedIngredients: Flow<List<OwnedIngredientUiModel>> = ingredientRepository.getIngredients()
-        .map {
-            it.getOrElse {
-                emptyList()
-            }
-        }
         .combine(_today) { ingredientUiModels, today ->
-            ingredientUiModels.map {
-                val daysToExpiration = it.expirationDate?.let {
-                    today.until(it, DateTimeUnit.DAY)
+            ingredientUiModels.map { model ->
+                val daysToExpiration = model.expirationDay?.let {
+                    it - today.toEpochDays()
                 }?.toInt()
 
-                OwnedIngredientUiModel(
-                    id = it.id,
-                    name = it.name,
-                    purchaseDate = it.purchaseDate,
-                    expirationDate = it.expirationDate,
-                    daysToExpiration = daysToExpiration,
-                    weight = it.weight,
-                    weightUnit = it.weightUnit,
-                    description = it.description
+                model.toOwnIngredientUiModel(
+                    daysToExpiration = daysToExpiration
                 )
             }
         }

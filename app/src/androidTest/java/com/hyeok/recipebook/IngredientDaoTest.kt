@@ -40,8 +40,8 @@ class IngredientDaoTest {
                 IngredientEntity(
                     id = 1,
                     name = "김치",
-                    purchaseDate = LocalDate(2026, 9, 4).toEpochDays(),
-                    expirationDate = LocalDate(2026, 9, 6).toEpochDays(),
+                    purchaseDay = LocalDate(2026, 9, 4).toEpochDays(),
+                    expirationDay = LocalDate(2026, 9, 6).toEpochDays(),
                     weight = 100,
                     weightUnitId = 1,
                     description = ""
@@ -52,8 +52,8 @@ class IngredientDaoTest {
                 IngredientEntity(
                     id = 2,
                     name = "두부",
-                    purchaseDate = LocalDate(2026, 9, 4).toEpochDays(),
-                    expirationDate = LocalDate(2026, 9, 6).toEpochDays(),
+                    purchaseDay = LocalDate(2026, 9, 4).toEpochDays(),
+                    expirationDay = LocalDate(2026, 9, 6).toEpochDays(),
                     weight = 200,
                     weightUnitId = 1,
                     description = ""
@@ -65,8 +65,8 @@ class IngredientDaoTest {
     @Test
     fun 재료_무게_단위_로드_테스트() = runTest {
         val ingredient = db.ingredientDao().getIngredient(1).first()
-        assert(ingredient.id == 1L)
-        assert(ingredient.weightUnit == "g")
+        assert(ingredient?.id == 1L)
+        assert(ingredient?.weightUnit == "g")
     }
 
     @Test

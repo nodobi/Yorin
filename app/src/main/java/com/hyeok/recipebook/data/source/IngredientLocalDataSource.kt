@@ -15,7 +15,7 @@ class IngredientLocalDataSource @Inject constructor(
         return ingredientDao.getAllIngredients()
     }
 
-    fun getIngredient(ingredientId: Long): Flow<IngredientModel> {
+    fun getIngredient(ingredientId: Long): Flow<IngredientModel?> {
         return ingredientDao.getIngredient(ingredientId)
     }
 
@@ -26,13 +26,26 @@ class IngredientLocalDataSource @Inject constructor(
         ingredientDao.deleteIngredient(ingredientId)
     }
 
-    suspend fun addIngredient(ingredientModel: IngredientModel) {
+    suspend fun addIngredient(ingredientModel: IngredientModel): Long =
         ingredientDao.insertIngredient(
             IngredientEntity(
                 id = ingredientModel.id,
                 name = ingredientModel.name,
-                purchaseDate = ingredientModel.purchaseDate,
-                expirationDate = ingredientModel.expirationDate,
+                purchaseDay = ingredientModel.purchaseDay,
+                expirationDay = ingredientModel.expirationDay,
+                weight = ingredientModel.weight,
+                weightUnitId = weightUnitDao.getIdByName(ingredientModel.weightUnit),
+                description = ingredientModel.description,
+            )
+        )
+
+    suspend fun updateIngredient(ingredientModel: IngredientModel) {
+        ingredientDao.updateIngredient(
+            IngredientEntity(
+                id = ingredientModel.id,
+                name = ingredientModel.name,
+                purchaseDay = ingredientModel.purchaseDay,
+                expirationDay = ingredientModel.expirationDay,
                 weight = ingredientModel.weight,
                 weightUnitId = weightUnitDao.getIdByName(ingredientModel.weightUnit),
                 description = ingredientModel.description,

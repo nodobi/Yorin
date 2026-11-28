@@ -594,8 +594,8 @@ private fun HomeScreenPreview() {
                         IngredientModel(
                             id = 1,
                             name = "재료1",
-                            purchaseDate = 0,
-                            expirationDate = 0,
+                            purchaseDay = 0,
+                            expirationDay = 0,
                             weight = 0,
                             weightUnit = "g",
                             description = "",
@@ -603,8 +603,8 @@ private fun HomeScreenPreview() {
                         IngredientModel(
                             id = 2,
                             name = "재료1",
-                            purchaseDate = 0,
-                            expirationDate = 0,
+                            purchaseDay = 0,
+                            expirationDay = 0,
                             weight = 0,
                             weightUnit = "g",
                             description = "",
@@ -612,8 +612,8 @@ private fun HomeScreenPreview() {
                         IngredientModel(
                             id = 3,
                             name = "재료3재료3재료3재료3재료3재료3재료3재료3재료3재료3재료3재료3재료3재료3",
-                            purchaseDate = 0,
-                            expirationDate = 0,
+                            purchaseDay = 0,
+                            expirationDay = 0,
                             weight = 0,
                             weightUnit = "g",
                             description = "",
